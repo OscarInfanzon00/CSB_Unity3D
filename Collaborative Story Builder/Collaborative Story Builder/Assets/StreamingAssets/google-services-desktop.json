@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "689094711975",
+    "project_id": "collaborativestorybuilde-2cf16",
+    "storage_bucket": "collaborativestorybuilde-2cf16.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689094711975:android:5764399148a5c3bdeb5982",
+        "android_client_info": {
+          "package_name": "com.capstone.csb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdJxouvNUNZVAInHywwBdZe7T0JMUZlQo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689094711975:android:e585c6f9e3e0d1c2eb5982",
+        "android_client_info": {
+          "package_name": "com.infanzon.collaborativestorybuilder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdJxouvNUNZVAInHywwBdZe7T0JMUZlQo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

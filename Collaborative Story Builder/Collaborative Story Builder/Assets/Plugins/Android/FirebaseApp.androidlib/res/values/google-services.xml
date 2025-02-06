@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+  <string name="gcm_defaultSenderId" translatable="false">689094711975</string>
+  <string name="google_storage_bucket" translatable="false">collaborativestorybuilde-2cf16.firebasestorage.app</string>
+  <string name="project_id" translatable="false">collaborativestorybuilde-2cf16</string>
+  <string name="google_api_key" translatable="false">AIzaSyAdJxouvNUNZVAInHywwBdZe7T0JMUZlQo</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAdJxouvNUNZVAInHywwBdZe7T0JMUZlQo</string>
+  <string name="google_app_id" translatable="false">1:689094711975:android:5764399148a5c3bdeb5982</string>
+</resources>
