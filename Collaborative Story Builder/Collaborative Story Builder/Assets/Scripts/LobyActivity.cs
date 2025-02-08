@@ -33,6 +33,7 @@ public class LobbyActivity : MonoBehaviour
 
     void Start()
     {
+        
         btnCreateLobby.onClick.AddListener(CreateLobby);
         joinToLobbyButton.onClick.AddListener(JoinToLobby);
         startGameButton.onClick.AddListener(StartGame);
