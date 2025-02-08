@@ -3,16 +3,16 @@ using UnityEngine.UI;
 using Firebase.Auth;
 using UnityEngine.SceneManagement;
 using Firebase.Extensions;
-
+using TMPro;
 public class RegisterActivity : MonoBehaviour
 {
     public GameObject LoginActivity;
-    public InputField RegisterEmail;
-    public InputField RegisterPassword;
-    public InputField ConfirmPassword;
+    public TMP_InputField RegisterEmail;
+    public TMP_InputField RegisterPassword;
+    public TMP_InputField ConfirmPassword;
     public Button btnRegister;
     public Button LoginRedirect;
-    public Text textError;
+    public TextMeshProUGUI textError;
 
     private FirebaseAuth firebaseAuth;
 
