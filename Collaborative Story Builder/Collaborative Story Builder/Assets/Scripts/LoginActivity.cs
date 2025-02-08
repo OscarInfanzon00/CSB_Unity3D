@@ -3,14 +3,15 @@ using UnityEngine.UI;
 using Firebase.Auth;
 using UnityEngine.SceneManagement;
 using Firebase.Extensions;
-
+using TMPro;
 public class LoginActivity : MonoBehaviour
 {
-    public InputField RegisterEmail;
-    public InputField RegisterPassword;
+    public GameObject RegisterActivity;
+    public TMP_InputField LoginEmail;
+    public TMP_InputField LoginPassword;
     public Button btnLogin;
     public Button RegisterRedirect;
-    public Text textError;
+    public TextMeshProUGUI textError;
 
     private FirebaseAuth firebaseAuth;
 
@@ -20,17 +21,26 @@ public class LoginActivity : MonoBehaviour
 
         if (PlayerPrefs.HasKey("SavedEmail"))
         {
-            RegisterEmail.text = PlayerPrefs.GetString("SavedEmail");
+            LoginEmail.text = PlayerPrefs.GetString("SavedEmail");
         }
 
         btnLogin.onClick.AddListener(LoginUser);
-        RegisterRedirect.onClick.AddListener(() => SceneManager.LoadScene("Register"));
+        RegisterRedirect.onClick.AddListener(() =>
+        {
+            LoginEmail.SetTextWithoutNotify("");
+            LoginPassword.SetTextWithoutNotify("");
+
+            RegisterActivity.SetActive(true);
+            gameObject.SetActive(false);
+            //SceneManager.LoadScene("Register");
+
+        });
     }
 
     private void LoginUser()
     {
-        string email = RegisterEmail.text.Trim();
-        string password = RegisterPassword.text.Trim();
+        string email = LoginEmail.text.Trim();
+        string password = LoginPassword.text.Trim();
 
         if (string.IsNullOrEmpty(email))
         {
@@ -66,4 +76,6 @@ public class LoginActivity : MonoBehaviour
                 }
             });
     }
+
+
 }

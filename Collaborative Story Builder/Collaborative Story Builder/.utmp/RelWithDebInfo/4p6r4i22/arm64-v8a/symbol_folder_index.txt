@@ -1,1 +1,0 @@
-C:\Users\oscar\Collaborative Story Builder\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\build\intermediates\cxx\RelWithDebInfo\4p6r4i22\obj\arm64-v8a
