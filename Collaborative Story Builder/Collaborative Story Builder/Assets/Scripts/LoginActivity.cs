@@ -6,8 +6,9 @@ using Firebase.Extensions;
 
 public class LoginActivity : MonoBehaviour
 {
-    public InputField RegisterEmail;
-    public InputField RegisterPassword;
+    public GameObject RegisterActivity;
+    public InputField LoginEmail;
+    public InputField LoginPassword;
     public Button btnLogin;
     public Button RegisterRedirect;
     public Text textError;
@@ -20,17 +21,26 @@ public class LoginActivity : MonoBehaviour
                 
         if (PlayerPrefs.HasKey("SavedEmail"))
         {
-            RegisterEmail.text = PlayerPrefs.GetString("SavedEmail");
+            LoginEmail.text = PlayerPrefs.GetString("SavedEmail");
         }
 
         btnLogin.onClick.AddListener(LoginUser);
-        RegisterRedirect.onClick.AddListener(() => SceneManager.LoadScene("Register"));
+        RegisterRedirect.onClick.AddListener(() =>
+        {
+            LoginEmail.SetTextWithoutNotify("");
+            LoginPassword.SetTextWithoutNotify("");
+
+            RegisterActivity.SetActive(true);
+            gameObject.SetActive(false);
+            //SceneManager.LoadScene("Register");
+
+        });
     }
 
     private void LoginUser()
     {
-        string email = RegisterEmail.text.Trim();
-        string password = RegisterPassword.text.Trim();
+        string email = LoginEmail.text.Trim();
+        string password = LoginPassword.text.Trim();
 
         if (string.IsNullOrEmpty(email))
         {
@@ -66,4 +76,6 @@ public class LoginActivity : MonoBehaviour
             }
         });
     }
+
+
 }
