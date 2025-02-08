@@ -18,7 +18,7 @@ public class LoginActivity : MonoBehaviour
     void Start()
     {
         firebaseAuth = FirebaseAuth.DefaultInstance;
-                
+
         if (PlayerPrefs.HasKey("SavedEmail"))
         {
             LoginEmail.text = PlayerPrefs.GetString("SavedEmail");
@@ -60,21 +60,21 @@ public class LoginActivity : MonoBehaviour
             return;
         }
 
-    firebaseAuth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
+        firebaseAuth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
             {
-                textError.text = "Login successful!";
-                PlayerPrefs.SetString("SavedEmail", email);
-                PlayerPrefs.SetString("SavedUsername", email);
-                PlayerPrefs.Save();
-                SceneManager.LoadScene("Main_Menu");
-            }
-            else
-            {
-                textError.text = "Login failed: " + task.Exception?.Message;
-            }
-        });
+                if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
+                {
+                    textError.text = "Login successful!";
+                    PlayerPrefs.SetString("SavedEmail", email);
+                    PlayerPrefs.SetString("SavedUsername", email);
+                    PlayerPrefs.Save();
+                    SceneManager.LoadScene("Main_Menu");
+                }
+                else
+                {
+                    textError.text = "Login failed: " + task.Exception?.Message;
+                }
+            });
     }
 
 
