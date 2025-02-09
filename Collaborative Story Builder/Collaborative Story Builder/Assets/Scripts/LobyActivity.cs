@@ -6,7 +6,7 @@ using Firebase;
 using Firebase.Firestore;
 using Firebase.Auth;
 using Firebase.Extensions;
-
+using TMPro;
 public class LobbyActivity : MonoBehaviour
 {
     public GameObject createJoinMenu;
@@ -16,11 +16,11 @@ public class LobbyActivity : MonoBehaviour
     public Button joinToLobbyButton;
     public Button startGameButton;
 
-    public InputField roomNumberInput;
-    public Text textRoomNumber;
-    public Text txtPlayersNumber;
+    public TMP_InputField roomNumberInput;
+    public TextMeshProUGUI textRoomNumber;
+    public TextMeshProUGUI txtPlayersNumber;
     public VerticalLayoutGroup listOfPlayersOnLobby;
-    public Text logText;
+    public TextMeshProUGUI logText;
     public GameObject playerConnected;
 
     private FirebaseFirestore db;

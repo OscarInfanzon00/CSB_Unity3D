@@ -154,7 +154,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 794d078386252cb44bc89cd4b073838a, type: 3}
   - {fileID: 8300000, guid: 38cf5e2c39a754749862b4307cff3091, type: 3}
   - {fileID: 8300000, guid: 2afb313e30c262747932493eca0dd7c4, type: 3}
-  muteSoundImage: {fileID: -4853040216054721884, guid: b9160ec4536349d4da5bde65fbcdebbf, type: 3}
-  soundOnImage: {fileID: -8903082085024031168, guid: fa92b7ba12671724d8bd8f055cc31cce, type: 3}
+  muteSoundImage: {fileID: 21300000, guid: b9160ec4536349d4da5bde65fbcdebbf, type: 3}
+  soundOnImage: {fileID: 21300000, guid: fa92b7ba12671724d8bd8f055cc31cce, type: 3}
   audioSource: {fileID: 9211171199930884868}
   MuteButton: {fileID: 0}
+  currentSong: {fileID: 0}

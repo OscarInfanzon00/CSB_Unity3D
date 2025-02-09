@@ -18,7 +18,7 @@ public class RegisterActivity : MonoBehaviour
 
     void Start()
     {
-        //PlayerPrefs.DeleteAll();
+        PlayerPrefs.DeleteAll();
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.DefaultInstance;
 

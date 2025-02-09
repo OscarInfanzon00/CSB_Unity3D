@@ -1,18 +1,20 @@
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; 
-
+using UnityEngine.UI;
+using TMPro;
 public class Main_MenuActivity : MonoBehaviour
 {
+
+    public GameObject MainMenuPanel, ProfilePanel, LobbyPanel;
     public Button openProfileButton;
     public Button openMultiplayerMenuButton;
-    public Text username;
+    public TextMeshProUGUI username;
     public Button btnTutorial;
     public Animator tutorial;
 
     public Slider lvlSlider;
-    public Text lvlText;
+    public TextMeshProUGUI lvlText;
 
     void Start()
     {
@@ -53,11 +55,17 @@ public class Main_MenuActivity : MonoBehaviour
 
     private void openMultiplayer()
     {
-        SceneManager.LoadScene("LobbyActivity");
+        //SceneManager.LoadScene("LobbyActivity");
+        ProfilePanel.SetActive(false);
+        MainMenuPanel.SetActive(false);
+        LobbyPanel.SetActive(true);
     }
 
     private void openProfile()
     {
-        SceneManager.LoadScene("Profile");
+        //SceneManager.LoadScene("Profile");
+        ProfilePanel.SetActive(true);
+        MainMenuPanel.SetActive(false);
+        LobbyPanel.SetActive(false);
     }
 }
