@@ -1296,7 +1296,7 @@ GameObject:
   - component: {fileID: 2073119271}
   - component: {fileID: 2073119272}
   m_Layer: 0
-  m_Name: ProfileManager
+  m_Name: FriendListManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1326,20 +1326,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2073119270}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76244e9c9b0f8084f9e559b743097e11, type: 3}
+  m_Script: {fileID: 11500000, guid: e58e002ebc823144d9a7bfe0a3bb503e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 753058839307444601}
-  email: {fileID: 0}
-  username: {fileID: 0}
-  saveButton: {fileID: 0}
-  logoutButton: {fileID: 0}
-  profilePicButton: {fileID: 264189537}
-  profilePic: {fileID: 264189538}
-  lvlSlider: {fileID: 0}
-  lvlText: {fileID: 770151326}
-  txtWordCounter: {fileID: 0}
-  maxImageSize: 512
+  CloseButton: {fileID: 753058839307444601}
 --- !u!1001 &753058839307444599
 PrefabInstance:
   m_ObjectHideFlags: 0
