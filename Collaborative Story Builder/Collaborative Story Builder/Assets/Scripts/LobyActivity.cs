@@ -11,7 +11,7 @@ public class LobbyActivity : MonoBehaviour
 {
     public GameObject createJoinMenu;
     public GameObject createLobbyMenu;
-
+    public Button quickRejoinButton;
     public Button btnCreateLobby;
     public Button joinToLobbyButton;
     public Button startGameButton;
@@ -31,6 +31,8 @@ public class LobbyActivity : MonoBehaviour
     private bool isRoomCreator = false;
     private ListenerRegistration roomListener;
 
+    
+
     void Start()
     {
         
@@ -40,6 +42,17 @@ public class LobbyActivity : MonoBehaviour
 
         db = FirebaseFirestore.DefaultInstance;
         auth = FirebaseAuth.DefaultInstance;
+
+
+        if (quickRejoinButton != null)
+            {
+        quickRejoinButton.onClick.AddListener(QuickRejoin);
+     }
+
+        if (PlayerPrefs.HasKey("LastRoomID"))
+        {
+        currentRoomID = PlayerPrefs.GetString("LastRoomID");
+        }
 
         if (auth.CurrentUser != null)
         {
@@ -55,6 +68,40 @@ public class LobbyActivity : MonoBehaviour
             }
         }
     }
+
+
+
+    private void QuickRejoin()
+{
+    if (string.IsNullOrEmpty(currentRoomID))
+    {
+        SetLogText("No previous room found.");
+        return;
+    }
+
+    SetLogText("Attempting to rejoin room: " + currentRoomID);
+
+    DocumentReference roomRef = db.Collection("Rooms").Document(currentRoomID);
+    roomRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+    {
+        if (task.IsCompleted && task.Result.Exists)
+        {
+            SetLogText("Room found! Rejoining...");
+            EnterRoom(currentRoomID);
+        }
+        else
+        {
+            SetLogText("Room not found or no longer available.");
+        }
+    }).ContinueWithOnMainThread(task =>
+    {
+        if (task.IsFaulted)
+        {
+            SetLogText("Internal error occurred while rejoining room.");
+        }
+    });
+}
+
 
     private void CreateLobby()
     {
