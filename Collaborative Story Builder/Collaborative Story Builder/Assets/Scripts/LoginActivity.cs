@@ -33,7 +33,6 @@ public class LoginActivity : MonoBehaviour
             RegisterActivity.SetActive(true);
             gameObject.SetActive(false);
             //SceneManager.LoadScene("Register");
-
         });
     }
 
