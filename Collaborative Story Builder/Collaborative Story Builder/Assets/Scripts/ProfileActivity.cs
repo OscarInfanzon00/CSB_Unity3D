@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
 using TMPro;
+
 public class ProfileActivity : MonoBehaviour
 {
     public GameObject MainMenuPanel, ProfilePanel;
@@ -12,6 +13,7 @@ public class ProfileActivity : MonoBehaviour
     public Button saveButton;
     public Button logoutButton;
     public Button profilePicButton;
+    public Button friedListButton; 
     public Image profilePic;
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
@@ -26,6 +28,7 @@ public class ProfileActivity : MonoBehaviour
         logoutButton.onClick.AddListener(logout);
         closeButton.onClick.AddListener(closeProfile);
         profilePicButton.onClick.AddListener(OnProfilePicButtonClicked);
+        friedListButton.onClick.AddListener(OpenFriendsList); 
 
         if (PlayerPrefs.HasKey("SavedEmail"))
         {
@@ -58,12 +61,15 @@ public class ProfileActivity : MonoBehaviour
         }
     }
 
-    private void updateLVL(){
+    private void updateLVL()
+    {
         if (PlayerPrefs.HasKey("lvl"))
         {
             lvlSlider.value = PlayerPrefs.GetInt("lvl");
-            lvlText.text = "LVL: "+PlayerPrefs.GetInt("lvl");
-        }else{
+            lvlText.text = "LVL: " + PlayerPrefs.GetInt("lvl");
+        }
+        else
+        {
             lvlSlider.value = 0;
             lvlText.text = "LVL: Newbie";
         }
@@ -84,9 +90,13 @@ public class ProfileActivity : MonoBehaviour
 
     private void closeProfile()
     {
-        //SceneManager.LoadScene("Main_Menu");
         MainMenuPanel.SetActive(true);
         ProfilePanel.SetActive(false);
+    }
+
+    private void OpenFriendsList()
+    {
+        SceneManager.LoadScene("Friends_list");
     }
 
     private void OnProfilePicButtonClicked()
@@ -142,8 +152,8 @@ public class ProfileActivity : MonoBehaviour
         if (texture != null)
         {
             Sprite newSprite = Sprite.Create(texture,
-                                               new Rect(0, 0, texture.width, texture.height),
-                                               new Vector2(0.5f, 0.5f));
+                                             new Rect(0, 0, texture.width, texture.height),
+                                             new Vector2(0.5f, 0.5f));
             profilePic.sprite = newSprite;
             Debug.Log("Profile image loaded successfully from: " + imagePath);
         }

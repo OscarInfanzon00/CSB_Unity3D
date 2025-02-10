@@ -2944,6 +2944,7 @@ MonoBehaviour:
   saveButton: {fileID: 311400195}
   logoutButton: {fileID: 830604937}
   profilePicButton: {fileID: 264189537}
+  friedListButton: {fileID: 1839153501}
   profilePic: {fileID: 264189538}
   lvlSlider: {fileID: 1274392820}
   lvlText: {fileID: 0}
