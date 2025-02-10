@@ -1,8 +1,13 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class EndTurnScript : MonoBehaviour
 {
+
+    //public Button buttonEndTurn;
+
+
     public TMP_InputField userInputField;  // Input field reference
     public GameObject popupPanel;          // Pop-up panel reference
     public TextMeshProUGUI popupText;      // Text inside pop-up
@@ -14,7 +19,7 @@ public class EndTurnScript : MonoBehaviour
         
         if (!string.IsNullOrEmpty(userInput)) //ensures that text is entered
         {
-            popupText.text = "Congratulations! You wrote: " + userInput;
+            popupText.text = userInput;
             popupPanel.SetActive(true); //this part will reveal the pop-up
         }
     }
@@ -24,4 +29,12 @@ public class EndTurnScript : MonoBehaviour
     {
         popupPanel.SetActive(false); //hides the pop-up
     }
+
+
+    //public void 
+
+    
 }
+
+
+

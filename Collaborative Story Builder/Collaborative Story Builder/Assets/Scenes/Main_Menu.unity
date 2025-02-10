@@ -8310,7 +8310,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1842186885}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2026691226}
+        m_TargetAssemblyTypeName: Main_MenuActivity, Assembly-CSharp
+        m_MethodName: openTestingRoom
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1842186885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9108,6 +9120,7 @@ MonoBehaviour:
   tutorial: {fileID: 353802761}
   lvlSlider: {fileID: 91949132}
   lvlText: {fileID: 91949131}
+  openTestingRoomButton: {fileID: 1842186884}
 --- !u!4 &2026691227
 Transform:
   m_ObjectHideFlags: 0

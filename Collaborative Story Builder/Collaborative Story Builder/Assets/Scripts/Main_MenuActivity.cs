@@ -16,11 +16,15 @@ public class Main_MenuActivity : MonoBehaviour
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
 
+    public Button openTestingRoomButton;
+
     void Start()
     {
         openProfileButton.onClick.AddListener(openProfile);
         openMultiplayerMenuButton.onClick.AddListener(openMultiplayer);
         btnTutorial.onClick.AddListener(playTutorial);
+        openTestingRoomButton.onClick.AddListener(openTestingRoom);
+
 
         tutorial.enabled = false;
 
@@ -68,4 +72,13 @@ public class Main_MenuActivity : MonoBehaviour
         MainMenuPanel.SetActive(false);
         LobbyPanel.SetActive(false);
     }
+
+    
+    public void openTestingRoom()
+    {
+        SceneManager.LoadScene("Testing_Room");
+        
+    }
+
+    
 }
