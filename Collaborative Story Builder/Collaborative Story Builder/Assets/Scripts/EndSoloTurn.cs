@@ -1,24 +1,27 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class EndTurnScript : MonoBehaviour
 {
-    public InputField inputField;
-    public GameObject popupPanel;
-    public Text popupText;
+    public TMP_InputField userInputField;  // Input field reference
+    public GameObject popupPanel;          // Pop-up panel reference
+    public TextMeshProUGUI popupText;      // Text inside pop-up
 
-    // variables above are references to elements in the Pop-up
-
-    // This function will be called when the "End Turn" button is clicked
+    // Function to handle the button click
     public void OnEndTurnButtonClicked()
     {
-        //gets the text entered by the user
-        string userInput = inputField.text;
+        string userInput = userInputField.text; //gets user input
+        
+        if (!string.IsNullOrEmpty(userInput)) //ensures that text is entered
+        {
+            popupText.text = "Congratulations! You wrote: " + userInput;
+            popupPanel.SetActive(true); //this part will reveal the pop-up
+        }
+    }
 
-        //sets the congratulatory message with the user's input
-        popupText.text = "Congratulations! You wrote: " + userInput;
-
-        //Makes pop-up panel pop up (it is invisible by default)
-        popupPanel.SetActive(true);
+    //this function will close the pop-up
+    public void ClosePopup()
+    {
+        popupPanel.SetActive(false); //hides the pop-up
     }
 }
