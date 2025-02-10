@@ -75,4 +75,8 @@ crashlytics-build.properties
 # Ignore Firebase large files
 /[Aa]ssets/Firebase/Plugins/x86_64/FirebaseCppApp-12_5_0.bundle
 /[Aa]ssets/Firebase/Plugins/x86_64/FirebaseCppApp-12_5_0.so
+/[Aa]ssets/Firebase/Plugins/iOS/FirebaseCppApp-12_5_0.bundle
+/[Aa]ssets/Firebase/Plugins/iOS/FirebaseCppApp-12_5_0.so
 
+
+.fake
