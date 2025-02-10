@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-
+using TMPro;
 public class NotificationManager : MonoBehaviour
 {
     public static NotificationManager Instance; 
 
-    public Text notificationText;
+    public TextMeshProUGUI notificationText;
     public CanvasGroup canvasGroup; 
     public float fadeDuration = 0.5f; 
     public float displayTime = 3f; 

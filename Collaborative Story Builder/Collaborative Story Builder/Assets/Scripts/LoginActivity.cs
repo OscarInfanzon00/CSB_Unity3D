@@ -3,34 +3,44 @@ using UnityEngine.UI;
 using Firebase.Auth;
 using UnityEngine.SceneManagement;
 using Firebase.Extensions;
-
+using TMPro;
 public class LoginActivity : MonoBehaviour
 {
-    public InputField RegisterEmail;
-    public InputField RegisterPassword;
+    public GameObject RegisterActivity;
+    public TMP_InputField LoginEmail;
+    public TMP_InputField LoginPassword;
     public Button btnLogin;
     public Button RegisterRedirect;
-    public Text textError;
+    public TextMeshProUGUI textError;
 
     private FirebaseAuth firebaseAuth;
 
     void Start()
     {
         firebaseAuth = FirebaseAuth.DefaultInstance;
-                
+
         if (PlayerPrefs.HasKey("SavedEmail"))
         {
-            RegisterEmail.text = PlayerPrefs.GetString("SavedEmail");
+            LoginEmail.text = PlayerPrefs.GetString("SavedEmail");
         }
 
         btnLogin.onClick.AddListener(LoginUser);
-        RegisterRedirect.onClick.AddListener(() => SceneManager.LoadScene("Register"));
+        RegisterRedirect.onClick.AddListener(() =>
+        {
+            LoginEmail.SetTextWithoutNotify("");
+            LoginPassword.SetTextWithoutNotify("");
+
+            RegisterActivity.SetActive(true);
+            gameObject.SetActive(false);
+            //SceneManager.LoadScene("Register");
+
+        });
     }
 
     private void LoginUser()
     {
-        string email = RegisterEmail.text.Trim();
-        string password = RegisterPassword.text.Trim();
+        string email = LoginEmail.text.Trim();
+        string password = LoginPassword.text.Trim();
 
         if (string.IsNullOrEmpty(email))
         {
@@ -50,20 +60,22 @@ public class LoginActivity : MonoBehaviour
             return;
         }
 
-    firebaseAuth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
+        firebaseAuth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
             {
-                textError.text = "Login successful!";
-                PlayerPrefs.SetString("SavedEmail", email);
-                PlayerPrefs.SetString("SavedUsername", email);
-                PlayerPrefs.Save();
-                SceneManager.LoadScene("Main_Menu");
-            }
-            else
-            {
-                textError.text = "Login failed: " + task.Exception?.Message;
-            }
-        });
+                if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
+                {
+                    textError.text = "Login successful!";
+                    PlayerPrefs.SetString("SavedEmail", email);
+                    PlayerPrefs.SetString("SavedUsername", email);
+                    PlayerPrefs.Save();
+                    SceneManager.LoadScene("Main_Menu");
+                }
+                else
+                {
+                    textError.text = "Login failed: " + task.Exception?.Message;
+                }
+            });
     }
+
+
 }

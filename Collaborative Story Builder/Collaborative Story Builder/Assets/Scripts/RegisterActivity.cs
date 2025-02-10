@@ -3,20 +3,22 @@ using UnityEngine.UI;
 using Firebase.Auth;
 using UnityEngine.SceneManagement;
 using Firebase.Extensions;
-
+using TMPro;
 public class RegisterActivity : MonoBehaviour
 {
-    public InputField RegisterEmail;
-    public InputField RegisterPassword;
-    public InputField ConfirmPassword;
+    public GameObject LoginActivity;
+    public TMP_InputField RegisterEmail;
+    public TMP_InputField RegisterPassword;
+    public TMP_InputField ConfirmPassword;
     public Button btnRegister;
     public Button LoginRedirect;
-    public Text textError;
+    public TextMeshProUGUI textError;
 
     private FirebaseAuth firebaseAuth;
 
     void Start()
     {
+        PlayerPrefs.DeleteAll();
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.DefaultInstance;
 
@@ -26,7 +28,10 @@ public class RegisterActivity : MonoBehaviour
         }
 
         btnRegister.onClick.AddListener(RegisterUser);
-        LoginRedirect.onClick.AddListener(() => SceneManager.LoadScene("Login"));
+        LoginRedirect.onClick.AddListener(() => {
+            LoadLogin();
+            //SceneManager.LoadScene("Login");
+            });
         NotificationManager.Instance.Notify("Welcome to CSB! Enter your information to start.", 3f);
     }
 
@@ -65,7 +70,8 @@ public class RegisterActivity : MonoBehaviour
         if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
         {
             textError.text = "Registration successful!";
-            SceneManager.LoadScene("Login");
+            LoadLogin();
+            //SceneManager.LoadScene("Login");
         }
         else
         {
@@ -73,5 +79,13 @@ public class RegisterActivity : MonoBehaviour
         }
     });
 
+    }
+    public void LoadLogin()
+    {
+        RegisterEmail.SetTextWithoutNotify("");
+        RegisterPassword.SetTextWithoutNotify("");
+        ConfirmPassword.SetTextWithoutNotify("");
+        LoginActivity.SetActive(true);
+        gameObject.SetActive(false);
     }
 }

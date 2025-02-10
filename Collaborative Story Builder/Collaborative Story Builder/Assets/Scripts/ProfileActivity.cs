@@ -2,19 +2,20 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
-
+using TMPro;
 public class ProfileActivity : MonoBehaviour
 {
+    public GameObject MainMenuPanel, ProfilePanel;
     public Button closeButton;
-    public InputField email;
-    public InputField username;
+    public TMP_InputField email;
+    public TMP_InputField username;
     public Button saveButton;
     public Button logoutButton;
     public Button profilePicButton;
     public Image profilePic;
     public Slider lvlSlider;
-    public Text lvlText;
-    public Text txtWordCounter;
+    public TextMeshProUGUI lvlText;
+    public TextMeshProUGUI txtWordCounter;
 
     public int maxImageSize = 512;
     private string persistentImageName = "profilePic.png";
@@ -83,7 +84,9 @@ public class ProfileActivity : MonoBehaviour
 
     private void closeProfile()
     {
-        SceneManager.LoadScene("Main_Menu");
+        //SceneManager.LoadScene("Main_Menu");
+        MainMenuPanel.SetActive(true);
+        ProfilePanel.SetActive(false);
     }
 
     private void OnProfilePicButtonClicked()
