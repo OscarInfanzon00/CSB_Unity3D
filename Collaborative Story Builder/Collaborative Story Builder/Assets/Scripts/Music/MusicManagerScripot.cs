@@ -26,6 +26,7 @@ public class MusicManagerScripot : MonoBehaviour
 
     void Start()
     {
+        
         if (mainMenu)
         {
             currentSong = MusicLibrary[6];

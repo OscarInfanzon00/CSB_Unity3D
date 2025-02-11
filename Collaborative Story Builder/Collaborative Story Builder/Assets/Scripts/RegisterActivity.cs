@@ -18,21 +18,19 @@ public class RegisterActivity : MonoBehaviour
 
     void Start()
     {
-        PlayerPrefs.DeleteAll();
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.DefaultInstance;
 
-        if (PlayerPrefs.HasKey("SavedEmail"))
+        UserData user = User.GetUser();
+        if (user.Email!="defaultEmail")
         {
             SceneManager.LoadScene("Main_Menu");
         }
 
         btnRegister.onClick.AddListener(RegisterUser);
         LoginRedirect.onClick.AddListener(() => {
-            LoadLogin();
-            //SceneManager.LoadScene("Login");
-            });
-        NotificationManager.Instance.Notify("Welcome to CSB! Enter your information to start.", 3f);
+                LoadLogin();
+        }); 
     }
 
     private void RegisterUser()
@@ -71,7 +69,6 @@ public class RegisterActivity : MonoBehaviour
         {
             textError.text = "Registration successful!";
             LoadLogin();
-            //SceneManager.LoadScene("Login");
         }
         else
         {

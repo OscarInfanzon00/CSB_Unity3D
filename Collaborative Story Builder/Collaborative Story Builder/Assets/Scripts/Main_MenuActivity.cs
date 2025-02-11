@@ -6,15 +6,17 @@ using TMPro;
 public class Main_MenuActivity : MonoBehaviour
 {
 
-    public GameObject MainMenuPanel, ProfilePanel, LobbyPanel;
+    public GameObject MainMenuPanel, ProfilePanel, LobbyPanel, TutorialPanel1, TutorialPanel2, TutorialPanel3,
+    TutorialPanel4, TutorialPanel5, TutorialPanel6;
     public Button openProfileButton;
     public Button openMultiplayerMenuButton;
     public TextMeshProUGUI username;
     public Button btnTutorial;
-    public Animator tutorial;
 
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
+
+    private UserData user;
 
     void Start()
     {
@@ -22,25 +24,25 @@ public class Main_MenuActivity : MonoBehaviour
         openMultiplayerMenuButton.onClick.AddListener(openMultiplayer);
         btnTutorial.onClick.AddListener(playTutorial);
 
-        tutorial.enabled = false;
+        user = User.GetUser();
 
-        if (PlayerPrefs.HasKey("SavedUsername"))
+        if (user.Username!="defaultUser")
         {
-            username.text = PlayerPrefs.GetString("SavedUsername");
+            username.text = user.Username;
         }
-        else if (PlayerPrefs.HasKey("SavedEmail"))
+        else if (user.Email!="defaultEmail")
         {
-            username.text = PlayerPrefs.GetString("SavedEmail");
+            username.text = user.Email;
         }
 
         updateLVL();
     }
 
     private void updateLVL(){
-        if (PlayerPrefs.HasKey("lvl"))
+        if (user.UserLevel!=0)
         {
-            lvlSlider.value = PlayerPrefs.GetInt("lvl");
-            lvlText.text = "LVL: "+PlayerPrefs.GetInt("lvl");
+            lvlSlider.value = user.UserLevel;
+            lvlText.text = "LVL: "+ user.UserLevel;
         }else{
             lvlSlider.value = 0;
             lvlText.text = "LVL: Newbie";
@@ -49,13 +51,25 @@ public class Main_MenuActivity : MonoBehaviour
 
     private void playTutorial()
     {
-        tutorial.enabled = true;
-        tutorial.Play("Tutorial", 0, 0f);
+        if(TutorialPanel1.active){
+            TutorialPanel1.SetActive(false);
+            TutorialPanel2.SetActive(false);
+            TutorialPanel3.SetActive(false);
+            TutorialPanel4.SetActive(false);
+            TutorialPanel5.SetActive(false);
+            TutorialPanel6.SetActive(false);
+        }else{
+             TutorialPanel1.SetActive(true);
+             TutorialPanel2.SetActive(true);
+             TutorialPanel3.SetActive(true);
+             TutorialPanel4.SetActive(true);
+             TutorialPanel5.SetActive(true);
+             TutorialPanel6.SetActive(true);
+        }
     }
 
     private void openMultiplayer()
     {
-        //SceneManager.LoadScene("LobbyActivity");
         ProfilePanel.SetActive(false);
         MainMenuPanel.SetActive(false);
         LobbyPanel.SetActive(true);
@@ -63,7 +77,6 @@ public class Main_MenuActivity : MonoBehaviour
 
     private void openProfile()
     {
-        //SceneManager.LoadScene("Profile");
         ProfilePanel.SetActive(true);
         MainMenuPanel.SetActive(false);
         LobbyPanel.SetActive(false);
