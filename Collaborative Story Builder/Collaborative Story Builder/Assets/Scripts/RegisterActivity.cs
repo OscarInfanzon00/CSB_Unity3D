@@ -18,21 +18,20 @@ public class RegisterActivity : MonoBehaviour
 
     void Start()
     {
-        PlayerPrefs.DeleteAll();
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.DefaultInstance;
 
-        if (PlayerPrefs.HasKey("SavedEmail"))
+        UserData user = User.GetUser();
+        if (user.Email != "defaultEmail")
         {
             SceneManager.LoadScene("Main_Menu");
         }
 
         btnRegister.onClick.AddListener(RegisterUser);
-        LoginRedirect.onClick.AddListener(() => {
+        LoginRedirect.onClick.AddListener(() =>
+        {
             LoadLogin();
-            //SceneManager.LoadScene("Login");
-            });
-        NotificationManager.Instance.Notify("Welcome to CSB! Enter your information to start.", 3f);
+        });
     }
 
     private void RegisterUser()
@@ -65,19 +64,25 @@ public class RegisterActivity : MonoBehaviour
             return;
         }
 
-    firebaseAuth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
-    {
-        if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
+        firebaseAuth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
         {
-            textError.text = "Registration successful!";
-            LoadLogin();
-            //SceneManager.LoadScene("Login");
-        }
-        else
-        {
-            textError.text = "Registration failed: " + task.Exception?.Message;
-        }
-    });
+            if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
+            {
+                textError.text = "Registration successful!";
+                string userID = firebaseAuth.CurrentUser.UserId;
+                string username = task.Result.User.Email;
+                string email = task.Result.User.Email;
+                int userLevel = 0;
+                int words = 0;
+                User.SaveUser(userID, username, email, userLevel, words);
+
+                LoadLogin();
+            }
+            else
+            {
+                textError.text = "Registration failed: " + task.Exception?.Message;
+            }
+        });
 
     }
     public void LoadLogin()

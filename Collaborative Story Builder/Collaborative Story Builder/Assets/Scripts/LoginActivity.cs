@@ -14,14 +14,16 @@ public class LoginActivity : MonoBehaviour
     public TextMeshProUGUI textError;
 
     private FirebaseAuth firebaseAuth;
+    private UserData user;
 
     void Start()
     {
         firebaseAuth = FirebaseAuth.DefaultInstance;
+        user = User.GetUser();
 
-        if (PlayerPrefs.HasKey("SavedEmail"))
+        if (user.Email != "defaultEmail")
         {
-            LoginEmail.text = PlayerPrefs.GetString("SavedEmail");
+            LoginEmail.text = user.Email;
         }
 
         btnLogin.onClick.AddListener(LoginUser);
@@ -32,8 +34,6 @@ public class LoginActivity : MonoBehaviour
 
             RegisterActivity.SetActive(true);
             gameObject.SetActive(false);
-            //SceneManager.LoadScene("Register");
-
         });
     }
 
@@ -64,10 +64,14 @@ public class LoginActivity : MonoBehaviour
             {
                 if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
                 {
+                    Firebase.Auth.AuthResult authResult = task.Result;
+                    Firebase.Auth.FirebaseUser user = authResult.User;
+                    string userId = user.UserId;
+
                     textError.text = "Login successful!";
-                    PlayerPrefs.SetString("SavedEmail", email);
-                    PlayerPrefs.SetString("SavedUsername", email);
-                    PlayerPrefs.Save();
+
+                    User.SaveUser(userId, email, email, 0, 0);
+
                     SceneManager.LoadScene("Main_Menu");
                 }
                 else
