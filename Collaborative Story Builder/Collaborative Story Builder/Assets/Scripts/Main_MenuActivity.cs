@@ -19,6 +19,8 @@ public class Main_MenuActivity : MonoBehaviour
 
     public Button openTestingRoomButton;
 
+    private UserData user;
+
 
     void Start()
     {
