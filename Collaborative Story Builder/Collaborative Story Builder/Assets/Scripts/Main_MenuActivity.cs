@@ -20,9 +20,6 @@ public class Main_MenuActivity : MonoBehaviour
     {
         openProfileButton.onClick.AddListener(openProfile);
         openMultiplayerMenuButton.onClick.AddListener(openMultiplayer);
-        btnTutorial.onClick.AddListener(playTutorial);
-
-        tutorial.enabled = false;
 
         if (PlayerPrefs.HasKey("SavedUsername"))
         {
@@ -32,6 +29,9 @@ public class Main_MenuActivity : MonoBehaviour
         {
             username.text = PlayerPrefs.GetString("SavedEmail");
         }
+
+        //btnTutorial.onClick.AddListener(playTutorial);
+        //tutorial.enabled = false;
 
         updateLVL();
     }

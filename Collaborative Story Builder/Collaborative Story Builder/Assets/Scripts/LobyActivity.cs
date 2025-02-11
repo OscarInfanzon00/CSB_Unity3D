@@ -9,6 +9,10 @@ using Firebase.Extensions;
 using TMPro;
 public class LobbyActivity : MonoBehaviour
 {
+    public GameObject LobbyActivityUI;
+    public GameObject MainMenuActivity;
+    public Button closeMenuButton1;
+    public Button closeMenuButton2;
     public GameObject createJoinMenu;
     public GameObject createLobbyMenu;
     public Button quickRejoinButton;
@@ -35,7 +39,8 @@ public class LobbyActivity : MonoBehaviour
 
     void Start()
     {
-        
+        closeMenuButton1.onClick.AddListener(closeMenu);
+        closeMenuButton2.onClick.AddListener(closeMenu);
         btnCreateLobby.onClick.AddListener(CreateLobby);
         joinToLobbyButton.onClick.AddListener(JoinToLobby);
         startGameButton.onClick.AddListener(StartGame);
@@ -69,7 +74,11 @@ public class LobbyActivity : MonoBehaviour
         }
     }
 
-
+    private void closeMenu()
+    {
+        MainMenuActivity.SetActive(true);
+        LobbyActivityUI.SetActive(false);
+    }
 
     private void QuickRejoin()
 {

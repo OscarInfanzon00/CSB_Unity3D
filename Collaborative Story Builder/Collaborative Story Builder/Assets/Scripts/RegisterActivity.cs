@@ -31,7 +31,7 @@ public class RegisterActivity : MonoBehaviour
             LoadLogin();
             //SceneManager.LoadScene("Login");
             });
-        NotificationManager.Instance.Notify("Welcome to CSB! Enter your information to start.", 3f);
+        //NotificationManager.Instance.Notify("Welcome to CSB! Enter your information to start.", 3f);
     }
 
     private void RegisterUser()
