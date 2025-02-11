@@ -16,29 +16,33 @@ public class Main_MenuActivity : MonoBehaviour
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
 
+    private UserData user;
+
     void Start()
     {
         openProfileButton.onClick.AddListener(openProfile);
         openMultiplayerMenuButton.onClick.AddListener(openMultiplayer);
         btnTutorial.onClick.AddListener(playTutorial);
 
-        if (PlayerPrefs.HasKey("SavedUsername"))
+        user = User.GetUser();
+
+        if (user.Username!="defaultUser")
         {
-            username.text = PlayerPrefs.GetString("SavedUsername");
+            username.text = user.Username;
         }
-        else if (PlayerPrefs.HasKey("SavedEmail"))
+        else if (user.Email!="defaultEmail")
         {
-            username.text = PlayerPrefs.GetString("SavedEmail");
+            username.text = user.Email;
         }
 
         updateLVL();
     }
 
     private void updateLVL(){
-        if (PlayerPrefs.HasKey("lvl"))
+        if (user.UserLevel!=0)
         {
-            lvlSlider.value = PlayerPrefs.GetInt("lvl");
-            lvlText.text = "LVL: "+PlayerPrefs.GetInt("lvl");
+            lvlSlider.value = user.UserLevel;
+            lvlText.text = "LVL: "+ user.UserLevel;
         }else{
             lvlSlider.value = 0;
             lvlText.text = "LVL: Newbie";
@@ -66,7 +70,6 @@ public class Main_MenuActivity : MonoBehaviour
 
     private void openMultiplayer()
     {
-        //SceneManager.LoadScene("LobbyActivity");
         ProfilePanel.SetActive(false);
         MainMenuPanel.SetActive(false);
         LobbyPanel.SetActive(true);
@@ -74,7 +77,6 @@ public class Main_MenuActivity : MonoBehaviour
 
     private void openProfile()
     {
-        //SceneManager.LoadScene("Profile");
         ProfilePanel.SetActive(true);
         MainMenuPanel.SetActive(false);
         LobbyPanel.SetActive(false);

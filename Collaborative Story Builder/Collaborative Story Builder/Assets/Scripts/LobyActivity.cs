@@ -34,8 +34,7 @@ public class LobbyActivity : MonoBehaviour
     private string currentUsername;
     private bool isRoomCreator = false;
     private ListenerRegistration roomListener;
-
-    
+    private UserData user;
 
     void Start()
     {
@@ -47,29 +46,29 @@ public class LobbyActivity : MonoBehaviour
 
         db = FirebaseFirestore.DefaultInstance;
         auth = FirebaseAuth.DefaultInstance;
-
+        user = User.GetUser();
 
         if (quickRejoinButton != null)
-            {
-        quickRejoinButton.onClick.AddListener(QuickRejoin);
-     }
+        {
+            quickRejoinButton.onClick.AddListener(QuickRejoin);
+        }
 
         if (PlayerPrefs.HasKey("LastRoomID"))
         {
-        currentRoomID = PlayerPrefs.GetString("LastRoomID");
+            currentRoomID = PlayerPrefs.GetString("LastRoomID");
         }
 
         if (auth.CurrentUser != null)
         {
             currentUserID = auth.CurrentUser.UserId;
 
-            if (PlayerPrefs.HasKey("SavedUsername"))
+            if (user.Username!="defaultUser")
             {
-                currentUsername = PlayerPrefs.GetString("SavedUsername");
+                currentUsername = user.Username;
             }
-            else if (PlayerPrefs.HasKey("SavedEmail"))
+            else if (user.Email!="defaultEmail")
             {
-                currentUsername = PlayerPrefs.GetString("SavedEmail");
+                currentUsername = user.Email;
             }
         }
     }
@@ -81,35 +80,35 @@ public class LobbyActivity : MonoBehaviour
     }
 
     private void QuickRejoin()
-{
-    if (string.IsNullOrEmpty(currentRoomID))
     {
-        SetLogText("No previous room found.");
-        return;
+        if (string.IsNullOrEmpty(currentRoomID))
+        {
+            SetLogText("No previous room found.");
+            return;
+        }
+
+        SetLogText("Attempting to rejoin room: " + currentRoomID);
+
+        DocumentReference roomRef = db.Collection("Rooms").Document(currentRoomID);
+        roomRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted && task.Result.Exists)
+            {
+                SetLogText("Room found! Rejoining...");
+                EnterRoom(currentRoomID);
+            }
+            else
+            {
+                SetLogText("Room not found or no longer available.");
+            }
+        }).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted)
+            {
+                SetLogText("Internal error occurred while rejoining room.");
+            }
+        });
     }
-
-    SetLogText("Attempting to rejoin room: " + currentRoomID);
-
-    DocumentReference roomRef = db.Collection("Rooms").Document(currentRoomID);
-    roomRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
-    {
-        if (task.IsCompleted && task.Result.Exists)
-        {
-            SetLogText("Room found! Rejoining...");
-            EnterRoom(currentRoomID);
-        }
-        else
-        {
-            SetLogText("Room not found or no longer available.");
-        }
-    }).ContinueWithOnMainThread(task =>
-    {
-        if (task.IsFaulted)
-        {
-            SetLogText("Internal error occurred while rejoining room.");
-        }
-    });
-}
 
 
     private void CreateLobby()

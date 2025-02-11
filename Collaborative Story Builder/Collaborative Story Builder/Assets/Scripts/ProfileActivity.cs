@@ -23,6 +23,8 @@ public class ProfileActivity : MonoBehaviour
     public int maxImageSize = 512;
     private string persistentImageName = "profilePic.png";
 
+    private UserData user;
+
     void Start()
     {
         saveButton.onClick.AddListener(saveUsername);
@@ -31,17 +33,16 @@ public class ProfileActivity : MonoBehaviour
         profilePicButton.onClick.AddListener(OnProfilePicButtonClicked);
         friedListButton.onClick.AddListener(OpenFriendsList); 
 
-        if (PlayerPrefs.HasKey("SavedEmail"))
+        user = User.GetUser();
+
+        if (user.Email!="defaultEmail")
         {
-            email.text = PlayerPrefs.GetString("SavedEmail");
+            email.text = user.Email;
+            username.text = user.Email;
         }
-        if (PlayerPrefs.HasKey("SavedUsername"))
+        if (user.Username!="defaultUser")
         {
-            username.text = PlayerPrefs.GetString("SavedUsername");
-        }
-        else if (PlayerPrefs.HasKey("SavedEmail"))
-        {
-            username.text = PlayerPrefs.GetString("SavedEmail");
+            username.text = user.Username;
         }
 
         string savedPath = Path.Combine(Application.persistentDataPath, persistentImageName);
@@ -51,23 +52,23 @@ public class ProfileActivity : MonoBehaviour
         }
         else
         {
-            Debug.Log("No persistent profile image found at: " + savedPath);
+            Debug.Log("No profile image found at: " + savedPath);
         }
 
         updateLVL();
 
-        if (PlayerPrefs.HasKey("words"))
+        if (user.Words!=0)
         {
-            txtWordCounter.text = "Words counter: " + PlayerPrefs.GetInt("words").ToString();
+            txtWordCounter.text = "Words counter: " + user.Words.ToString();
         }
     }
 
     private void updateLVL()
     {
-        if (PlayerPrefs.HasKey("lvl"))
+        if (user.UserLevel!=0)
         {
-            lvlSlider.value = PlayerPrefs.GetInt("lvl");
-            lvlText.text = "LVL: " + PlayerPrefs.GetInt("lvl");
+            lvlSlider.value = user.UserLevel;
+            lvlText.text = "LVL: " + user.UserLevel;
         }
         else
         {

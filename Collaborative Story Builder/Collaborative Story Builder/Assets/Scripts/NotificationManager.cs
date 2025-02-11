@@ -4,6 +4,8 @@ using System.Collections;
 using TMPro;
 public class NotificationManager : MonoBehaviour
 {
+    //This is the way to call a notification 
+    ////NotificationManager.Instance.Notify("Welcome to CSB! Enter your information to start.", 3f);
     public static NotificationManager Instance; 
 
     public TextMeshProUGUI notificationText;
