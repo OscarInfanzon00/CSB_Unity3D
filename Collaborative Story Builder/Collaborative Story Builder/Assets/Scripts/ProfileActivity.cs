@@ -6,7 +6,8 @@ using TMPro;
 
 public class ProfileActivity : MonoBehaviour
 {
-    public GameObject MainMenuPanel, ProfilePanel;
+    public GameObject MainMenuPanel, ProfilePanel, FriendsPanel;
+    public TextMeshProUGUI usernameMainMenuText;
     public Button closeButton;
     public TMP_InputField email;
     public TMP_InputField username;
@@ -86,6 +87,7 @@ public class ProfileActivity : MonoBehaviour
     {
         PlayerPrefs.SetString("SavedUsername", username.text);
         PlayerPrefs.Save();
+        usernameMainMenuText.text = username.text;
     }
 
     private void closeProfile()
@@ -96,7 +98,8 @@ public class ProfileActivity : MonoBehaviour
 
     private void OpenFriendsList()
     {
-        SceneManager.LoadScene("Friends_list");
+        ProfilePanel.SetActive(false);
+        FriendsPanel.SetActive(true);
     }
 
     private void OnProfilePicButtonClicked()
