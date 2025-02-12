@@ -34,7 +34,7 @@ public class UploadStory : MonoBehaviour
 
         string userID = user.UserId;
         string storyID = Guid.NewGuid().ToString();
-        string timestamp = Timestamp.GetCurrentTimestamp().ToString();
+        Timestamp timestamp = Timestamp.GetCurrentTimestamp(); 
 
         List<string> storyTexts = new List<string>
     {
@@ -48,7 +48,7 @@ public class UploadStory : MonoBehaviour
     {
         { "storyID", storyID },
         { "storyTexts", storyTexts },
-        { "timestamp", timestamp },
+        { "timestamp", timestamp },  
         { "usernames", usersUsernames },
         { "users", usersID }
     };
@@ -68,6 +68,7 @@ public class UploadStory : MonoBehaviour
             }
         });
     }
+
 
     void Update()
     {
