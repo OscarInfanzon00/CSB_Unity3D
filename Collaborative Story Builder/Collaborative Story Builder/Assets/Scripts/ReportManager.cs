@@ -1,55 +1,106 @@
 using Firebase.Firestore;
-using Firebase;
-using Firebase.Auth;
 using Firebase.Extensions;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 using System.Collections.Generic;
-
-
 
 public class ReportManager : MonoBehaviour
 {
     private FirebaseFirestore db;
     private UserData user;
+    private string reportedUserID = ""; 
 
+    public GameObject reportPopup; // Assign in Unity (this exists outside the prefab)
+    public TMP_Dropdown reasonDropdown;
+    public TMP_InputField detailsInputField;
+    public Button submitReportButton, closeReportButton;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private readonly List<string> reportReasons = new List<string>
+    {
+        "Harassment",
+        "Inappropriate Content",
+        "Cheating/Exploiting",
+        "Spam",
+        "Other"
+    };
+
     void Start()
     {
         db = FirebaseFirestore.DefaultInstance;
         user = User.GetUser();
-        report_Player("TEST", "TEST");
+        InitializeDropdown();
+
+        closeReportButton.onClick.AddListener(CloseReportPopup);
+        submitReportButton.onClick.AddListener(SubmitReport);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void InitializeDropdown()
     {
-
-    }
-
-
-    private void report_Player(string userID, string reason)
-    {
-        //You have to add the userID coming from the input of the method into a new space in the list blocked people.
-        Dictionary<string, object> reportedPeople = new Dictionary<string, object>
+        if (reasonDropdown != null)
         {
-            { "userID", user.UserID},
-            { "reportedPeople", new List<Dictionary<string, object>>()},
-            { "reason", new List<Dictionary<string, object>>()}
+            reasonDropdown.ClearOptions();
+            reasonDropdown.AddOptions(reportReasons);
+        }
+    }
+
+    public void OpenReportPopup(string userID)
+    {
+        if (string.IsNullOrEmpty(userID))
+        {
+            Debug.LogError("Invalid user ID for reporting.");
+            return;
+        }
+
+        reportedUserID = userID;
+        reportPopup.SetActive(true); // Show the popup
+
+        reportPopup.transform.SetAsLastSibling();
+        Debug.Log($"Report popup opened for user: {userID}");
+    }
+
+    private void CloseReportPopup()
+    {
+        reportedUserID = ""; // Reset the user
+        reportPopup.SetActive(false);
+    }
+
+    private void SubmitReport()
+    {
+        if (string.IsNullOrEmpty(reportedUserID))
+        {
+            Debug.LogError("No user selected for reporting.");
+            return;
+        }
+
+        string selectedReason = reportReasons[reasonDropdown.value];
+        string details = detailsInputField.text;
+
+        DocumentReference reportDocRef = db.Collection("Reports").Document(reportedUserID);
+        CollectionReference userReportsRef = reportDocRef.Collection("UserReports");
+
+        Dictionary<string, object> newReport = new Dictionary<string, object>
+        {
+            { "reportedBy", user.UserID },
+            { "reason", selectedReason },
+            { "details", details },
+            { "timestamp", FieldValue.ServerTimestamp }
         };
 
-        DocumentReference reportedPeopleRefer = db.Collection("Reported").Document();
-        reportedPeopleRefer.SetAsync(reportedPeople).ContinueWithOnMainThread(task =>
+        userReportsRef.AddAsync(newReport).ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
             {
-                Debug.Log("it worked");
+                Debug.Log("Report successfully submitted.");
+                CloseReportPopup();
             }
             else
             {
-                Debug.Log("it did not work");
+                Debug.LogError("Failed to submit report: " + task.Exception);
             }
         });
     }
 }
+
+
 

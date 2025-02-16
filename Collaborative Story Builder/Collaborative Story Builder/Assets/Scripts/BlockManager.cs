@@ -21,9 +21,10 @@ public class BlockManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void OnBlockButtonPressed(string userId)
+    public void OnBlockButtonPressed(string userID)
     {
-        block_Player(userId);
+        Debug.Log("Blocking user: " + userID);
+        block_Player(userID);
     }
 
 

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6708006572299698429}
   - component: {fileID: 1919323176580484820}
   m_Layer: 0
-  m_Name: Report_Button
+  m_Name: reportButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 3054607919761044692}
   - component: {fileID: 8207420855296730226}
   m_Layer: 0
-  m_Name: Block_Button
+  m_Name: blockButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

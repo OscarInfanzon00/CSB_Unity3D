@@ -1,40 +1,30 @@
-using System.Collections.Generic;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEditor.Compilation;
+
 
 public class RandomPrompt : MonoBehaviour {
-    public Text settingText;
-    public Text characterText;
-    public Text conflictText;
+    public Button generateButton;
+    public TMP_Text outputText;
 
-    private static List<string> settings = new List<string>
+    private void Start()
     {
-        "A dystopian futuristic cyberpunk city.",
-        "A haunted mansion in the middle of the woods.",
-        "Atop a skyscraper in a moonlit metropolis.",
-        "A mysterious alien planet on the outskirts of the Milky Way."
-
-    };
-    private static List<string> characters = new List<string>
-    {
-        "A rogue scientist obsessed with immortality.",
-        "A rebellious teenager with a mysterious past.",
-        "A time traveler stuck in the wrong era.",
-        "A detective who can read minds."
-    };
-
-    private static List<string> conflicts = new List<string>
-    {
-        "A war between two secret societies.",
-        "A mysterious letter changes everything.",
-        "An experiment goes horribly wrong.",
-        "A prophecy that must be fulfilled or prevented."
-    };
-
+        if (generateButton != null) {
+            generateButton.onClick.AddListener(GeneratePrompt);
+        }
+    }
     public void GeneratePrompt()
     {
-        settingText.text = "Setting: " + settings[Random.Range(0, settings.Count)];
-        characterText.text = "Character: " + characters[Random.Range(0, characters.Count)];
-        conflictText.text = "Conflict: " + conflicts[Random.Range(0, conflicts.Count)];
+        StartCoroutine(AI_Manager.GetChatCompletion("Give me a short sentence for a story idea I could use to write.", response =>
+        {
+            Debug.Log("AI Response: " + response);
+            if (outputText != null) {
+                outputText.text = response;
+            }
+        }));
     }
+    
 }
