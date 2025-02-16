@@ -34,8 +34,10 @@ public class UploadStory : MonoBehaviour
 
         string userID = user.UserId;
         string storyID = Guid.NewGuid().ToString();
-        Timestamp timestamp = Timestamp.GetCurrentTimestamp(); 
+        string timestamp = Timestamp.GetCurrentTimestamp().ToString();
 
+        string storyText = storyInputField.text;
+        int wordCount = CountWords(storyText);
         List<string> storyTexts = new List<string>
     {
         storyInputField.text
@@ -48,9 +50,10 @@ public class UploadStory : MonoBehaviour
     {
         { "storyID", storyID },
         { "storyTexts", storyTexts },
-        { "timestamp", timestamp },  
+        { "timestamp", timestamp },
         { "usernames", usersUsernames },
-        { "users", usersID }
+        { "users", usersID },
+        { "wordCount", wordCount }
     };
 
         DocumentReference storyRef = db.Collection("Stories").Document(storyID);
@@ -59,7 +62,7 @@ public class UploadStory : MonoBehaviour
         {
             if (task.IsCompletedSuccessfully)
             {
-                notificationManager.Notify("Your story was successfully uploaded!", 3f);
+                notificationManager.Notify($"Your story was successfully uploaded!\nWord count: {wordCount}", 3f);
                 Debug.Log("Story saved successfully with ID: " + storyID);
             }
             else
@@ -68,8 +71,13 @@ public class UploadStory : MonoBehaviour
             }
         });
     }
+    private int CountWords(string text) {
+        if(string.IsNullOrWhiteSpace(text)) {
+            return 0;
+        }
 
-
+        return text.Split(new char[] { ' ', '\t', '\n', '\r'}, StringSplitOptions.RemoveEmptyEntries).Length;
+    }
     void Update()
     {
 

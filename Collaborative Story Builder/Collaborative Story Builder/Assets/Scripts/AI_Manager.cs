@@ -20,11 +20,11 @@ using System.Text;
 public static class AI_Manager
 {
     private const string API_URL = "https://openrouter.ai/api/v1";
-    private const string API_KEY = "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";
+    private const string API_KEY = "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";
 
     public static IEnumerator GetChatCompletion(string prompt, Action<string> callback)
     {
-        string jsonData = "{\"model\": \"deepseek/deepseek-r1:free\", \"messages\": [{\"role\": \"user\", \"content\": \"" + prompt + "\"}]}";
+        string jsonData = "{\"model\": \"google/gemini-2.0-flash-exp:free\", \"messages\": [{\"role\": \"user\", \"content\": \"" + prompt + "\"}]}";
 
         using (UnityWebRequest request = new UnityWebRequest(API_URL + "/chat/completions", "POST"))
         {
