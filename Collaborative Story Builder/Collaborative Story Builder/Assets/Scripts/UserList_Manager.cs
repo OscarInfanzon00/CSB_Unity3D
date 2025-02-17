@@ -14,7 +14,8 @@ public class UserList_Manager : MonoBehaviour
     public GameObject UserElementPrefab; 
     public Button openUserListButton, closeButton;
     public TMP_Text totalUsersText;
-
+    public BlockManager blockManager;
+    public ReportManager reportManager;
     private FirebaseFirestore db;
 
     void Start()
@@ -79,10 +80,11 @@ public class UserList_Manager : MonoBehaviour
                 {
                     Dictionary<string, object> data = doc.ToDictionary();
 
-                    if (data.ContainsKey("username"))
+                    if (data.ContainsKey("username") && data.ContainsKey("userID"))
                     {
                         string username = data["username"].ToString();
-                        CreateUserCard(username);
+                        string userID = data["userID"].ToString();
+                        CreateUserCard(userID, username);
                     }
                 }
             }
@@ -93,7 +95,7 @@ public class UserList_Manager : MonoBehaviour
         });
     }
 
-    private void CreateUserCard(string username)
+   private void CreateUserCard(string userID, string username)
     {
         GameObject newUserCard = Instantiate(UserElementPrefab, contentArea); 
         User_Element_Controller userController = newUserCard.GetComponent<User_Element_Controller>();
@@ -101,6 +103,27 @@ public class UserList_Manager : MonoBehaviour
         if (userController != null)
         {
             userController.usernameText.text = username; 
+            
+            userController.blockButton.onClick.AddListener(() =>
+            {
+                if (blockManager != null) {
+                    blockManager.OnBlockButtonPressed(userID);
+                }
+                else {
+                    Debug.LogError("BlockManager reference is missing.");
+                }
+            });
+
+            userController.reportButton.onClick.AddListener(() => 
+            {
+                if (reportManager != null) {
+                    reportManager.OpenReportPopup(userID);
+                }
+                else {
+                    Debug.LogError("ReportManager reference is missing.");
+                }
+            });
         }
+
     }
 }
