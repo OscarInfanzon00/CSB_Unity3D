@@ -41,6 +41,11 @@ public class Main_MenuActivity : MonoBehaviour
         }
 
         updateLVL();
+        
+        StartCoroutine(AI_Manager.GetChatCompletion("give me a topic to write about in one sentence.", response =>
+        {
+            Debug.Log("AI Response: " + response);
+        }));
     }
 
     private void updateLVL(){
