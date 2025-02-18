@@ -876,7 +876,7 @@ PrefabInstance:
       insertIndex: 0
       addedObject: {fileID: 245314295}
     - targetCorrespondingSourceObject: {fileID: 6337091109919342347, guid: 4694e0953549db64a99a1afcbb6aea8c, type: 3}
-      insertIndex: -1
+      insertIndex: 2
       addedObject: {fileID: 1245699925}
     - targetCorrespondingSourceObject: {fileID: 6035004555636416840, guid: 4694e0953549db64a99a1afcbb6aea8c, type: 3}
       insertIndex: -1
@@ -2946,8 +2946,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e42f21d6087c34ee0bcdbade967c86d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generateButton: {fileID: 0}
-  outputText: {fileID: 0}
+  generateButton: {fileID: 1043779629}
+  outputText: {fileID: 679476011}
 --- !u!4 &299589246
 Transform:
   m_ObjectHideFlags: 0
@@ -3194,10 +3194,10 @@ RectTransform:
   m_Children:
   - {fileID: 1727035778}
   - {fileID: 609559779}
+  - {fileID: 2074437600}
   - {fileID: 517480717}
   - {fileID: 91949130}
   - {fileID: 1654764254}
-  - {fileID: 2074437600}
   m_Father: {fileID: 1540796831}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -10434,7 +10434,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 80305910}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9999955
+  m_Size: 0.9999653
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -16687,7 +16687,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storyListContainer: {fileID: 1904088744}
-  storyCardPrefab: {fileID: 8120005304983997345, guid: 36a0b9eec0e61a444af55f7629b7542a, type: 3}
+  storyCardPrefab: {fileID: 8120005304983997345, guid: 3f3d1a4997fb7406ba168e25d55b0da9, type: 3}
   StoryViewerUI: {fileID: 974434285}
 --- !u!4 &1885457109
 Transform:
@@ -16738,7 +16738,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00043018925, y: -0.000030517578}
+  m_AnchoredPosition: {x: 0.000015226833, y: -0.000030517578}
   m_SizeDelta: {x: -1061.2, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1904088745
@@ -18367,7 +18367,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2074437600}
-  - component: {fileID: 2074437601}
   m_Layer: 0
   m_Name: RandomPromptUI
   m_TagString: Untagged
@@ -18396,20 +18395,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 167}
   m_SizeDelta: {x: 308.3333, y: 104.166595}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2074437601
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2074437599}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e42f21d6087c34ee0bcdbade967c86d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  generateButton: {fileID: 1043779629}
-  outputText: {fileID: 679476011}
 --- !u!1 &2084394379
 GameObject:
   m_ObjectHideFlags: 0
