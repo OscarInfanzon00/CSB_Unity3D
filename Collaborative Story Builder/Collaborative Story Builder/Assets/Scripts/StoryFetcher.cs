@@ -25,19 +25,19 @@ public class StoryFetcher : MonoBehaviour
             closeButton.onClick.AddListener(CloseStoryPopup);
         }
 
-        storyPopup.SetActive(false); // Hide pop-up initially
+        storyPopup.SetActive(false); 
     }
 
     public void GetStory()
     {
-        // Set placeholder text before fetching the story
+        
         storyText.text = placeholderText;
-        storyPopup.SetActive(true); // Show the pop-up while fetching
+        storyPopup.SetActive(true); 
 
-        // FIX: Removed third argument, only passing prompt and response callback
+        
         StartCoroutine(AI_Manager.GetChatCompletion("Tell me a short fantasy story.", response =>
         {
-            if (!string.IsNullOrEmpty(response)) // Check if response is valid
+            if (!string.IsNullOrEmpty(response)) 
             {
                 Debug.Log("AI Response: " + response);
                 storyText.text = response;
@@ -45,7 +45,7 @@ public class StoryFetcher : MonoBehaviour
             else
             {
                 Debug.LogError("Empty AI Response.");
-                storyText.text = errorText; // Show error message
+                storyText.text = errorText;
             }
         }));
     }
@@ -53,6 +53,6 @@ public class StoryFetcher : MonoBehaviour
     public void CloseStoryPopup()
     {
         storyPopup.SetActive(false);
-        storyText.text = placeholderText; // Reset text when closing
+        storyText.text = placeholderText; 
     }
 }
