@@ -20,7 +20,7 @@ using System.Text;
 public static class AI_Manager
 {
     private const string API_URL = "https://openrouter.ai/api/v1";
-    private const string API_KEY = "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";
+    private const string API_KEY = "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";
 
     public static IEnumerator GetChatCompletion(string prompt, Action<string> callback)
     {
