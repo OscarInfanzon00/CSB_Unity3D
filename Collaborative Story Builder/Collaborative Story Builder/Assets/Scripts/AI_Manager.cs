@@ -16,6 +16,7 @@ using System.Text;
 //You have to use a coroutine because AI is not an instant thing and you have to wait for the answer, have it in consideration for your development.
 //Everything inside the coroutine will wait for the answer from the AI to be executed.
 //Let me know if you need help. Oscar
+//
 
 public static class AI_Manager
 {
