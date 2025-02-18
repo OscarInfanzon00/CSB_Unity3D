@@ -38,6 +38,7 @@ public class UploadStory : MonoBehaviour
     string userID = user.UserId;  // Firebase UID of the logged-in user
     string storyID = Guid.NewGuid().ToString(); // Unique Story ID
 
+<<<<<<< Updated upstream
     // Create a dictionary to store the story data
     Dictionary<string, object> storyData = new Dictionary<string, object>
     {
@@ -46,6 +47,31 @@ public class UploadStory : MonoBehaviour
         { "storyText", storyText }, // The story text they wrote
         { "timestamp", Timestamp.GetCurrentTimestamp() } // Optional: Adds a timestamp
     };
+=======
+        string userID = user.UserId;
+        string storyID = Guid.NewGuid().ToString();
+        Timestamp timestamp = Timestamp.GetCurrentTimestamp(); 
+
+        List<string> storyTexts = new List<string>
+        {
+            storyInputField.text
+        };
+
+        List<string> usersID = new List<string> { userID };
+        List<string> usersUsernames = new List<string> { userData.Username };
+
+        List<List<string>> comments = new List<List<string>>();
+
+        Dictionary<string, object> storyData = new Dictionary<string, object>
+        {
+            { "storyID", storyID },
+            { "storyTexts", storyTexts },
+            { "timestamp", timestamp },  
+            { "usernames", usersUsernames },
+            { "users", usersID },
+            { "comments", comments } 
+        };
+>>>>>>> Stashed changes
 
     // Reference to the "Stories" collection in Firestore
     DocumentReference storyRef = db.Collection("Stories").Document(storyID);
