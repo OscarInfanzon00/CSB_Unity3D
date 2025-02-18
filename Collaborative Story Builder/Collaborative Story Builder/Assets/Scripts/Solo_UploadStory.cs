@@ -9,43 +9,57 @@ using TMPro;
 
 public class UploadStory : MonoBehaviour
 {
-        public TMP_InputField storyInputField;
+    private UserData userData;
+    public TMP_InputField storyInputField;
+    private FirebaseFirestore db;
 
-        private FirebaseFirestore db;
+    public NotificationManager notificationManager;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         db = FirebaseFirestore.DefaultInstance;
-
-        
+        userData = User.GetUser();
     }
 
-    
-    
-    public void SaveStory(string storyText)
-{
-    // Get the current user's ID from Firebase Auth
-    FirebaseAuth auth = FirebaseAuth.DefaultInstance;
-    FirebaseUser user = auth.CurrentUser;
-
-    if (user == null)
+    public void SaveStory()
     {
-        Debug.LogError("No user is currently signed in.");
-        return;
-    }
+        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+        FirebaseUser user = auth.CurrentUser;
 
-    string userID = user.UserId;  // Firebase UID of the logged-in user
-    string storyID = Guid.NewGuid().ToString(); // Unique Story ID
+        if (user == null)
+        {
+            Debug.LogError("No user is currently signed in.");
+            return;
+        }
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     // Create a dictionary to store the story data
     Dictionary<string, object> storyData = new Dictionary<string, object>
+=======
+        string userID = user.UserId;
+        string storyID = Guid.NewGuid().ToString();
+        string timestamp = Timestamp.GetCurrentTimestamp().ToString();
+
+        string storyText = storyInputField.text;
+        int wordCount = CountWords(storyText);
+        List<string> storyTexts = new List<string>
+    {
+        storyInputField.text
+    };
+
+        List<string> usersID = new List<string> { userID };
+        List<string> usersUsernames = new List<string> { userData.Username };
+
+        Dictionary<string, object> storyData = new Dictionary<string, object>
+>>>>>>> main
     {
         { "storyID", storyID },
-        { "userID", userID }, // Logged-in user's ID
-        { "storyText", storyText }, // The story text they wrote
-        { "timestamp", Timestamp.GetCurrentTimestamp() } // Optional: Adds a timestamp
+        { "storyTexts", storyTexts },
+        { "timestamp", timestamp },
+        { "usernames", usersUsernames },
+        { "users", usersID },
+        { "wordCount", wordCount }
     };
 =======
         string userID = user.UserId;
@@ -73,54 +87,31 @@ public class UploadStory : MonoBehaviour
         };
 >>>>>>> Stashed changes
 
-    // Reference to the "Stories" collection in Firestore
-    DocumentReference storyRef = db.Collection("Stories").Document(storyID);
+        DocumentReference storyRef = db.Collection("Stories").Document(storyID);
 
-    // Save data to Firestore
-    storyRef.SetAsync(storyData).ContinueWithOnMainThread(task =>
-    {
-        if (task.IsCompletedSuccessfully)
+        storyRef.SetAsync(storyData).ContinueWithOnMainThread(task =>
         {
-            Debug.Log("Story saved successfully by user: " + userID);
-        }
-        else
-        {
-            Debug.LogError("Error saving story: " + task.Exception);
-        }
-    });
-}
-
-public void StoryUploader()
-    {
-        string storyText = storyInputField.text; // Get user input text
-        SaveStory(storyText);
+            if (task.IsCompletedSuccessfully)
+            {
+                notificationManager.Notify($"Your story was successfully uploaded!\nWord count: {wordCount}", 3f);
+                Debug.Log("Story saved successfully with ID: " + storyID);
+            }
+            else
+            {
+                Debug.LogError("Error saving story: " + task.Exception);
+            }
+        });
     }
+    private int CountWords(string text) {
+        if(string.IsNullOrWhiteSpace(text)) {
+            return 0;
+        }
 
-/*
-    public void TestSaveStory()
-{
-    // Sample test data
-    List<string> testUsers = new List<string> { "Chris", "Marco", "Josh" };
-    List<string> testStoryTexts = new List<string>
-    {
-        "This is the first string of the story.",
-        "Following the first string is this part of the story.",
-        "Closing the story with this string."
-    };
-
-    // Call the SaveStory method with test data
-    SaveStory(testUsers, testStoryTexts);
-
-    // Log for debugging
-    Debug.Log("TestSaveStory: Saving test story...");
-
+        return text.Split(new char[] { ' ', '\t', '\n', '\r'}, StringSplitOptions.RemoveEmptyEntries).Length;
     }
-*/
-
-    // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
 
