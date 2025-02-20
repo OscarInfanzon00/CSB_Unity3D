@@ -1,43 +1,69 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
+using System.Collections;
 using System.Text;
- 
-
+using TMPro;
 public class TranslatorAPI : MonoBehaviour
 {
-    private const string apiUrl = "https://libretranslate.com/translate";
+    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private TextMeshProUGUI outputText;
+    [SerializeField] private Button translateButton;
+
+    public string inputLanguage, outputLanguage;
+    private string myMemoryUrl = "https://api.mymemory.translated.net/get";
 
     void Start()
     {
-        StartCoroutine(TranslateText("Hello, how are you?", "ru"));
+        translateButton.onClick.AddListener(OnTranslateButtonClicked);
     }
 
-    IEnumerator TranslateText(string text, string targetLanguage)
+    void OnTranslateButtonClicked()
     {
-        // Create JSON payload
-        string jsonData = "{\"q\": \"" + text + "\", \"source\": \"auto\", \"target\": \"" + targetLanguage + "\", \"format\": \"text\", \"alternatives\": 3, \"api_key\": \"\"}";
-
-        // Create UnityWebRequest
-        using (UnityWebRequest request = new UnityWebRequest(apiUrl, "POST"))
+        if (!string.IsNullOrEmpty(inputField.text))
         {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
+            StartCoroutine(Translate(inputField.text));
+        }
+        else
+        {
+            outputText.text = "no text";
+        }
+    }
 
-            // Send request
+    IEnumerator Translate(string textToTranslate)
+    {
+        // Construct the URL with escaped text and language pair (en|ru)
+        string url = $"{myMemoryUrl}?q={UnityWebRequest.EscapeURL(textToTranslate)}&langpair={inputLanguage}|{outputLanguage}";
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            Debug.Log("Sending request to: " + url);
             yield return request.SendWebRequest();
 
-            // Handle response
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log("Response: " + request.downloadHandler.text);
+                string jsonResponse = request.downloadHandler.text;
+                Debug.Log("Response: " + jsonResponse);
+                MyMemoryResponse response = JsonUtility.FromJson<MyMemoryResponse>(jsonResponse);
+                outputText.text = response.responseData.translatedText;
             }
             else
             {
-                Debug.LogError("Error: " + request.error);
+                Debug.LogError($"Request failed: {request.error} - Response Code: {request.responseCode}");
+                Debug.LogError($"Response Text: {request.downloadHandler?.text}");
+                outputText.text = $"Error: {request.error}";
             }
         }
     }
+}
+
+[System.Serializable]
+public class MyMemoryResponse
+{
+    public ResponseData responseData;
+}
+
+[System.Serializable]
+public class ResponseData
+{
+    public string translatedText;
 }
