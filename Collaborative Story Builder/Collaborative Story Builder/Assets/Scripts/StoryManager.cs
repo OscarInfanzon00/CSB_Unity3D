@@ -10,6 +10,9 @@ public class StoryManager : MonoBehaviour
     public Transform storyListContainer;
     public GameObject storyCardPrefab;
     public GameObject StoryViewerUI;
+    private string storyID;
+
+    public GameObject commentingPanel;
 
     private void Start()
     {
@@ -45,6 +48,7 @@ public class StoryManager : MonoBehaviour
                         }
                     }
 
+                    storyID = (string)data["storyID"];
                     Timestamp timestamp = (Timestamp)data["timestamp"];
                     string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
                     Story newStory = new Story(previewText, storyTexts, users, timestamp.ToDateTime());
@@ -59,6 +63,14 @@ public class StoryManager : MonoBehaviour
         });
     }
 
+    public void TogglePanel()
+    {
+        if (commentingPanel != null)
+        {
+            commentingPanel.SetActive(!commentingPanel.activeSelf);
+        }
+    }
+
 
 
     void CreateStoryCard(Story story)
@@ -67,5 +79,6 @@ public class StoryManager : MonoBehaviour
         newCard.GetComponent<StoryCardUI>().StoryViewerUI = StoryViewerUI;
         StoryCardUI cardUI = newCard.GetComponent<StoryCardUI>();
         cardUI.SetStoryInfo(story);
+        cardUI.storyID = storyID;
     }
 }

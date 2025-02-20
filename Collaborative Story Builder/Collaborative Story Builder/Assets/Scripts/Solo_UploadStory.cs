@@ -46,14 +46,23 @@ public class UploadStory : MonoBehaviour
         List<string> usersID = new List<string> { userID };
         List<string> usersUsernames = new List<string> { userData.Username };
 
+        List<List<string>> comments = new List<List<string>>();
+
+        //this is how comments can be visualized: 
+        // { "comments": [["userID1", "This is a comment"], ["userID2", "Another comment"]] }
+
+
+
         Dictionary<string, object> storyData = new Dictionary<string, object>
+
     {
         { "storyID", storyID },
         { "storyTexts", storyTexts },
         { "timestamp", timestamp },
         { "usernames", usersUsernames },
         { "users", usersID },
-        { "wordCount", wordCount }
+        { "wordCount", wordCount },
+        { "comments", comments }
     };
 
         DocumentReference storyRef = db.Collection("Stories").Document(storyID);
