@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Firebase.Firestore;
 using Firebase.Extensions;
+using Firebase.Auth;
+using TMPro;
 
 public class StoryManager : MonoBehaviour
 {
@@ -13,6 +15,8 @@ public class StoryManager : MonoBehaviour
     private string storyID;
 
     public GameObject commentingPanel;
+
+    public TMP_InputField userCommentInputField;
 
     private void Start()
     {
@@ -81,4 +85,68 @@ public class StoryManager : MonoBehaviour
         cardUI.SetStoryInfo(story);
         cardUI.storyID = storyID;
     }
+
+
+    public void AddComment()
+    {
+        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+        FirebaseUser user = auth.CurrentUser;
+
+        if (user == null)
+        {
+            Debug.LogError("No user is currently signed in.");
+            return;
+        }
+
+        string userID = user.UserId;
+        string commentText = userCommentInputField.text.Trim();
+
+        if (string.IsNullOrEmpty(commentText))
+        {
+            Debug.LogError("Comment cannot be empty.");
+            return;
+        }
+
+        DocumentReference storyRef = db.Collection("Stories").Document(storyID);
+
+        storyRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                DocumentSnapshot snapshot = task.Result;
+
+                if (snapshot.Exists)
+                {
+                    List<List<string>> comments = snapshot.ContainsField("comments")
+                        ? snapshot.GetValue<List<List<string>>>("comments")
+                        : new List<List<string>>();
+
+                    // Add new comment with user ID
+                    comments.Add(new List<string> { userID, commentText });
+
+                    storyRef.UpdateAsync("comments", comments).ContinueWithOnMainThread(updateTask =>
+                    {
+                        if (updateTask.IsCompletedSuccessfully)
+                        {
+                            Debug.Log("Comment added successfully.");
+                            userCommentInputField.text = ""; // Clear input field after submission
+                        }
+                        else
+                        {
+                            Debug.LogError("Error adding comment: " + updateTask.Exception);
+                        }
+                    });
+                }
+                else
+                {
+                    Debug.LogError("Story does not exist.");
+                }
+            }
+            else
+            {
+                Debug.LogError("Error retrieving story: " + task.Exception);
+            }
+        });
+    }
+    
 }
