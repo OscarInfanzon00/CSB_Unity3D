@@ -1,27 +1,38 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class CloseButtonHandler : MonoBehaviour
+public class FriendsUIManager : MonoBehaviour
 {
-    public Button CloseButton;
-    public Button friendPanel;
-    public GameObject FriendPopupPanel, MainMenuPanel, FriendsPanel;
+    public GameObject friendsPanel;     // The panel that contains the friends list
+    public GameObject friendsPopup;     // The popup that shows friend details
+    public Button closeFriendPanelBtn;  // Button to close friendsPanel
+    public Button closeFriendPopupBtn;
+    public Button FriendCard;
 
     void Start()
     {
-        CloseButton.onClick.AddListener(CloseScene);
-        friendPanel.onClick.AddListener(ShowFriendInfo);
+        // Ensure panels are hidden at start
+        FriendCard.onClick.AddListener(OpenFriendsPopup);
+        // Add listeners for closing buttons
+        closeFriendPanelBtn.onClick.AddListener(CloseFriendsPanel);
+        closeFriendPopupBtn.onClick.AddListener(CloseFriendsPopup);
     }
 
-    private void CloseScene()
+    // Function to open the friends popup
+    public void OpenFriendsPopup()
     {
-        MainMenuPanel.SetActive(true);
-        FriendsPanel.SetActive(false);
+        friendsPopup.SetActive(true);
     }
 
-    private void ShowFriendInfo()
+    // Function to close the friends popup
+    public void CloseFriendsPopup()
     {
-        FriendPopupPanel.gameObject.SetActive(true);
+        friendsPopup.SetActive(false);
+    }
+
+    // Function to close the friends panel
+    public void CloseFriendsPanel()
+    {
+        friendsPanel.SetActive(false);
     }
 }
