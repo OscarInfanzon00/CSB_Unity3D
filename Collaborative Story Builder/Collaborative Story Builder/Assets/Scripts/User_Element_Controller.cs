@@ -4,31 +4,29 @@ using TMPro;
 
 public class User_Element_Controller : MonoBehaviour
 {
-    public TMP_Text usernameText;  // Reference to username text
+    public TMP_Text usernameText; 
     public Button addFriendButton;
     public Button reportButton;
     public Button blockButton;
 
-    // Function to setup UI elements properly
+
     public void Setup(string username, string userID, UserList_Manager userManager)
     {
-        usernameText.text = username; // Set the username text
+        usernameText.text = username; 
 
-        // Add Friend Button
-        addFriendButton.onClick.RemoveAllListeners();  // Ensure no duplicate listeners
+        addFriendButton.onClick.RemoveAllListeners(); 
         addFriendButton.onClick.AddListener(() =>
         {
             userManager.AddFriend(userID);
         });
 
-        // Report Button (Optional)
+ 
         reportButton.onClick.RemoveAllListeners();
         reportButton.onClick.AddListener(() =>
         {
             userManager.reportManager.OpenReportPopup(userID);
         });
 
-        // Block Button (Optional)
         blockButton.onClick.RemoveAllListeners();
         blockButton.onClick.AddListener(() =>
         {

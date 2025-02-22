@@ -9,6 +9,7 @@ using Firebase.Firestore;
 using Firebase.Extensions;
 
 
+
 public class UserList_Manager : MonoBehaviour
 {
     public GameObject UserListUI;
@@ -95,7 +96,7 @@ public class UserList_Manager : MonoBehaviour
             if (task.IsCompletedSuccessfully)
             {
                 int totalDocuments = task.Result.Count;
-                Debug.Log($"Firestore returned {totalDocuments} user documents."); // Log how many documents were retrieved
+                Debug.Log($"Firestore returned {totalDocuments} user documents."); 
 
                 int count = 0; // Track number of users processed
 
@@ -104,7 +105,7 @@ public class UserList_Manager : MonoBehaviour
                     try
                     {
                         Dictionary<string, object> data = doc.ToDictionary();
-                        Debug.Log($"Processing Document ID: {doc.Id}"); // Log each document's ID before reading data
+                        Debug.Log($"Processing Document ID: {doc.Id}"); 
 
                         if (data.ContainsKey("username") && data.ContainsKey("userID"))
                         {
@@ -146,7 +147,6 @@ public class UserList_Manager : MonoBehaviour
     {
         Debug.Log($"Creating user card for: {username} (ID: {userID})");
 
-        // Ensure UserElementPrefab is assigned
         if (UserElementPrefab == null)
         {
             Debug.LogError("UserElementPrefab is not assigned in the Inspector.");
@@ -167,20 +167,18 @@ public class UserList_Manager : MonoBehaviour
             return;
         }
 
-        // Ensure the usernameText field is assigned
         if (userController.usernameText == null)
         {
             Debug.LogError("usernameText is not assigned in User_Element_Controller. Check the prefab setup.");
             return;
         }
 
-        // Set username
         userController.usernameText.text = username;
 
-        // Ensure block button is assigned before adding event listener
+        // Ensure buttons are assigned before adding listeners
         if (userController.blockButton != null)
         {
-            userController.blockButton.onClick.RemoveAllListeners(); // Prevent duplicate listeners
+            userController.blockButton.onClick.RemoveAllListeners();
             userController.blockButton.onClick.AddListener(() =>
             {
                 if (blockManager != null)
@@ -193,15 +191,10 @@ public class UserList_Manager : MonoBehaviour
                 }
             });
         }
-        else
-        {
-            Debug.LogError("Block button is not assigned in User_Element_Controller.");
-        }
 
-        // Ensure report button is assigned before adding event listener
         if (userController.reportButton != null)
         {
-            userController.reportButton.onClick.RemoveAllListeners(); // Prevent duplicate listeners
+            userController.reportButton.onClick.RemoveAllListeners();
             userController.reportButton.onClick.AddListener(() =>
             {
                 if (reportManager != null)
@@ -214,25 +207,48 @@ public class UserList_Manager : MonoBehaviour
                 }
             });
         }
-        else
-        {
-            Debug.LogError("Report button is not assigned in User_Element_Controller.");
-        }
 
-        // Ensure add friend button is assigned before adding event listener
         if (userController.addFriendButton != null)
         {
-            userController.addFriendButton.onClick.RemoveAllListeners(); // Prevent duplicate listeners
-            userController.addFriendButton.onClick.AddListener(() =>
+            userController.addFriendButton.onClick.RemoveAllListeners();
+
+            // Check if user is already a friend
+            db.Collection("Friends").Document(currentUserId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
             {
-                AddFriend(userID);
+                if (task.IsCompletedSuccessfully)
+                {
+                    DocumentSnapshot snapshot = task.Result;
+                    List<string> friendsList = new List<string>();
+
+                    if (snapshot.Exists && snapshot.ContainsField("friends"))
+                    {
+                        friendsList = snapshot.GetValue<List<string>>("friends");
+                    }
+
+                    if (friendsList.Contains(userID))
+                    {
+                        // If already friends, update the button text
+                        userController.addFriendButton.GetComponentInChildren<TMP_Text>().text = "Already Friends";
+                        userController.addFriendButton.interactable = false; // Disable the button
+                    }
+                    else
+                    {
+                        // If not friends, allow adding
+                        userController.addFriendButton.GetComponentInChildren<TMP_Text>().text = "Add Friend";
+                        userController.addFriendButton.onClick.AddListener(() =>
+                        {
+                            AddFriend(userID);
+                        });
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Failed to retrieve friend list: " + task.Exception);
+                }
             });
         }
-        else
-        {
-            Debug.LogError("Add Friend button is not assigned in User_Element_Controller.");
-        }
     }
+
 
 
 
