@@ -356,7 +356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   usernameText: {fileID: 2622573486907836722}
-  AddFriendButton: {fileID: 7221867584673149585}
+  addFriendButton: {fileID: 7221867584673149585}
   reportButton: {fileID: 1919323176580484820}
   blockButton: {fileID: 8207420855296730226}
 --- !u!1 &3338075109418845864
