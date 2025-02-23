@@ -51,6 +51,8 @@ public class UploadStory : MonoBehaviour
         //this is how comments can be visualized: 
         // { "comments": [["userID1", "This is a comment"], ["userID2", "Another comment"]] }
 
+        int likes = 0;
+
 
 
         Dictionary<string, object> storyData = new Dictionary<string, object>
@@ -62,7 +64,8 @@ public class UploadStory : MonoBehaviour
         { "usernames", usersUsernames },
         { "users", usersID },
         { "wordCount", wordCount },
-        { "comments", comments }
+        { "comments", comments },
+        { "likes", likes }
     };
 
         DocumentReference storyRef = db.Collection("Stories").Document(storyID);

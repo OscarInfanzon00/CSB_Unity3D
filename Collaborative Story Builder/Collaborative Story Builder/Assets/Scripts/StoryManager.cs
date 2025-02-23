@@ -87,6 +87,8 @@ public class StoryManager : MonoBehaviour
     }
 
 
+
+
     public void AddComment()
     {
         FirebaseAuth auth = FirebaseAuth.DefaultInstance;
@@ -148,5 +150,54 @@ public class StoryManager : MonoBehaviour
             }
         });
     }
+
+
+
+
+    public void LikeStory()
+{
+    if (string.IsNullOrEmpty(storyID))
+    {
+        Debug.LogError("No story is currently selected.");
+        return;
+    }
+
+    DocumentReference storyRef = db.Collection("Stories").Document(storyID);
+
+    storyRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+    {
+        if (task.IsCompletedSuccessfully)
+        {
+            DocumentSnapshot snapshot = task.Result;
+            if (snapshot.Exists)
+            {
+                int currentLikes = snapshot.ContainsField("likes") ? snapshot.GetValue<int>("likes") : 0;
+                int newLikes = currentLikes + 1;
+
+                storyRef.UpdateAsync("likes", newLikes).ContinueWithOnMainThread(updateTask =>
+                {
+                    if (updateTask.IsCompletedSuccessfully)
+                    {
+                        Debug.Log($"Story {storyID} now has {newLikes} likes!");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Error updating likes: {updateTask.Exception}");
+                    }
+                });
+            }
+            else
+            {
+                Debug.LogError("Story not found.");
+            }
+        }
+        else
+        {
+            Debug.LogError($"Error fetching story: {task.Exception}");
+        }
+    });
+}
+
+    
     
 }
