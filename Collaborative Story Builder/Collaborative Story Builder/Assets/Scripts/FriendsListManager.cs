@@ -106,6 +106,8 @@ public class FriendsListManager : MonoBehaviour
                     int level = friendSnapshot.ContainsField("userLevel") ? friendSnapshot.GetValue<int>("userLevel") : 0;
                     int words = friendSnapshot.ContainsField("words") ? friendSnapshot.GetValue<int>("words") : 0;
 
+                    username = FormatUsername(username); // Modify username if it contains "@"
+
                     CreateFriendCard(friendId, username, level, words);
                 }
             }
@@ -154,6 +156,8 @@ public class FriendsListManager : MonoBehaviour
     public void OpenFriendsPopup(string friendId, string username, int level, int words)
     {
         selectedFriendId = friendId;
+        username = FormatUsername(username); // Ensure formatted username in popup
+
         if (popupUsernameText != null) popupUsernameText.text = username;
         if (popupLevelText != null) popupLevelText.text = "Level: " + level;
         if (popupWordsText != null) popupWordsText.text = "Words: " + words;
@@ -203,5 +207,14 @@ public class FriendsListManager : MonoBehaviour
     public void CloseFriendsPanel()
     {
         FriendListUI.SetActive(false);
+    }
+
+    private string FormatUsername(string username)
+    {
+        if (username.Contains("@"))
+        {
+            return username.Split('@')[0];
+        }
+        return username;
     }
 }
