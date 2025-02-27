@@ -23,6 +23,7 @@ public class StoryManager : MonoBehaviour
         {
             if (task.IsCompletedSuccessfully)
             {
+                try{
                 foreach (DocumentSnapshot doc in task.Result.Documents)
                 {
                     Dictionary<string, object> data = doc.ToDictionary();
@@ -45,11 +46,27 @@ public class StoryManager : MonoBehaviour
                         }
                     }
 
-                    Timestamp timestamp = (Timestamp)data["timestamp"];
+                    DateTime timestamp = DateTime.MinValue; // Default value if timestamp is missing
+                    if (data.ContainsKey("timestamp"))
+                    {
+                        object timestampObj = data["timestamp"];
+
+                        if (timestampObj is Firebase.Firestore.Timestamp firestoreTimestamp)
+                        {
+                            timestamp = firestoreTimestamp.ToDateTime();
+                        }
+                        else
+                        {
+                            Debug.LogError($"Invalid timestamp format: {timestampObj.GetType()}");
+                        }
+                    }
                     string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
-                    Story newStory = new Story(previewText, storyTexts, users, timestamp.ToDateTime());
+                    Story newStory = new Story(previewText, storyTexts, users, timestamp);
 
                     CreateStoryCard(newStory);
+                }
+                }catch(Exception e){
+                    Debug.LogError("Failed to load stories: " + e);
                 }
             }
             else

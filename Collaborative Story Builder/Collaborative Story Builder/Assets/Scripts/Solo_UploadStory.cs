@@ -34,7 +34,6 @@ public class UploadStory : MonoBehaviour
 
         string userID = user.UserId;
         string storyID = Guid.NewGuid().ToString();
-        string timestamp = Timestamp.GetCurrentTimestamp().ToString();
 
         string storyText = storyInputField.text;
         int wordCount = CountWords(storyText);
@@ -50,7 +49,7 @@ public class UploadStory : MonoBehaviour
     {
         { "storyID", storyID },
         { "storyTexts", storyTexts },
-        { "timestamp", timestamp },
+        { "timestamp", Firebase.Firestore.Timestamp.GetCurrentTimestamp() },
         { "usernames", usersUsernames },
         { "users", usersID },
         { "wordCount", wordCount }
