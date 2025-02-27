@@ -13,6 +13,9 @@ public class Main_MenuActivity : MonoBehaviour
     public Button openMultiplayerMenuButton;
     public TextMeshProUGUI username;
     public Button btnTutorial;
+    
+    public GameObject AiGenButtonsPanel;
+    public Button AiGenMenuBtn;
 
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
@@ -27,6 +30,7 @@ public class Main_MenuActivity : MonoBehaviour
         openMultiplayerMenuButton.onClick.AddListener(openMultiplayer);
         btnTutorial.onClick.AddListener(playTutorial);
         openTestingRoomButton.onClick.AddListener(openTestingRoom);
+        AiGenMenuBtn.onClick.AddListener(openAiGenMenu);
 
 
         user = User.GetUser();
@@ -41,7 +45,15 @@ public class Main_MenuActivity : MonoBehaviour
         }
 
         updateLVL();
+        AiGenButtonsPanel.SetActive(false);
+        
     }
+
+    private void openAiGenMenu()
+    {
+        AiGenButtonsPanel.SetActive(!AiGenButtonsPanel.activeSelf);
+    }
+
 
     private void updateLVL(){
         if (user.UserLevel!=0)

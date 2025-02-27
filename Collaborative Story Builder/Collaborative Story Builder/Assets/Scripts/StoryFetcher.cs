@@ -8,7 +8,7 @@ public class StoryFetcher : MonoBehaviour
     public Button storyButton;
     public Button closeButton;
     public TMP_Text storyText;
-    public GameObject storyPopup;
+    public GameObject storyPopup, AiGenMenuPopup;
 
     private string placeholderText = "Fetching your story... Please wait.";
     private string errorText = "Oops! Something went wrong. Try again.";
@@ -32,7 +32,8 @@ public class StoryFetcher : MonoBehaviour
     {
         
         storyText.text = placeholderText;
-        storyPopup.SetActive(true); 
+        storyPopup.SetActive(true);
+        AiGenMenuPopup.SetActive(!AiGenMenuPopup.activeSelf);
 
         
         StartCoroutine(AI_Manager.GetChatCompletion("Tell me a short story about any of this topics: fantasy, military, sports, comedy, or romance. Include a Title at the top and no other extra comments, just the story. Please avoid any religious, political or +18 commentary. In simple lenguage, use words that most people can understand and make it less than 500 words", response =>
