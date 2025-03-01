@@ -10,7 +10,7 @@ public class StoryCardUI : MonoBehaviour
     public Button openDetailsButton;
     public GameObject StoryViewerUI;
     private Story storyData;
-    
+    public string storyID;
 
     public void SetStoryInfo(Story story)
     {
@@ -23,6 +23,6 @@ public class StoryCardUI : MonoBehaviour
     public void OnStoryClick()
     {
         StoryViewerUI.SetActive(true);
-        StoryViewerUI.GetComponent<StoryDetailsUI>().ShowStoryDetails(storyData);
+        StoryViewerUI.GetComponent<StoryDetailsUI>().ShowStoryDetails(storyData, storyID);
     }
 }
