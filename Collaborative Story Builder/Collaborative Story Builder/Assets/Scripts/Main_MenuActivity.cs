@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
-using UnityEditor.U2D.Aseprite;
 public class Main_MenuActivity : MonoBehaviour
 {
 
