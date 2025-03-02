@@ -1808,7 +1808,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: d7d480a22b9c1f64bb6d748bf353e45b, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2371,6 +2371,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6142742511199329741, guid: 90f676832fc5bb0469917279d1f985ab, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142742511199329741, guid: 90f676832fc5bb0469917279d1f985ab, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142742511199329741, guid: 90f676832fc5bb0469917279d1f985ab, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 11500000, guid: 32e5fecd46d9a4e8ba5be2d503eaec14, type: 3}
+    - target: {fileID: 6142742511199329741, guid: 90f676832fc5bb0469917279d1f985ab, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8904190513968589725, guid: 90f676832fc5bb0469917279d1f985ab, type: 3}
       propertyPath: m_Name
       value: CloseButton
@@ -2826,6 +2842,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   storyInputField: {fileID: 11819217}
   notificationManager: {fileID: 1980005829}
+  closeButton: {fileID: 1656552985}
 --- !u!4 &1578449257
 Transform:
   m_ObjectHideFlags: 0
@@ -2841,6 +2858,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1656552985 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6142742511199329741, guid: 90f676832fc5bb0469917279d1f985ab, type: 3}
+  m_PrefabInstance: {fileID: 1314793099}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1668102437
 GameObject:
   m_ObjectHideFlags: 0
@@ -3170,8 +3198,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281413937
-  m_fontColor: {r: 0.19215687, g: 0.19215687, b: 0.19215687, a: 1}
+    rgba: 4292532964
+  m_fontColor: {r: 0.89433956, g: 0.8555286, b: 0.8555286, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3499,6 +3527,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2086576060}
   m_CullTransparentMesh: 1
+--- !u!1001 &682702364167023636
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 213.26596
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1597.1886
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -13.730627
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370366549334984037, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8099350062874649876, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: m_Name
+      value: TranslatorManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8956745762250169480, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: inputField
+      value: 
+      objectReference: {fileID: 11819217}
+    - target: {fileID: 8956745762250169480, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: outputText
+      value: 
+      objectReference: {fileID: 1068075231}
+    - target: {fileID: 8956745762250169480, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
+      propertyPath: translateButton
+      value: 
+      objectReference: {fileID: 1135323159}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9d9d181c823bf9940944b166d4655265, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3507,3 +3604,4 @@ SceneRoots:
   - {fileID: 342239219}
   - {fileID: 336390026}
   - {fileID: 1578449257}
+  - {fileID: 682702364167023636}

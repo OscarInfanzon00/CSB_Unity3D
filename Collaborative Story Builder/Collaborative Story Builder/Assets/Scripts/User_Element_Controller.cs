@@ -1,21 +1,36 @@
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using TMPro;
 
 public class User_Element_Controller : MonoBehaviour
 {
-    public TMP_Text usernameText;
-    public Button AddFriendButton, reportButton, blockButton;
+    public TMP_Text usernameText; 
+    public Button addFriendButton;
+    public Button reportButton;
+    public Button blockButton;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    public void Setup(string username, string userID, UserList_Manager userManager)
     {
-        
+        usernameText.text = username; 
+
+        addFriendButton.onClick.RemoveAllListeners(); 
+        addFriendButton.onClick.AddListener(() =>
+        {
+            userManager.AddFriend(userID);
+        });
+
+ 
+        reportButton.onClick.RemoveAllListeners();
+        reportButton.onClick.AddListener(() =>
+        {
+            userManager.reportManager.OpenReportPopup(userID);
+        });
+
+        blockButton.onClick.RemoveAllListeners();
+        blockButton.onClick.AddListener(() =>
+        {
+            userManager.blockManager.OnBlockButtonPressed(userID);
+        });
     }
 }

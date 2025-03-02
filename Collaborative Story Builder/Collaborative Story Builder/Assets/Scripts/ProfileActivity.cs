@@ -99,7 +99,6 @@ public class ProfileActivity : MonoBehaviour
 
     private void OpenFriendsList()
     {
-        ProfilePanel.SetActive(false);
         FriendsPanel.SetActive(true);
     }
 
