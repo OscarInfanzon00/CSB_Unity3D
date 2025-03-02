@@ -33,7 +33,7 @@ public class RandomPrompt : MonoBehaviour
             outputText.text = "Getting your AI-generated prompt ready...";
         }
 
-        StartCoroutine(AI_Manager.GetChatCompletion("Give me a short sentence for a story idea I could use to write.", response =>
+        StartCoroutine(AI_Manager.GetChatCompletion("Give me a short sentence for a story idea I could use to write about something random every time", response =>
         {
             Debug.Log("AI Response: " + response);
             if (outputText != null)
