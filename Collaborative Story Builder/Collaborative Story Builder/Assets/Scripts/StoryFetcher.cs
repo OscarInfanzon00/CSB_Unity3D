@@ -36,7 +36,7 @@ public class StoryFetcher : MonoBehaviour
         AiGenMenuPopup.SetActive(!AiGenMenuPopup.activeSelf);
 
         
-        StartCoroutine(AI_Manager.GetChatCompletion("Write a short story (under 600 words) with a clear and engaging title. The story should belong to one of the following genres: history, comedy, or fantasy. If historical, focus on a humorous or intriguing event with entertaining characters. If fantasy, create a magical world with whimsical elements. If comedic, use witty dialogue and amusing situations to bring laughter. The story should be fun, adventurous, and suitable for all audiences, avoiding political, religious, or mature themes.", response =>
+        StartCoroutine(AI_Manager.GetChatCompletion("Do it different every time. Write a short story (under 600 words) with a clear and engaging title. The story should belong to one of the following genres: history, comedy, or fantasy. If historical, focus on a humorous or intriguing event with entertaining characters. If fantasy, create a magical world with whimsical elements. If comedic, use witty dialogue and amusing situations to bring laughter. The story should be fun, adventurous, and suitable for all audiences, avoiding political, religious, or mature themes.", response =>
         {
             if (!string.IsNullOrEmpty(response)) 
             {
