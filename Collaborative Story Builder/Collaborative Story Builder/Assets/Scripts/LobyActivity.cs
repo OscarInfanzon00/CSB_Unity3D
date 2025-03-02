@@ -62,15 +62,16 @@ public class LobbyActivity : MonoBehaviour
         {
             currentUserID = auth.CurrentUser.UserId;
 
-            if (user.Username!="defaultUser")
+            if (user.Username != "defaultUser")
             {
                 currentUsername = user.Username;
             }
-            else if (user.Email!="defaultEmail")
+            else if (user.Email != "defaultEmail")
             {
                 currentUsername = user.Email;
             }
         }
+        PlayerPrefs.SetInt("isRoomCreator", 0);
     }
 
     private void closeMenu()
@@ -113,8 +114,10 @@ public class LobbyActivity : MonoBehaviour
 
     private void CreateLobby()
     {
+        SetLogText("Creating Lobby...");
         isRoomCreator = true;
         currentRoomID = GenerateRoomCode();
+        SetLogText("Generating Room Code...");
 
         Dictionary<string, object> roomData = new Dictionary<string, object>
         {
@@ -199,7 +202,10 @@ public class LobbyActivity : MonoBehaviour
                         .ContinueWithOnMainThread(updateTask =>
                         {
                             if (updateTask.IsCompletedSuccessfully)
+                            {
                                 SetLogText("Joined room successfully.");
+                                PlayerPrefs.SetString("room", currentRoomID);
+                            }
                             else
                                 SetLogText("Error joining room: " + updateTask.Exception);
                         });
@@ -263,24 +269,50 @@ public class LobbyActivity : MonoBehaviour
             return;
         }
 
+        PlayerPrefs.SetInt("isRoomCreator", 1);
         DocumentReference roomRef = db.Collection("Rooms").Document(currentRoomID);
-        roomRef.UpdateAsync("isGameStarted", true).ContinueWithOnMainThread(task =>
+        roomRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
-            if (task.IsCompletedSuccessfully)
+            if (task.IsCompletedSuccessfully && task.Result.Exists)
             {
-                SetLogText("Game started!");
-            }
-            else
-            {
-                SetLogText("Error starting game: " + task.Exception);
+                List<Dictionary<string, object>> players = task.Result.GetValue<List<Dictionary<string, object>>>("players");
+                if (players == null || players.Count == 0)
+                {
+                    SetLogText("No players in the room to start the game.");
+                    return;
+                }
+                // For example, set the first player as the first turn.
+                string firstPlayerID = players[0]["userID"].ToString();
+
+                // Update the room with additional game data
+                Dictionary<string, object> updateData = new Dictionary<string, object>
+                {
+                {"isGameStarted", true},
+                {"currentTurn", firstPlayerID},
+                {"roundNumber", 1}
+                };
+
+                roomRef.UpdateAsync(updateData).ContinueWithOnMainThread(updateTask =>
+                {
+                    if (updateTask.IsCompletedSuccessfully)
+                    {
+                        SetLogText("Game started!");
+                    }
+                    else
+                    {
+                        SetLogText("Error starting game: " + updateTask.Exception);
+                    }
+                });
             }
         });
     }
+
 
     private void LoadGameScene()
     {
         roomListener.Stop();
         UnityEngine.SceneManagement.SceneManager.LoadScene("Story_Contribution");
+
     }
 
     private string GenerateRoomCode()
