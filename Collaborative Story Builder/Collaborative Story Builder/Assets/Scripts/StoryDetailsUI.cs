@@ -4,6 +4,8 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using Firebase.Firestore;
 using Firebase.Extensions;
+using Firebase.Auth;
+using System.Collections.Generic;
 
 public class StoryDetailsUI : MonoBehaviour
 {
@@ -15,14 +17,18 @@ public class StoryDetailsUI : MonoBehaviour
     public GameObject StoryViewerUI;
     public string storyID;
     public TMP_Text storyLikes;
+    FirebaseFirestore db;
+    public GameObject commentingPanel;
+    public TMP_InputField userCommentInputField;
 
-    public Transform commentsContainer;
-    public GameObject commentPrefab; 
+    public Transform commentsContainer; 
+    public GameObject commentPrefab;
 
     private void Awake()
     {
         Instance = this;
         closeButton.onClick.AddListener(CloseDetails);
+        db = FirebaseFirestore.DefaultInstance;
     }
 
     public void ShowStoryDetails(Story story, string storyID)
@@ -32,19 +38,14 @@ public class StoryDetailsUI : MonoBehaviour
         storyDate.text = "Date: " + story.timestamp.ToString("MM/dd/yyyy HH:mm");
 
         this.storyID = storyID;
-<<<<<<< Updated upstream
-=======
         updateLikes();
 
         LoadComments();
     }
->>>>>>> Stashed changes
 
-
-        //story likes
-        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+    public void updateLikes()
+    {
         DocumentReference storyRef = db.Collection("Stories").Document(storyID);
-
         storyRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
@@ -53,30 +54,90 @@ public class StoryDetailsUI : MonoBehaviour
                 if (snapshot.Exists && snapshot.ContainsField("likes"))
                 {
                     int likes = snapshot.GetValue<int>("likes");
-                    storyLikes.text = "Likes: " + likes.ToString();
+                    storyLikes.text = likes.ToString();
                 }
                 else
                 {
-                    storyLikes.text = "Likes: 0";  // Default if no likes field is found
+                    storyLikes.text = "0";  // Default if no likes field is found
                 }
             }
             else
             {
                 Debug.LogError("Failed to fetch likes: " + task.Exception);
-                storyLikes.text = "Likes: N/A";  // Show error state in UI
+                storyLikes.text = "N/A";  // Show error state in UI
             }
         });
+    }
 
+    public void AddComment()
+    {
+        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+        FirebaseUser user = auth.CurrentUser;
 
-        //addComment()
+        if (user == null)
+        {
+            Debug.LogError("No user is currently signed in.");
+            return;
+        }
+
+        string userID = user.UserId;
+        string commentText = userCommentInputField.text.Trim();
+
+        if (string.IsNullOrEmpty(commentText))
+        {
+            Debug.LogError("Comment cannot be empty.");
+            return;
+        }
+
+        DocumentReference storyRef = db.Collection("Stories").Document(storyID);
+
+        storyRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                DocumentSnapshot snapshot = task.Result;
+
+                if (snapshot.Exists)
+                {
+                    List<Dictionary<string, string>> comments = snapshot.ContainsField("comments")
+                        ? snapshot.GetValue<List<Dictionary<string, string>>>("comments")
+                        : new List<Dictionary<string, string>>();
+
+                    // Add new comment as an object (dictionary)
+                    Dictionary<string, string> newComment = new Dictionary<string, string>
+                    {
+                    { "userID", userID },
+                    { "text", commentText }
+                    };
+                    comments.Add(newComment);
+
+                    storyRef.UpdateAsync("comments", comments).ContinueWithOnMainThread(updateTask =>
+                    {
+                        if (updateTask.IsCompletedSuccessfully)
+                        {
+                            Debug.Log("Comment added successfully.");
+                            userCommentInputField.text = ""; // Clear input field after submission
+                            TogglePanel();
+                        }
+                        else
+                        {
+                            Debug.LogError("Error adding comment: " + updateTask.Exception);
+                        }
+                    });
+                }
+                else
+                {
+                    Debug.LogError("Story does not exist.");
+                }
+            }
+            else
+            {
+                Debug.LogError("Error retrieving story: " + task.Exception);
+            }
+        });
     }
 
 
-<<<<<<< Updated upstream
-    /**
-    addComment method here
-    */
-=======
     public void LikeStory()
     {
         if (string.IsNullOrEmpty(storyID))
@@ -122,12 +183,11 @@ public class StoryDetailsUI : MonoBehaviour
         });
     }
 
-
     public void LoadComments()
     {
         foreach (Transform child in commentsContainer)
         {
-            Destroy(child.gameObject); // Clear previous comments
+            Destroy(child.gameObject); 
         }
 
         DocumentReference storyRef = db.Collection("Stories").Document(storyID);
@@ -155,8 +215,6 @@ public class StoryDetailsUI : MonoBehaviour
         });
     }
 
-
-
     void CreateCommentUI(string userID, string text)
     {
         GameObject newComment = Instantiate(commentPrefab, commentsContainer);
@@ -165,7 +223,6 @@ public class StoryDetailsUI : MonoBehaviour
         commentText.text = $"{userID}: {text}";
     }
 
-
     public void TogglePanel()
     {
         if (commentingPanel != null)
@@ -173,7 +230,6 @@ public class StoryDetailsUI : MonoBehaviour
             commentingPanel.SetActive(!commentingPanel.activeSelf);
         }
     }
->>>>>>> Stashed changes
 
     public void CloseDetails()
     {
