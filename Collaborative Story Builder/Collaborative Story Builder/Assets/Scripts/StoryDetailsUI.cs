@@ -21,6 +21,10 @@ public class StoryDetailsUI : MonoBehaviour
     public GameObject commentingPanel;
     public TMP_InputField userCommentInputField;
 
+    public Transform commentsContainer;
+    public GameObject commentPrefab;
+    public TMP_Text loveText, funnyText, sadText, angryText;
+
     private void Awake()
     {
         Instance = this;
@@ -36,6 +40,9 @@ public class StoryDetailsUI : MonoBehaviour
 
         this.storyID = storyID;
         updateLikes();
+
+        LoadComments();
+        LoadReactions();
     }
 
     public void updateLikes()
@@ -176,6 +183,162 @@ public class StoryDetailsUI : MonoBehaviour
                 Debug.LogError($"Error fetching story: {task.Exception}");
             }
         });
+    }
+
+    public void LoadComments()
+    {
+        foreach (Transform child in commentsContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        DocumentReference storyRef = db.Collection("Stories").Document(storyID);
+        storyRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                DocumentSnapshot snapshot = task.Result;
+                if (snapshot.Exists && snapshot.ContainsField("comments"))
+                {
+                    List<Dictionary<string, string>> comments = snapshot.GetValue<List<Dictionary<string, string>>>("comments");
+
+                    Dictionary<string, string> userCache = new Dictionary<string, string>();
+
+                    foreach (var comment in comments)
+                    {
+                        string userID = comment["userID"];
+                        string text = comment["text"];
+
+                        if (userCache.ContainsKey(userID))
+                        {
+                            CreateCommentUI(userCache[userID], text);
+                        }
+                        else
+                        {
+                            FetchUsername(userID, text, userCache);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("Failed to load comments: " + task.Exception);
+            }
+        });
+    }
+
+    void FetchUsername(string userID, string text, Dictionary<string, string> userCache)
+    {
+        DocumentReference userRef = db.Collection("Users").Document(userID);
+        userRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                DocumentSnapshot userSnapshot = task.Result;
+                if (userSnapshot.Exists && userSnapshot.ContainsField("username"))
+                {
+                    string username = userSnapshot.GetValue<string>("username");
+                    userCache[userID] = username;
+                    CreateCommentUI(username, text);
+                }
+                else
+                {
+                    Debug.LogWarning($"Username not found for userID: {userID}");
+                    CreateCommentUI("Unknown User", text);
+                }
+            }
+            else
+            {
+                Debug.LogError("Failed to fetch username: " + task.Exception);
+                CreateCommentUI("Unknown User", text);
+            }
+        });
+    }
+
+    void CreateCommentUI(string username, string text)
+    {
+        GameObject newComment = Instantiate(commentPrefab, commentsContainer);
+        TMP_Text commentText = newComment.GetComponent<TMP_Text>();
+        commentText.text = $"{username} said: {text}";
+    }
+
+    public void reactLove()
+    {
+        SaveReaction(0);
+    }
+    public void reactFunny()
+    {
+        SaveReaction(1);
+    }
+    public void reactSad()
+    {
+        SaveReaction(2);
+    }
+    public void reactAngry()
+    {
+        SaveReaction(3);
+    }
+
+    public void SaveReaction(int reactionType)
+    {
+        string[] reactionFields = { "love", "funny", "sad", "angry" };
+
+        if (reactionType < 0 || reactionType >= reactionFields.Length)
+        {
+            Debug.LogError("Invalid reaction type.");
+            return;
+        }
+
+        string selectedReaction = reactionFields[reactionType];
+        DocumentReference storyRef = db.Collection("Stories").Document(storyID);
+
+        storyRef.UpdateAsync(selectedReaction, FieldValue.Increment(1))
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsCompletedSuccessfully)
+                {
+                    Debug.Log($"Reaction '{selectedReaction}' incremented successfully.");
+                    LoadReactions();
+                }
+                else
+                {
+                    Debug.LogError("Failed to save reaction: " + task.Exception);
+                }
+            });
+    }
+
+    public void LoadReactions()
+    {
+        DocumentReference storyRef = db.Collection("Stories").Document(storyID);
+
+        storyRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                DocumentSnapshot snapshot = task.Result;
+                if (snapshot.Exists)
+                {
+                    int love = snapshot.ContainsField("love") ? snapshot.GetValue<int>("love") : 0;
+                    int funny = snapshot.ContainsField("funny") ? snapshot.GetValue<int>("funny") : 0;
+                    int sad = snapshot.ContainsField("sad") ? snapshot.GetValue<int>("sad") : 0;
+                    int angry = snapshot.ContainsField("angry") ? snapshot.GetValue<int>("angry") : 0;
+
+                    UpdateUI(love, funny, sad, angry);
+                }
+            }
+            else
+            {
+                Debug.LogError("Failed to load reactions: " + task.Exception);
+            }
+        });
+    }
+
+    private void UpdateUI(int love, int funny, int sad, int angry)
+    {
+        loveText.text = love.ToString();
+        funnyText.text = funny.ToString();
+        sadText.text = sad.ToString();
+        angryText.text = angry.ToString();
     }
 
     public void TogglePanel()
