@@ -183,45 +183,83 @@ public class StoryDetailsUI : MonoBehaviour
         });
     }
 
-    public void LoadComments()
+public void LoadComments()
+{
+    foreach (Transform child in commentsContainer)
     {
-        foreach (Transform child in commentsContainer)
-        {
-            Destroy(child.gameObject); 
-        }
+        Destroy(child.gameObject); 
+    }
 
-        DocumentReference storyRef = db.Collection("Stories").Document(storyID);
-        storyRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+    DocumentReference storyRef = db.Collection("Stories").Document(storyID);
+    storyRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+    {
+        if (task.IsCompletedSuccessfully)
         {
-            if (task.IsCompletedSuccessfully)
+            DocumentSnapshot snapshot = task.Result;
+            if (snapshot.Exists && snapshot.ContainsField("comments"))
             {
-                DocumentSnapshot snapshot = task.Result;
-                if (snapshot.Exists && snapshot.ContainsField("comments"))
-                {
-                    List<Dictionary<string, string>> comments = snapshot.GetValue<List<Dictionary<string, string>>>("comments");
+                List<Dictionary<string, string>> comments = snapshot.GetValue<List<Dictionary<string, string>>>("comments");
 
-                    foreach (var comment in comments)
+                Dictionary<string, string> userCache = new Dictionary<string, string>();
+
+                foreach (var comment in comments)
+                {
+                    string userID = comment["userID"];
+                    string text = comment["text"];
+
+                    if (userCache.ContainsKey(userID))
                     {
-                        string userID = comment["userID"];
-                        string text = comment["text"];
-                        CreateCommentUI(userID, text);
+                        CreateCommentUI(userCache[userID], text);
+                    }
+                    else
+                    {
+                        FetchUsername(userID, text, userCache);
                     }
                 }
             }
+        }
+        else
+        {
+            Debug.LogError("Failed to load comments: " + task.Exception);
+        }
+    });
+}
+
+void FetchUsername(string userID, string text, Dictionary<string, string> userCache)
+{
+    DocumentReference userRef = db.Collection("Users").Document(userID);
+    userRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+    {
+        if (task.IsCompletedSuccessfully)
+        {
+            DocumentSnapshot userSnapshot = task.Result;
+            if (userSnapshot.Exists && userSnapshot.ContainsField("username"))
+            {
+                string username = userSnapshot.GetValue<string>("username");
+                userCache[userID] = username; 
+                CreateCommentUI(username, text);
+            }
             else
             {
-                Debug.LogError("Failed to load comments: " + task.Exception);
+                Debug.LogWarning($"Username not found for userID: {userID}");
+                CreateCommentUI("Unknown User", text);
             }
-        });
-    }
+        }
+        else
+        {
+            Debug.LogError("Failed to fetch username: " + task.Exception);
+            CreateCommentUI("Unknown User", text);
+        }
+    });
+}
 
-    void CreateCommentUI(string userID, string text)
-    {
-        GameObject newComment = Instantiate(commentPrefab, commentsContainer);
-        TMP_Text commentText = newComment.GetComponent<TMP_Text>();
+void CreateCommentUI(string username, string text)
+{
+    GameObject newComment = Instantiate(commentPrefab, commentsContainer);
+    TMP_Text commentText = newComment.GetComponent<TMP_Text>();
+    commentText.text = $"{username} said: {text}";
+}
 
-        commentText.text = $"{userID}: {text}";
-    }
 
     public void TogglePanel()
     {
