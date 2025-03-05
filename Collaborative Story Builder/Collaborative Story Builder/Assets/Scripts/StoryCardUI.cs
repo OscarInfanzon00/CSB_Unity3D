@@ -9,6 +9,7 @@ public class StoryCardUI : MonoBehaviour
     public TMP_Text authorText;
     public Button openDetailsButton;
     public GameObject StoryViewerUI;
+    public GameObject friendTag;
     private Story storyData;
     public string storyID;
 
@@ -24,5 +25,9 @@ public class StoryCardUI : MonoBehaviour
     {
         StoryViewerUI.SetActive(true);
         StoryViewerUI.GetComponent<StoryDetailsUI>().ShowStoryDetails(storyData, storyID);
+    }
+
+    public void activateFriends(){
+        friendTag.SetActive(true);
     }
 }
