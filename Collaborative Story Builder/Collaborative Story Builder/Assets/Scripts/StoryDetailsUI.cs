@@ -30,7 +30,6 @@ public class StoryDetailsUI : MonoBehaviour
         Instance = this;
         closeButton.onClick.AddListener(CloseDetails);
         db = FirebaseFirestore.DefaultInstance;
-        
     }
 
     public void ShowStoryDetails(Story story, string storyID)

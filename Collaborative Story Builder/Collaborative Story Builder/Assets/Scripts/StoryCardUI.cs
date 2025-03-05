@@ -10,8 +10,11 @@ public class StoryCardUI : MonoBehaviour
     public Button openDetailsButton;
     public GameObject StoryViewerUI;
     public GameObject friendTag;
+    public GameObject summarizePanel;
+    public TextMeshProUGUI summaryText;
     private Story storyData;
     public string storyID;
+
 
     public void SetStoryInfo(Story story)
     {
@@ -30,4 +33,20 @@ public class StoryCardUI : MonoBehaviour
     public void activateFriends(){
         friendTag.SetActive(true);
     }
+
+public void summarizeStory(){
+    if(summarizePanel.activeSelf){  
+        summarizePanel.SetActive(false);
+    } else {
+        summarizePanel.SetActive(true);
+
+        string combinedStoryText = string.Join("\n\n", storyData.storyTexts);
+
+        StartCoroutine(AI_Manager.GetChatCompletion("Summarize this story a few words, what is it about?: " + combinedStoryText, response =>
+        {
+            summaryText.text = response.ToString();
+        }));
+    }
+}
+
 }
