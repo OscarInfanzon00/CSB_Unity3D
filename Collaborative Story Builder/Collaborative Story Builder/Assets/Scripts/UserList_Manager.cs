@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,8 +8,6 @@ using Firebase.Auth;
 using Firebase.Firestore;
 using Firebase.Extensions;
 
-
-
 public class UserList_Manager : MonoBehaviour
 {
     public GameObject UserListUI;
@@ -17,17 +15,20 @@ public class UserList_Manager : MonoBehaviour
     public GameObject UserElementPrefab;
     public Button openUserListButton, closeButton;
     public TMP_Text totalUsersText;
+    public TMP_InputField searchField; 
     public BlockManager blockManager;
     public ReportManager reportManager;
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private string currentUserId;
+    private List<(string userID, string username)> allUsers = new List<(string, string)>();
 
     void Start()
     {
         openUserListButton.onClick.AddListener(OpenUserList);
         closeButton.onClick.AddListener(CloseMenu);
+        searchField.onValueChanged.AddListener(FilterUserList); 
 
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
@@ -38,7 +39,7 @@ public class UserList_Manager : MonoBehaviour
 
                 if (auth.CurrentUser != null)
                 {
-                    currentUserId = auth.CurrentUser.UserId;  // Get logged-in user ID
+                    currentUserId = auth.CurrentUser.UserId;
                     Debug.Log("Logged in as: " + currentUserId);
                     GetTotalUsers();
                 }
@@ -84,6 +85,8 @@ public class UserList_Manager : MonoBehaviour
 
     private void LoadUserList()
     {
+        allUsers.Clear(); 
+
         foreach (Transform child in contentArea)
         {
             Destroy(child.gameObject);
@@ -95,29 +98,22 @@ public class UserList_Manager : MonoBehaviour
         {
             if (task.IsCompletedSuccessfully)
             {
-                int totalDocuments = task.Result.Count;
-                Debug.Log($"Firestore returned {totalDocuments} user documents."); 
-
-                int count = 0; // Track number of users processed
+                Debug.Log($"Firestore returned {task.Result.Count} user documents.");
 
                 foreach (DocumentSnapshot doc in task.Result.Documents)
                 {
                     try
                     {
                         Dictionary<string, object> data = doc.ToDictionary();
-                        Debug.Log($"Processing Document ID: {doc.Id}"); 
 
                         if (data.ContainsKey("username") && data.ContainsKey("userID"))
                         {
                             string username = data["username"].ToString();
                             string userID = data["userID"].ToString();
 
-                            Debug.Log($"User {count + 1}: Username = {username}, ID = {userID}");
-
-                            if (userID != currentUserId) // Don't show yourself in the list
+                            if (userID != currentUserId) // Exclude the current user
                             {
-                                count++;
-                                CreateUserCard(userID, username);
+                                allUsers.Add((userID, username)); 
                             }
                         }
                         else
@@ -131,7 +127,8 @@ public class UserList_Manager : MonoBehaviour
                     }
                 }
 
-                Debug.Log($"Total Users Retrieved and Processed from Firestore: {count}");
+               
+                FilterUserList(searchField.text);
             }
             else
             {
@@ -140,55 +137,47 @@ public class UserList_Manager : MonoBehaviour
         });
     }
 
+    private void FilterUserList(string searchText)
+    {
+        foreach (Transform child in contentArea)
+        {
+            Destroy(child.gameObject);
+        }
 
+        string searchLower = searchText.ToLower();
 
+        int count = 0;
+        foreach (var user in allUsers)
+        {
+            if (user.username.ToLower().Contains(searchLower)) 
+            {
+                CreateUserCard(user.userID, user.username);
+                count++;
+            }
+        }
+
+        Debug.Log($"Filtered Users: {count} matching '{searchText}'");
+    }
 
     private void CreateUserCard(string userID, string username)
     {
-        Debug.Log($"Creating user card for: {username} (ID: {userID})");
-
-        if (UserElementPrefab == null)
-        {
-            Debug.LogError("UserElementPrefab is not assigned in the Inspector.");
-            return;
-        }
-
         GameObject newUserCard = Instantiate(UserElementPrefab, contentArea);
-        if (newUserCard == null)
-        {
-            Debug.LogError("Failed to instantiate UserElementPrefab.");
-            return;
-        }
-
         User_Element_Controller userController = newUserCard.GetComponent<User_Element_Controller>();
-        if (userController == null)
-        {
-            Debug.LogError("User_Element_Controller script is missing on the instantiated prefab.");
-            return;
-        }
 
-        if (userController.usernameText == null)
+        if (userController == null || userController.usernameText == null)
         {
-            Debug.LogError("usernameText is not assigned in User_Element_Controller. Check the prefab setup.");
+            Debug.LogError("User_Element_Controller or usernameText is missing on the instantiated prefab.");
             return;
         }
 
         userController.usernameText.text = username;
 
-        // Ensure buttons are assigned before adding listeners
         if (userController.blockButton != null)
         {
             userController.blockButton.onClick.RemoveAllListeners();
             userController.blockButton.onClick.AddListener(() =>
             {
-                if (blockManager != null)
-                {
-                    blockManager.OnBlockButtonPressed(userID);
-                }
-                else
-                {
-                    Debug.LogError("BlockManager reference is missing.");
-                }
+                blockManager?.OnBlockButtonPressed(userID);
             });
         }
 
@@ -197,43 +186,29 @@ public class UserList_Manager : MonoBehaviour
             userController.reportButton.onClick.RemoveAllListeners();
             userController.reportButton.onClick.AddListener(() =>
             {
-                if (reportManager != null)
-                {
-                    reportManager.OpenReportPopup(userID);
-                }
-                else
-                {
-                    Debug.LogError("ReportManager reference is missing.");
-                }
+                reportManager?.OpenReportPopup(userID);
             });
         }
 
         if (userController.addFriendButton != null)
         {
             userController.addFriendButton.onClick.RemoveAllListeners();
-
-            // Check if user is already a friend
             db.Collection("Friends").Document(currentUserId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
             {
                 if (task.IsCompletedSuccessfully)
                 {
                     DocumentSnapshot snapshot = task.Result;
-                    List<string> friendsList = new List<string>();
-
-                    if (snapshot.Exists && snapshot.ContainsField("friends"))
-                    {
-                        friendsList = snapshot.GetValue<List<string>>("friends");
-                    }
+                    List<string> friendsList = snapshot.Exists && snapshot.ContainsField("friends")
+                        ? snapshot.GetValue<List<string>>("friends")
+                        : new List<string>();
 
                     if (friendsList.Contains(userID))
                     {
-                        // If already friends, update the button text
                         userController.addFriendButton.GetComponentInChildren<TMP_Text>().text = "Already Friends";
-                        userController.addFriendButton.interactable = false; // Disable the button
+                        userController.addFriendButton.interactable = false;
                     }
                     else
                     {
-                        // If not friends, allow adding
                         userController.addFriendButton.GetComponentInChildren<TMP_Text>().text = "Add Friend";
                         userController.addFriendButton.onClick.AddListener(() =>
                         {
@@ -249,9 +224,6 @@ public class UserList_Manager : MonoBehaviour
         }
     }
 
-
-
-
     public void AddFriend(string friendId)
     {
         if (string.IsNullOrEmpty(currentUserId))
@@ -261,18 +233,14 @@ public class UserList_Manager : MonoBehaviour
         }
 
         DocumentReference docRef = db.Collection("Friends").Document(currentUserId);
-
         docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
             {
                 DocumentSnapshot snapshot = task.Result;
-                List<string> friendsList = new List<string>();
-
-                if (snapshot.Exists && snapshot.ContainsField("friends"))
-                {
-                    friendsList = snapshot.GetValue<List<string>>("friends");
-                }
+                List<string> friendsList = snapshot.Exists && snapshot.ContainsField("friends")
+                    ? snapshot.GetValue<List<string>>("friends")
+                    : new List<string>();
 
                 if (!friendsList.Contains(friendId))
                 {
@@ -302,4 +270,3 @@ public class UserList_Manager : MonoBehaviour
         });
     }
 }
-

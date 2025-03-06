@@ -8,6 +8,7 @@ using Firebase.Auth;
 using Firebase.Firestore;
 using Firebase.Extensions;
 
+
 public class FriendsListManager : MonoBehaviour
 {
     public GameObject FriendListUI;
@@ -16,6 +17,7 @@ public class FriendsListManager : MonoBehaviour
     public TMP_Text friendsCounterText;
     public Button closeButton;
     public Button refreshButton;
+    public TMP_InputField searchField; // 🆕 Search input field
 
     public GameObject friendsPopup;
     public TMP_Text popupUsernameText;
@@ -29,12 +31,15 @@ public class FriendsListManager : MonoBehaviour
     private string currentUserId;
     private string selectedFriendId;
 
+    private List<(string friendId, string username, int level, int words)> allFriends = new(); // 🆕 Store all friends
+
     void Start()
     {
         closeFriendPopupBtn.onClick.AddListener(CloseFriendsPopup);
         closeButton.onClick.AddListener(CloseFriendsPanel);
         removeFriendButton.onClick.AddListener(RemoveFriend);
         refreshButton.onClick.AddListener(LoadFriendsList);
+        searchField.onValueChanged.AddListener(FilterFriendsList); // 🆕 Add search listener
 
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
@@ -60,6 +65,8 @@ public class FriendsListManager : MonoBehaviour
 
     private void LoadFriendsList()
     {
+        allFriends.Clear(); // 🆕 Clear stored friends
+
         foreach (Transform child in contentArea)
         {
             Destroy(child.gameObject);
@@ -106,12 +113,36 @@ public class FriendsListManager : MonoBehaviour
                     int level = friendSnapshot.ContainsField("userLevel") ? friendSnapshot.GetValue<int>("userLevel") : 0;
                     int words = friendSnapshot.ContainsField("words") ? friendSnapshot.GetValue<int>("words") : 0;
 
-                    username = FormatUsername(username); // Modify username if it contains "@"
+                    username = FormatUsername(username);
 
-                    CreateFriendCard(friendId, username, level, words);
+                    allFriends.Add((friendId, username, level, words)); // 🆕 Store friend in list
+
+                    FilterFriendsList(searchField.text); // 🆕 Refresh displayed friends
                 }
             }
         });
+    }
+
+    private void FilterFriendsList(string searchText)
+    {
+        foreach (Transform child in contentArea)
+        {
+            Destroy(child.gameObject);
+        }
+
+        string searchLower = searchText.ToLower();
+
+        int count = 0;
+        foreach (var friend in allFriends)
+        {
+            if (friend.username.ToLower().Contains(searchLower)) // Case-insensitive search
+            {
+                CreateFriendCard(friend.friendId, friend.username, friend.level, friend.words);
+                count++;
+            }
+        }
+
+        Debug.Log($"Filtered Friends: {count} matching '{searchText}'");
     }
 
     private void CreateFriendCard(string friendId, string username, int level, int words)
@@ -156,7 +187,7 @@ public class FriendsListManager : MonoBehaviour
     public void OpenFriendsPopup(string friendId, string username, int level, int words)
     {
         selectedFriendId = friendId;
-        username = FormatUsername(username); // Ensure formatted username in popup
+        username = FormatUsername(username);
 
         if (popupUsernameText != null) popupUsernameText.text = username;
         if (popupLevelText != null) popupLevelText.text = "Level: " + level;
