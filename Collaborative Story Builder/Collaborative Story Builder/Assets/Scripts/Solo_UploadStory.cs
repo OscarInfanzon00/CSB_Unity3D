@@ -160,6 +160,8 @@ public class Solo_UploadStory : MonoBehaviour
             item.GetComponentInChildren<TMP_Text>().text = word;
             item.GetComponentInChildren<Button>().onClick.AddListener(() => RemoveBannedWord(word));
         }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(bannedWordsListContent.GetComponent<RectTransform>());
+
     }
 
     public void ClearBannedWordsForNewStory()
@@ -204,6 +206,7 @@ public class Solo_UploadStory : MonoBehaviour
             item.GetComponentInChildren<TMP_Text>().text = word;
             item.GetComponentInChildren<Button>().onClick.AddListener(() => RemoveRequiredWord(word));
         }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(requiredWordsListContent.GetComponent<RectTransform>());
     }
     private bool ContainsAllRequiredWords(string storyText) {
         foreach (string word in currentStoryRequiredWords)

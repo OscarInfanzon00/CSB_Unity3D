@@ -3153,37 +3153,76 @@ MonoBehaviour:
   - {fileID: 1452263143}
   uiButtons:
   - {fileID: 1006323689}
+  uiTexts:
+  - {fileID: 1685424123}
+  - {fileID: 1650002627}
   genreThemes:
   - genreName: Sci-fi
     backgroundImages:
     - {fileID: 21300000, guid: eeb0e9f70ba6e664e9e6d064e13c821c, type: 3}
     panelImages:
-    - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-    - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-    - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-    - {fileID: 21300000, guid: e4430d406d9e002418f1d3cf864fb0ff, type: 3}
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: f57b3e44b93713946ae7087873829395, type: 3}
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: 2fdc725d8597ae048aff5051148dd2b9, type: 3}
+    - {fileID: 21300000, guid: eeffb356a8b699142855c2591a58ba76, type: 3}
     panelColors:
-    - {r: 0.7837444, g: 0.2971698, b: 1, a: 1}
-    - {r: 0.7529412, g: 0.28627452, b: 0.9647059, a: 1}
-    - {r: 0.7764706, g: 0.29803923, b: 1, a: 1}
-    - {r: 0.32851884, g: 0, b: 0.6509434, a: 1}
-    - {r: 0.73942786, g: 0.5821022, b: 0.9716981, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 0.27058825, g: 0.8392157, b: 0.9647059, a: 1}
     buttonImages:
-    - {fileID: 21300000, guid: d7d480a22b9c1f64bb6d748bf353e45b, type: 3}
+    - {fileID: 21300000, guid: 356796e48f465de499bee3899ee6f7aa, type: 3}
     buttonColors:
-    - {r: 0.5462432, g: 0.3009968, b: 0.7169812, a: 1}
+    - {r: 0.28773582, g: 0.8676728, b: 1, a: 1}
+    textColors:
+    - {r: 0, g: 0, b: 0, a: 1}
+    - {r: 0, g: 0, b: 0, a: 1}
   - genreName: Fantasy
-    backgroundImages: []
-    panelImages: []
-    panelColors: []
-    buttonImages: []
-    buttonColors: []
+    backgroundImages:
+    - {fileID: 21300000, guid: b0efbc267bf5af34ebc3f2f8e5488a47, type: 3}
+    panelImages:
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: f57b3e44b93713946ae7087873829395, type: 3}
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: 2fdc725d8597ae048aff5051148dd2b9, type: 3}
+    - {fileID: 21300000, guid: eeffb356a8b699142855c2591a58ba76, type: 3}
+    panelColors:
+    - {r: 0, g: 0.3018868, b: 0.07058601, a: 1}
+    - {r: 0.007843138, g: 0.3019608, b: 0.07058824, a: 1}
+    - {r: 0.007843138, g: 0.3019608, b: 0.07058824, a: 1}
+    - {r: 0.33962262, g: 0.17666289, b: 0.12655748, a: 1}
+    - {r: 1, g: 0.93299586, b: 0.7971698, a: 1}
+    buttonImages:
+    - {fileID: 21300000, guid: 356796e48f465de499bee3899ee6f7aa, type: 3}
+    buttonColors:
+    - {r: 0, g: 0.6132076, b: 0.1181687, a: 1}
+    textColors:
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 0, g: 0, b: 0, a: 1}
   - genreName: Horror
-    backgroundImages: []
-    panelImages: []
-    panelColors: []
-    buttonImages: []
-    buttonColors: []
+    backgroundImages:
+    - {fileID: 21300000, guid: eeb0e9f70ba6e664e9e6d064e13c821c, type: 3}
+    panelImages:
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: f57b3e44b93713946ae7087873829395, type: 3}
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: 2fdc725d8597ae048aff5051148dd2b9, type: 3}
+    - {fileID: 21300000, guid: eeffb356a8b699142855c2591a58ba76, type: 3}
+    panelColors:
+    - {r: 0, g: 0, b: 0, a: 1}
+    - {r: 0, g: 0, b: 0, a: 1}
+    - {r: 0, g: 0, b: 0, a: 1}
+    - {r: 1, g: 0, b: 0, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    buttonImages:
+    - {fileID: 21300000, guid: 356796e48f465de499bee3899ee6f7aa, type: 3}
+    buttonColors:
+    - {r: 1, g: 1, b: 1, a: 1}
+    textColors:
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 0, g: 0, b: 0, a: 1}
 --- !u!4 &1322150337
 Transform:
   m_ObjectHideFlags: 0
@@ -3617,7 +3656,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 619964666}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9933627
+  m_Size: 0.9889507
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4172,7 +4211,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0004340978}
+  m_AnchoredPosition: {x: 0, y: 0.0007774281}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1613739172

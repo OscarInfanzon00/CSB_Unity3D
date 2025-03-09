@@ -14,12 +14,14 @@ public class GenreStyleChanger : MonoBehaviour
         public List<Color> panelColors = new List<Color>(); // Match count with UI panels
         public List<Sprite> buttonImages = new List<Sprite>(); // Match count with UI buttons
         public List<Color> buttonColors = new List<Color>(); // Match count with UI buttons
+        public List<Color> textColors = new List<Color>();
     }
 
     public TMP_Dropdown genreDropdown;
     public List<Image> backgroundImages;
     public List<Image> uiPanels;
     public List<Button> uiButtons;
+    public List<TextMeshProUGUI> uiTexts; 
     public List<GenreTheme> genreThemes;
 
     // Stores default values
@@ -28,7 +30,7 @@ public class GenreStyleChanger : MonoBehaviour
     private List<Color> defaultPanelColors = new List<Color>();
     private List<Sprite> defaultButtonImages = new List<Sprite>();
     private List<Color> defaultButtonColors = new List<Color>();
-
+    private List<Color> defaultTextColors = new List<Color>();
     void Start()
     {
         SaveDefaultTheme(); // Save initial appearance
@@ -53,6 +55,8 @@ public class GenreStyleChanger : MonoBehaviour
             if (buttonImage != null) defaultButtonImages.Add(buttonImage.sprite);
             defaultButtonColors.Add(uiButtons[i].colors.normalColor);
         }
+        for (int i = 0; i < uiTexts.Count; i++)
+            defaultTextColors.Add(uiTexts[i].color);
     }
 
     void InitializeDropdown()
@@ -114,6 +118,11 @@ public class GenreStyleChanger : MonoBehaviour
                 uiButtons[i].colors = colors;
             }
         }
+        for (int i = 0; i < uiTexts.Count; i++)
+        {
+            if (i < selectedTheme.textColors.Count)
+                uiTexts[i].color = selectedTheme.textColors[i];
+        }
     }
 
     void ResetToDefault()
@@ -143,6 +152,9 @@ public class GenreStyleChanger : MonoBehaviour
             colors.disabledColor = defaultButtonColors[i] * 0.5f;
             uiButtons[i].colors = colors;
         }
+
+        for (int i = 0; i < uiTexts.Count; i++)
+            uiTexts[i].color = defaultTextColors[i];
     }
 }
 
