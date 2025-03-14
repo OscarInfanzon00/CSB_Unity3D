@@ -1228,6 +1228,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6337091109919342347, guid: 4694e0953549db64a99a1afcbb6aea8c, type: 3}
       insertIndex: 4
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
       insertIndex: 1
       addedObject: {fileID: 538268667}
@@ -1249,6 +1250,8 @@ PrefabInstance:
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 =======
 >>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
       addedObject: {fileID: 1245699925}
@@ -2002,6 +2005,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 162889213}
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1 &145332702
 GameObject:
   m_ObjectHideFlags: 0
@@ -2546,6 +2550,8 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 145332702}
   m_CullTransparentMesh: 1
+=======
+>>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 =======
 >>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 --- !u!1 &164314611
@@ -5675,6 +5681,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 456814941}
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
 --- !u!1 &460406463
@@ -5955,6 +5962,8 @@ CanvasRenderer:
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 =======
 >>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 --- !u!1 &467676348
@@ -8062,6 +8071,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 632683699}
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -8264,6 +8274,8 @@ CanvasRenderer:
   m_GameObject: {fileID: 636045838}
   m_CullTransparentMesh: 1
 >>>>>>> Stashed changes
+=======
+>>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 =======
 >>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 --- !u!1 &639579332
@@ -14254,6 +14266,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 1098585694}
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -14457,6 +14470,8 @@ CanvasRenderer:
 >>>>>>> Stashed changes
 =======
 >>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
+=======
+>>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 --- !u!1 &1117337034
 GameObject:
   m_ObjectHideFlags: 0
@@ -14608,6 +14623,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1123549920}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -14974,6 +14990,8 @@ CanvasRenderer:
   m_GameObject: {fileID: 1139004189}
   m_CullTransparentMesh: 1
 >>>>>>> Stashed changes
+=======
+>>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 =======
 >>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 --- !u!1001 &1145952203
@@ -16961,6 +16979,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 1358527109}
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1 &1365299526
 GameObject:
   m_ObjectHideFlags: 0
@@ -17269,6 +17288,8 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1365299526}
   m_CullTransparentMesh: 1
+=======
+>>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 =======
 >>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 --- !u!1 &1365524058
@@ -19202,6 +19223,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 1550117068}
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -19443,6 +19465,8 @@ CanvasRenderer:
   m_GameObject: {fileID: 1565414735}
   m_CullTransparentMesh: 1
 >>>>>>> Stashed changes
+=======
+>>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 =======
 >>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 --- !u!1 &1570688164
@@ -19966,6 +19990,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 1600533745}
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -20057,6 +20082,9 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 --- !u!1 &1626801872
 >>>>>>> Stashed changes
+=======
+--- !u!1 &1636490458
+>>>>>>> parent of 46e0901 (Daily Challenges added to mainMenu)
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
