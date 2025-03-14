@@ -2,15 +2,6 @@ using UnityEngine;
 
 public class BookMarkController : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
 
     public void saveBookmark(string id){
         string bookMarkList = PlayerPrefs.GetString("SavedBookMarkList");
@@ -29,10 +20,10 @@ public class BookMarkController : MonoBehaviour
 
     }
 
-    public void getBookmarks(string id){
+    public void getBookmarks(){
         string bookMarkList = PlayerPrefs.GetString("SavedBookMarkList");
         string[] result = bookMarkList.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
-
+        
         
 
 
