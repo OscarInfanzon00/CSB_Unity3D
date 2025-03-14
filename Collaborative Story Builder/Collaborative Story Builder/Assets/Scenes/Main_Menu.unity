@@ -3866,6 +3866,7 @@ RectTransform:
   - {fileID: 609559779}
   - {fileID: 517480717}
   - {fileID: 91949130}
+  - {fileID: 1846783893}
   - {fileID: 1654764254}
   - {fileID: 1686324018}
   - {fileID: 895516970}
@@ -19648,7 +19649,6 @@ RectTransform:
   - {fileID: 1139004190}
   - {fileID: 2042420410}
   - {fileID: 7655051804783453727}
-  - {fileID: 1846783893}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -20519,10 +20519,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Bookmarkeds
+  m_text: 'Bookmark List
+
+'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c40630a094af278428ba232a14807278, type: 2}
+  m_sharedMaterial: {fileID: -96834054162728800, guid: c40630a094af278428ba232a14807278, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -24190,7 +24192,7 @@ GameObject:
   - component: {fileID: 1846783895}
   - component: {fileID: 1846783894}
   m_Layer: 0
-  m_Name: Button
+  m_Name: BookmarkButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24203,17 +24205,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1846783892}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1629135029}
-  m_Father: {fileID: 1540796831}
+  m_Father: {fileID: 317526638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -181, y: 68}
+  m_AnchoredPosition: {x: -539.35, y: 1642}
   m_SizeDelta: {x: 336.5216, y: 88.23389}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1846783894
