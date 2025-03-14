@@ -17,7 +17,17 @@ public class TranslatorAPI : MonoBehaviour
     {
         translateButton.onClick.AddListener(OnTranslateButtonClicked);
     }
-
+    private void Update()
+    {
+        if(Settings.inputLangTranslation != inputLanguage)
+        {
+            inputLanguage = Settings.inputLangTranslation;
+        }
+        if (Settings.outputLangTranslation != outputLanguage)
+        {
+            outputLanguage = Settings.outputLangTranslation;
+        }
+    }
     void OnTranslateButtonClicked()
     {
         if (!string.IsNullOrEmpty(inputField.text))
