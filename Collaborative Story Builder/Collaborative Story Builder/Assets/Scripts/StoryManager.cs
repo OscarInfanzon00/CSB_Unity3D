@@ -20,6 +20,8 @@ public class StoryManager : MonoBehaviour
         db = FirebaseFirestore.DefaultInstance;
         currentUser = FirebaseAuth.DefaultInstance.CurrentUser;
         LoadFriends();
+        LoadStories(); 
+
     }
 
     void LoadFriends()
@@ -40,7 +42,6 @@ public class StoryManager : MonoBehaviour
                             friendsSet.Add(friend.ToString());
                         }
                     }
-                    LoadStories(); 
                 }
                 else
                 {
