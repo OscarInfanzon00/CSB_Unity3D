@@ -3994,7 +3994,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 313604340120687705, guid: 90f676832fc5bb0469917279d1f985ab, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 21.000061
+      value: 21.00003
       objectReference: {fileID: 0}
     - target: {fileID: 313604340120687705, guid: 90f676832fc5bb0469917279d1f985ab, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -7529,7 +7529,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 62.3
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -20262,9 +20262,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7655051804783453728}
-        m_TargetAssemblyTypeName: SettingsScript, Assembly-CSharp
-        m_MethodName: SwitchSettingPanel
+      - m_Target: {fileID: 6659654983815927120}
+        m_TargetAssemblyTypeName: AchievementsManagerScript, Assembly-CSharp
+        m_MethodName: SwitchAchievementPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -29471,9 +29471,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: SettingsScript, Assembly-CSharp
-        m_MethodName: SwitchSettingPanel
+      - m_Target: {fileID: 6659654983815927120}
+        m_TargetAssemblyTypeName: AchievementsManagerScript, Assembly-CSharp
+        m_MethodName: SwitchAchievementPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -30505,18 +30505,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5005663b25bfeac4ab0caccdd4c92932, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  achievementPrefabs:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  achievementPrefabs: []
   gridParent: {fileID: 3475612756500517746}
+  AchievementPanel: {fileID: 581029689872078375}
 --- !u!224 &6904244227067166288
 RectTransform:
   m_ObjectHideFlags: 0
