@@ -32,6 +32,7 @@ public class Main_MenuActivity : MonoBehaviour
         openTestingRoomButton.onClick.AddListener(openTestingRoom);
         AiGenMenuBtn.onClick.AddListener(openAiGenMenu);
 
+        AchivementNotificationManager.Instance.Notify("name", "unlocked");
 
         user = User.GetUser();
 
