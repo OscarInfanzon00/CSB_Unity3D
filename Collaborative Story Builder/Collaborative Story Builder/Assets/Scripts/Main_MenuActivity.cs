@@ -32,7 +32,6 @@ public class Main_MenuActivity : MonoBehaviour
         openTestingRoomButton.onClick.AddListener(openTestingRoom);
         AiGenMenuBtn.onClick.AddListener(openAiGenMenu);
 
-
         user = User.GetUser();
 
         if (user.Username!="defaultUser")
