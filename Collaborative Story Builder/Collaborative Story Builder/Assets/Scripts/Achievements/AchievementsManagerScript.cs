@@ -11,7 +11,7 @@ public class AchievementsManagerScript : MonoBehaviour
     public List<GameObject> achievementPrefabs;
     public Transform gridParent;
     public GameObject AchievementPanel;
-    public int ID;
+    public int lastAchievementID;
     void Start()
     {
         InstantiateAchievementGrid();
@@ -36,7 +36,10 @@ public class AchievementsManagerScript : MonoBehaviour
                 break;
         }
     }
-
+    public void ObtainAchievement()
+    {
+        //switch(lastAchievementID)
+    }
     
     public void AddAchievementToDatabase()
     {
@@ -50,7 +53,7 @@ public class AchievementsManagerScript : MonoBehaviour
         }
 
         string userID = user.UserId;
-        string achievementID = ID.ToString(); // achievementID;
+        string achievementID = lastAchievementID.ToString(); // achievementID;
 
         //if (string.IsNullOrEmpty(commentText))
         //{
