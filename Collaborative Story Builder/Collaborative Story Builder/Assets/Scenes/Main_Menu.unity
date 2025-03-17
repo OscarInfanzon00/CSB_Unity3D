@@ -7728,7 +7728,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 62.3
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -31692,7 +31692,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5005663b25bfeac4ab0caccdd4c92932, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  achievementPrefabs: []
+  achievementPrefabs:
+  - {fileID: 8729566549900390009, guid: 6167f0e29de1eb24bb7d4abc66644f6c, type: 3}
+  - {fileID: 9021038818979988612, guid: ab5a3f8f3de37534698cda1eaac026f0, type: 3}
+  - {fileID: 5094350296088690548, guid: f6a2ce36c9b83ea428b18a29249d91d9, type: 3}
+  - {fileID: 6880286700089458714, guid: c2d502edbbe9bed43a40abb1ebe8b26d, type: 3}
+  - {fileID: 4634060335267388443, guid: e9c3edf3f9f1ebc458ef29bd09da16b7, type: 3}
   gridParent: {fileID: 3475612756500517746}
   AchievementPanel: {fileID: 581029689872078375}
 --- !u!224 &6904244227067166288
