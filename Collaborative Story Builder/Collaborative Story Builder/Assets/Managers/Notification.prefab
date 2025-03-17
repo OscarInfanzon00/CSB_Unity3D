@@ -155,7 +155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &741050922237914816
 RectTransform:
   m_ObjectHideFlags: 0
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9c93640899211d4295ca1fcc0843087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  notificationText: {fileID: 0}
+  notificationText: {fileID: 2112733209042438093}
   canvasGroup: {fileID: 2140530208751459994}
   fadeDuration: 0.5
   displayTime: 3
