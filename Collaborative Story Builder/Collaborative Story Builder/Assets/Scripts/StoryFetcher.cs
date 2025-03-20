@@ -9,6 +9,7 @@ public class StoryFetcher : MonoBehaviour
     public Button closeButton;
     public TMP_Text storyText;
     public GameObject storyPopup, AiGenMenuPopup;
+    public NotificationManager notification;
 
     private string placeholderText = "Fetching your story... Please wait.";
     private string errorText = "Oops! Something went wrong. Try again.";
@@ -42,6 +43,7 @@ public class StoryFetcher : MonoBehaviour
             {
                 Debug.Log("AI Response: " + response);
                 storyText.text = response;
+                notification.Notify("Your AI story was succesfully generated. Enjoy it!", 3f);
             }
             else
             {

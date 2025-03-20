@@ -9,6 +9,10 @@ public class User_Element_Controller : MonoBehaviour
     public Button reportButton;
     public Button blockButton;
 
+    void Awake()
+    {
+        
+    }
 
     public void Setup(string username, string userID, UserList_Manager userManager)
     {
@@ -20,7 +24,6 @@ public class User_Element_Controller : MonoBehaviour
             userManager.AddFriend(userID);
         });
 
- 
         reportButton.onClick.RemoveAllListeners();
         reportButton.onClick.AddListener(() =>
         {

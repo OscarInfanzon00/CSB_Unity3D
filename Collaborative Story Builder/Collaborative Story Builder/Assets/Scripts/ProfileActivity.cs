@@ -19,6 +19,7 @@ public class ProfileActivity : MonoBehaviour
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
     public TextMeshProUGUI txtWordCounter;
+    public NotificationManager notification;
 
     public int maxImageSize = 512;
     private string persistentImageName = "profilePic.png";
@@ -89,6 +90,7 @@ public class ProfileActivity : MonoBehaviour
         PlayerPrefs.SetString("SavedUsername", username.text);
         PlayerPrefs.Save();
         usernameMainMenuText.text = username.text;
+        notification.Notify("The new username has been saved!", 3f);
     }
 
     private void closeProfile()
