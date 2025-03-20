@@ -30,23 +30,47 @@ public class StoryCardUI : MonoBehaviour
         StoryViewerUI.GetComponent<StoryDetailsUI>().ShowStoryDetails(storyData, storyID);
     }
 
-    public void activateFriends(){
+    public void activateFriends()
+    {
         friendTag.SetActive(true);
     }
 
-public void summarizeStory(){
-    if(summarizePanel.activeSelf){  
-        summarizePanel.SetActive(false);
-    } else {
-        summarizePanel.SetActive(true);
-
-        string combinedStoryText = string.Join("\n\n", storyData.storyTexts);
-
-        StartCoroutine(AI_Manager.GetChatCompletion("Summarize this story a few words, what is it about?: " + combinedStoryText, response =>
+    public void summarizeStory()
+    {
+        if (summarizePanel.activeSelf)
         {
-            summaryText.text = response.ToString();
-        }));
+            summarizePanel.SetActive(false);
+        }
+        else
+        {
+            summarizePanel.SetActive(true);
+
+            string combinedStoryText = string.Join("\n\n", storyData.storyTexts);
+
+            StartCoroutine(AI_Manager.GetChatCompletion("Summarize this story a few words, what is it about?: " + combinedStoryText, response =>
+            {
+                summaryText.text = response.ToString();
+            }));
+        }
     }
-}
+
+    public void saveBookmark()
+    {
+        string bookMarkList = PlayerPrefs.GetString("SavedBookMarkList");
+
+        string finalBookList;
+
+        if (bookMarkList.Length > 0)
+        {
+            finalBookList = bookMarkList + "," + storyID;
+        }
+        else
+        {
+            finalBookList = storyID;
+        }
+
+
+        PlayerPrefs.SetString("SavedBookMarkList", finalBookList);
+    }
 
 }
