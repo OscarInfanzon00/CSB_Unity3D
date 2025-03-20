@@ -36,6 +36,8 @@ public class LobbyActivity : MonoBehaviour
     private ListenerRegistration roomListener;
     private UserData user;
 
+    public NotificationManager notificationManager;
+
     void Start()
     {
         closeMenuButton1.onClick.AddListener(closeMenu);
@@ -335,5 +337,12 @@ public class LobbyActivity : MonoBehaviour
         {
             logText.text = message;
         }
+    }
+
+    public void CopyRoomID()
+    {
+        GUIUtility.systemCopyBuffer = "Hey, I created a room in CSB. Wanna play? Room ID: " + currentRoomID;
+        Debug.Log("Room ID copied to clipboard: " + currentRoomID);
+        notificationManager.Notify("Room ID copied to clipboard.");
     }
 }

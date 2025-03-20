@@ -11,6 +11,7 @@ public class BlockManager : MonoBehaviour
 {
     private FirebaseFirestore db;
     private UserData user;
+    private NotificationManager notification;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -18,6 +19,7 @@ public class BlockManager : MonoBehaviour
     {
         db = FirebaseFirestore.DefaultInstance;
         user = User.GetUser();
+        notification = GameObject.Find("Notification").GetComponent<NotificationManager>();
     }
 
     // Update is called once per frame
@@ -43,6 +45,7 @@ public class BlockManager : MonoBehaviour
                         if (updateTask.IsCompletedSuccessfully)
                         {
                             Debug.Log("User successfully blocked.");
+                            notification.Notify("User blocked!", 3f);
                         }
                         else
                         {
