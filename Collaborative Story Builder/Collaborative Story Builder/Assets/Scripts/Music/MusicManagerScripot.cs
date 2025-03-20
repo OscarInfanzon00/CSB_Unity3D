@@ -41,10 +41,6 @@ public class MusicManagerScripot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Settings.musicVolume != audioSource.volume)
-        {
-            audioSource.volume = Settings.musicVolume;
-        }
         if (audioSource.time >= audioSource.clip.length - 0.1f && !mainMenu)
         {
             SetRandomSong();

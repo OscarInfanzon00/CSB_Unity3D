@@ -147,19 +147,34 @@ public class FriendsListManager : MonoBehaviour
 
     private void CreateFriendCard(string friendId, string username, int level, int words)
     {
-        if (FriendCardPrefab == null) return;
+        if (FriendCardPrefab == null)
+        {
+            return;
+        }
 
         GameObject newFriendCard = Instantiate(FriendCardPrefab, contentArea);
-        if (newFriendCard == null) return;
+        if (newFriendCard == null)
+        {
+            return;
+        }
 
         FriendCardController friendController = newFriendCard.GetComponent<FriendCardController>();
-        if (friendController != null)
+        if (friendController == null)
         {
-            // 🆕 Pass all details correctly
-            friendController.Setup(username, level,friendId);
+            return;
+        }
+
+        friendController.Setup(username, level);
+
+        Button friendCardButton = newFriendCard.GetComponent<Button>();
+        if (friendCardButton != null)
+        {
+            friendCardButton.onClick.AddListener(() =>
+            {
+                OpenFriendsPopup(friendId, username, level, words);
+            });
         }
     }
-
 
     private void UpdateFriendsCounter(int count)
     {
