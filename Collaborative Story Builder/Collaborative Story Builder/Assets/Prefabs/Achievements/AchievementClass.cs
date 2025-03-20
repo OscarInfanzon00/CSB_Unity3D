@@ -15,6 +15,7 @@ public class AchievementClass : MonoBehaviour
     public GameObject Background, Image;
     void Start()
     {
+
         // Find the EventSystem in the scene
         eventSystem = FindFirstObjectByType<EventSystem>();
 
