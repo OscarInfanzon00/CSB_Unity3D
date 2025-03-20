@@ -7,7 +7,7 @@ public class Main_MenuActivity : MonoBehaviour
 {
 
     public GameObject MainMenuPanel, ProfilePanel, LobbyPanel, TutorialPanel1, TutorialPanel2, TutorialPanel3,
-    TutorialPanel4, TutorialPanel5, TutorialPanel6;
+    TutorialPanel4, TutorialPanel5, TutorialPanel6, onboardingMessage;
     public Button openProfileButton;
     public Button openMultiplayerMenuButton;
     public TextMeshProUGUI username;
@@ -47,6 +47,7 @@ public class Main_MenuActivity : MonoBehaviour
         updateLVL();
         AiGenButtonsPanel.SetActive(false);
         
+        createOnboardingMessage();
     }
 
     private void openAiGenMenu()
@@ -108,5 +109,16 @@ public class Main_MenuActivity : MonoBehaviour
         
     }
 
-    
+    public void createOnboardingMessage(){
+        if(PlayerPrefs.GetInt("login")==1){
+            onboardingMessage.SetActive(true);
+            Invoke("closeOnboardingMessage", 5f);
+            PlayerPrefs.SetInt("login", 0);
+            PlayerPrefs.Save();
+        }
+    }
+
+    public void closeOnboardingMessage(){
+        onboardingMessage.SetActive(false);
+    }
 }

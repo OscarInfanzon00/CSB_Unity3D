@@ -21,6 +21,7 @@ public class MultiplayerStoryManager : MonoBehaviour
     private string currentStoryID;
     private ListenerRegistration storyListener;
     private ListenerRegistration roomListener;
+    public GameObject tutorial;
 
     void Start()
     {
@@ -310,5 +311,9 @@ public class MultiplayerStoryManager : MonoBehaviour
             roomListener.Stop();
         if (storyListener != null)
             storyListener.Stop();
+    }
+
+    public void closeTutorial(){
+        tutorial.SetActive(false);
     }
 }

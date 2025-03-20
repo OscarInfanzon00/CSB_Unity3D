@@ -9,6 +9,7 @@ public class RandomPrompt : MonoBehaviour
     public Button generateButton, closeButton;
     public TMP_Text outputText;
     public GameObject promptPopup, AigenMenu;
+    public NotificationManager notification;
 
     private void Start()
     {
@@ -39,6 +40,7 @@ public class RandomPrompt : MonoBehaviour
             if (outputText != null)
             {
                 outputText.text = response;
+                notification.Notify("Your AI prompt was succesfully generated. Are you planning to write about it?", 3f);
             }
         }));
     }

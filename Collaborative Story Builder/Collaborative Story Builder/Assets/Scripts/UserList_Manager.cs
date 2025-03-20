@@ -23,6 +23,7 @@ public class UserList_Manager : MonoBehaviour
     private FirebaseAuth auth;
     private string currentUserId;
     private List<(string userID, string username)> allUsers = new List<(string, string)>();
+    public NotificationManager notification;
 
     void Start()
     {
@@ -53,6 +54,8 @@ public class UserList_Manager : MonoBehaviour
                 Debug.LogError("Could not resolve all Firebase dependencies: " + task.Result);
             }
         });
+
+        notification = GameObject.Find("Notification").GetComponent<NotificationManager>();
     }
 
     private void CloseMenu()
@@ -251,6 +254,7 @@ public class UserList_Manager : MonoBehaviour
                             if (updateTask.IsCompletedSuccessfully)
                             {
                                 Debug.Log("Friend added successfully!");
+                                notification.Notify("The invitation link has been sent!", 3f);
                             }
                             else
                             {
