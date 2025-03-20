@@ -67,6 +67,7 @@ public class Solo_UploadStory : MonoBehaviour
                 notificationManager.Notify($"Your story was successfully uploaded!\nWord count: {wordCount}", 3f);
                 Debug.Log("Story saved successfully with ID: " + storyID);
                 LevelSystem.AddXP(50);
+                AddWordsToUser(user.UserId, wordCount);
             }
             else
             {
@@ -83,6 +84,24 @@ public class Solo_UploadStory : MonoBehaviour
 
         return text.Split(new char[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
     }
+
+    public void AddWordsToUser(string userId, int newWords)
+    {
+        DocumentReference userRef = db.Collection("Users").Document(userId);
+
+        userRef.UpdateAsync("words", FieldValue.Increment(newWords)).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log($"Successfully added {newWords} words to user {userId}.");
+            }
+            else
+            {
+                Debug.LogError("Failed to update words: " + task.Exception);
+            }
+        });
+    }
+
     void Update()
     {
 
