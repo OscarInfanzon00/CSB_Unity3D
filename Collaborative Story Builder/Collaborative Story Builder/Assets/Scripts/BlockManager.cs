@@ -4,6 +4,8 @@ using Firebase.Auth;
 using Firebase.Extensions;
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine.UI;
 
 
 
@@ -55,7 +57,6 @@ public class BlockManager : MonoBehaviour
                 // If the document does not exist, create it with the first blocked user
                 Dictionary<string, object> blockedData = new Dictionary<string, object>
                 {
-                    { "userID", user.UserID },
                     { "blockedPeople", new List<string> { userID } }
                 };
 

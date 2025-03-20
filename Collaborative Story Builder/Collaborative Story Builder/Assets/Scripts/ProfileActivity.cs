@@ -6,7 +6,7 @@ using TMPro;
 
 public class ProfileActivity : MonoBehaviour
 {
-    public GameObject MainMenuPanel, ProfilePanel, FriendsPanel;
+    public GameObject MainMenuPanel, ProfilePanel, FriendsPanel, BlockedUsersPanel;
     public TextMeshProUGUI usernameMainMenuText;
     public Button closeButton;
     public TMP_InputField email;
@@ -15,6 +15,7 @@ public class ProfileActivity : MonoBehaviour
     public Button logoutButton;
     public Button profilePicButton;
     public Button friedListButton; 
+    public Button blockedListButton;
     public Image profilePic;
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
@@ -32,7 +33,7 @@ public class ProfileActivity : MonoBehaviour
         closeButton.onClick.AddListener(closeProfile);
         profilePicButton.onClick.AddListener(OnProfilePicButtonClicked);
         friedListButton.onClick.AddListener(OpenFriendsList); 
-
+        blockedListButton.onClick.AddListener(OpenBlockedUsersList);
         user = User.GetUser();
 
         if (user.Email!="defaultEmail")
@@ -100,6 +101,10 @@ public class ProfileActivity : MonoBehaviour
     private void OpenFriendsList()
     {
         FriendsPanel.SetActive(true);
+    }
+    private void OpenBlockedUsersList()
+    {
+        BlockedUsersPanel.SetActive(true);
     }
 
     private void OnProfilePicButtonClicked()

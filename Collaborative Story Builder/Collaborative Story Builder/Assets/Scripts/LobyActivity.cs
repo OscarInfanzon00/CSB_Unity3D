@@ -7,6 +7,7 @@ using Firebase.Firestore;
 using Firebase.Auth;
 using Firebase.Extensions;
 using TMPro;
+using System.Threading.Tasks;
 public class LobbyActivity : MonoBehaviour
 {
     public GameObject LobbyActivityUI;
@@ -19,6 +20,7 @@ public class LobbyActivity : MonoBehaviour
     public Button btnCreateLobby;
     public Button joinToLobbyButton;
     public Button startGameButton;
+    public Button joinRandomButton;
 
     public TMP_InputField roomNumberInput;
     public TextMeshProUGUI textRoomNumber;
@@ -52,7 +54,10 @@ public class LobbyActivity : MonoBehaviour
         {
             quickRejoinButton.onClick.AddListener(QuickRejoin);
         }
-
+        if (joinRandomButton != null)
+        {
+            joinRandomButton.onClick.AddListener(JoinRandomRoom);
+        }
         if (PlayerPrefs.HasKey("LastRoomID"))
         {
             currentRoomID = PlayerPrefs.GetString("LastRoomID");
@@ -165,7 +170,34 @@ public class LobbyActivity : MonoBehaviour
             }
         });
     }
+    private void JoinRandomRoom()
+    {
+        db.Collection("Rooms").GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if(task.IsCompletedSuccessfully)
+            {
+                List<string> roomIDs = new List<string>();
+                foreach (var document in task.Result.Documents)
+                {
+                    roomIDs.Add(document.Id);
+                }
+                if (roomIDs.Count == 0)
+                {
+                    SetLogText("No available rooms found.");
+                    return;
+                }
+                System.Random random = new System.Random();
 
+                string randomRoomID = roomIDs[random.Next(roomIDs.Count)];
+                SetLogText("Random room selected: " + randomRoomID);
+                EnterRoom(randomRoomID);
+            }
+            else
+            {
+                SetLogText("Error fetching rooms: " + task.Exception);
+            }
+        });
+    }
     private void EnterRoom(string roomID)
     {
         createJoinMenu.SetActive(false);
