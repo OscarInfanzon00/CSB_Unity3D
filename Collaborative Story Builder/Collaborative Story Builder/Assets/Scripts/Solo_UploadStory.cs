@@ -102,12 +102,18 @@ public class Solo_UploadStory : MonoBehaviour
         });
     }
 
+    public void clearText()
+    {
+        storyInputField.text = " ";
+    }
+
     void Update()
     {
 
     }
 
-    public void closeScene(){
+    public void closeScene()
+    {
         SceneManager.LoadScene("Main_Menu");
     }
 }
