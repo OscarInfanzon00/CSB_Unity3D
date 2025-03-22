@@ -14,6 +14,7 @@ public class StoryCardUI : MonoBehaviour
     public TextMeshProUGUI summaryText;
     private Story storyData;
     public string storyID;
+    public NotificationManager notification = null;
 
 
     public void SetStoryInfo(Story story)
@@ -56,6 +57,9 @@ public class StoryCardUI : MonoBehaviour
 
     public void saveBookmark()
     {
+        if(notification==null){
+            notification = GameObject.Find("Notification").GetComponent<NotificationManager>();
+        }
         string bookMarkList = PlayerPrefs.GetString("SavedBookMarkList");
 
         string finalBookList;
@@ -71,6 +75,7 @@ public class StoryCardUI : MonoBehaviour
 
         PlayerPrefs.SetString("SavedBookMarkList", finalBookList);
         Debug.Log("Story bookmarked! "+ storyID);
+        notification.Notify("Story bookmarked!");
     }
 
 }
