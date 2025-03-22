@@ -4,6 +4,8 @@ using UnityEngine;
 using Firebase.Firestore;
 using Firebase.Extensions;
 using Firebase.Auth;
+using UnityEngine.UI;
+using TMPro;
 
 public class StoryManager : MonoBehaviour
 {
@@ -12,9 +14,11 @@ public class StoryManager : MonoBehaviour
     public Transform storyListContainer;
     public GameObject storyCardPrefab;
     public GameObject StoryViewerUI;
+    public TMP_InputField searchInputField;
     private string storyID;
     private HashSet<string> friendsSet = new HashSet<string>();
     bool allTheStoriesShowingUp = true;
+    private List<Story> allStories = new List<Story>();
 
     private void Start()
     {
@@ -22,6 +26,11 @@ public class StoryManager : MonoBehaviour
         currentUser = FirebaseAuth.DefaultInstance.CurrentUser;
         LoadFriends();
         LoadStories();
+
+        if (searchInputField != null)
+        {
+            searchInputField.onValueChanged.AddListener(FilterStories);
+        }
     }
 
     void LoadFriends()
@@ -63,14 +72,17 @@ public class StoryManager : MonoBehaviour
             {
                 try
                 {
-                    List<Story> friendStories = new List<Story>();
-                    List<Story> otherStories = new List<Story>();
+                    allStories.Clear();
+                    foreach (Transform child in storyListContainer)
+                    {
+                        Destroy(child.gameObject);
+                    }
 
                     foreach (DocumentSnapshot doc in task.Result.Documents)
                     {
                         Dictionary<string, object> data = doc.ToDictionary();
-
                         List<string> storyTexts = new List<string>();
+
                         if (data.ContainsKey("storyTexts"))
                         {
                             foreach (var item in (List<object>)data["storyTexts"])
@@ -88,16 +100,8 @@ public class StoryManager : MonoBehaviour
                             }
                         }
 
-                        List<string> users = new List<string>();
-                        if (data.ContainsKey("users"))
-                        {
-                            foreach (var item in (List<object>)data["users"])
-                            {
-                                users.Add(item.ToString());
-                            }
-                        }
+                        storyID = data.ContainsKey("storyID") ? (string)data["storyID"] : "";
 
-                        storyID = (string)data["storyID"];
                         DateTime timestamp = DateTime.MinValue;
                         if (data.ContainsKey("timestamp"))
                         {
@@ -112,46 +116,12 @@ public class StoryManager : MonoBehaviour
                             }
                         }
 
-                        // Check if any user in the story is a friend
-                        bool isFriend = false;
-                        foreach (var user in users)
-                        {
-                            if (friendsSet.Contains(user)) // If user is a friend
-                            {
-                                isFriend = true;
-                                break; // Stop checking once we find a match
-                            }
-                        }
-
                         string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
                         Story newStory = new Story(previewText, storyTexts, usersnames, timestamp);
-
-                        if (isFriend)
-                        {
-                            friendStories.Add(newStory); // Add to friend stories
-                        }
-                        else
-                        {
-                            otherStories.Add(newStory); // Add to other stories
-                        }
+                        allStories.Add(newStory);
                     }
 
-                    // Sort stories by timestamp (latest first)
-                    friendStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
-                    otherStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
-
-                    // Display friend stories first, followed by other stories
-                    foreach (Story story in friendStories)
-                    {
-                        CreateStoryCard(story, true);
-
-                    }
-
-                    foreach (Story story in otherStories)
-                    {
-                        CreateStoryCard(story, false);
-                    }
-
+                    DisplayStories(allStories);
                 }
                 catch (Exception e)
                 {
@@ -176,12 +146,12 @@ public class StoryManager : MonoBehaviour
         GameObject.Destroy(storyListContainer.GetChild(i).gameObject);
         Debug.Log("Deleted a story");
     }
-    // Part to delete all stories
 
     if (allTheStoriesShowingUp)
     {
         loadStoryByID();
         allTheStoriesShowingUp = false;
+
     }
     else
     {
@@ -293,8 +263,8 @@ public class StoryManager : MonoBehaviour
     return bookMarkList.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
 }
 
-    // Create and display story cards
-    void CreateStoryCard(Story story, bool areFriends)
+
+    void CreateStoryCard(Story story)
     {
         GameObject newCard = Instantiate(storyCardPrefab, storyListContainer);
         newCard.GetComponent<StoryCardUI>().StoryViewerUI = StoryViewerUI;
@@ -305,6 +275,7 @@ public class StoryManager : MonoBehaviour
     
         // Pass the specific storyID from the Story object
         cardUI.storyID = story.storyID;
+
     }
 
 }

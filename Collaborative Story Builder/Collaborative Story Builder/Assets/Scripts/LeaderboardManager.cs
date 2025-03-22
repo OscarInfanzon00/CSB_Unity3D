@@ -4,7 +4,6 @@ using Firebase;
 using Firebase.Firestore;
 using Firebase.Extensions;
 using TMPro;
-using Microsoft.Unity.VisualStudio.Editor;
 
 public class LeaderboardManager : MonoBehaviour
 {

@@ -72,6 +72,9 @@ public class LoginActivity : MonoBehaviour
 
                     User.SaveUser(userId, email, email, 0, 0);
 
+                    PlayerPrefs.SetInt("login", 1);
+                    PlayerPrefs.Save();
+
                     SceneManager.LoadScene("Main_Menu");
                 }
                 else

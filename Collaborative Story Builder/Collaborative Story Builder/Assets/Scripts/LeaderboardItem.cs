@@ -1,7 +1,5 @@
-using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class LeaderboardItem : MonoBehaviour
 {

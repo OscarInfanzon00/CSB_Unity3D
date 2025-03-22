@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
 using TMPro;
+using Firebase.Firestore;
+using Firebase.Extensions;
 
 public class ProfileActivity : MonoBehaviour
 {
@@ -19,11 +21,15 @@ public class ProfileActivity : MonoBehaviour
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
     public TextMeshProUGUI txtWordCounter;
-
+    public NotificationManager notification;
     public int maxImageSize = 512;
     private string persistentImageName = "profilePic.png";
 
     private UserData user;
+
+    public TextMeshProUGUI XPtext;
+
+    private FirebaseFirestore dbReference;
 
     void Start()
     {
@@ -57,26 +63,47 @@ public class ProfileActivity : MonoBehaviour
 
         updateLVL();
 
-        if (user.Words!=0)
-        {
-            txtWordCounter.text = "Words counter: " + user.Words.ToString();
-        }
+        dbReference = FirebaseFirestore.DefaultInstance;
+        GetUserWords(user.UserID);
     }
 
-    private void updateLVL()
+    public void GetUserWords(string userId)
     {
+        dbReference.Collection("Users").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DocumentSnapshot doc = task.Result;
+                if (doc.Exists)
+                {
+                    int words = doc.ContainsField("words") ? doc.GetValue<int>("words") : 0;
+                    txtWordCounter.text = "Words counter: " + words.ToString();
+                }
+                else
+                {
+                    Debug.Log($"User {userId} not found in Firestore.");
+                }
+            }
+            else
+            {
+                Debug.LogError("Failed to fetch user data: " + task.Exception);
+            }
+        });
+    }
+
+    private void updateLVL(){
         if (user.UserLevel!=0)
         {
-            lvlSlider.value = user.UserLevel;
-            lvlText.text = "LVL: " + user.UserLevel;
-        }
-        else
-        {
-            lvlSlider.value = 0;
+            XPtext.text = "XP "+ PlayerPrefs.GetInt("XP", 0);
+            lvlText.text = "LVL: "+ user.UserLevel;
+        }else{
+            XPtext.text = "XP "+ 0;
             lvlText.text = "LVL: Newbie";
         }
+        lvlSlider.value = PlayerPrefs.GetInt("XP", 0);
+        lvlSlider.maxValue = LevelSystem.GetXPForNextLevel();
     }
-
+    
     private void logout()
     {
         PlayerPrefs.DeleteAll();
@@ -89,6 +116,7 @@ public class ProfileActivity : MonoBehaviour
         PlayerPrefs.SetString("SavedUsername", username.text);
         PlayerPrefs.Save();
         usernameMainMenuText.text = username.text;
+        notification.Notify("The new username has been saved!", 3f);
     }
 
     private void closeProfile()
