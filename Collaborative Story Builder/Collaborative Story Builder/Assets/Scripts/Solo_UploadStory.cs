@@ -5,20 +5,23 @@ using Firebase.Firestore;
 using UnityEngine;
 using Firebase.Auth;
 using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
-public class UploadStory : MonoBehaviour
+public class Solo_UploadStory : MonoBehaviour
 {
     private UserData userData;
     public TMP_InputField storyInputField;
     private FirebaseFirestore db;
-
     public NotificationManager notificationManager;
+    public Button closeButton;
 
     void Start()
     {
         db = FirebaseFirestore.DefaultInstance;
         userData = User.GetUser();
+        closeButton.onClick.AddListener(closeScene);
     }
 
     public void SaveStory()
@@ -39,7 +42,6 @@ public class UploadStory : MonoBehaviour
 =======
         string userID = user.UserId;
         string storyID = Guid.NewGuid().ToString();
-        string timestamp = Timestamp.GetCurrentTimestamp().ToString();
 
         string storyText = storyInputField.text;
         int wordCount = CountWords(storyText);
@@ -56,7 +58,7 @@ public class UploadStory : MonoBehaviour
     {
         { "storyID", storyID },
         { "storyTexts", storyTexts },
-        { "timestamp", timestamp },
+        { "timestamp", Firebase.Firestore.Timestamp.GetCurrentTimestamp() },
         { "usernames", usersUsernames },
         { "users", usersID },
         { "wordCount", wordCount }
@@ -95,6 +97,8 @@ public class UploadStory : MonoBehaviour
             {
                 notificationManager.Notify($"Your story was successfully uploaded!\nWord count: {wordCount}", 3f);
                 Debug.Log("Story saved successfully with ID: " + storyID);
+                LevelSystem.AddXP(50);
+                AddWordsToUser(user.UserId, wordCount);
             }
             else
             {
@@ -102,16 +106,44 @@ public class UploadStory : MonoBehaviour
             }
         });
     }
-    private int CountWords(string text) {
-        if(string.IsNullOrWhiteSpace(text)) {
+    private int CountWords(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
             return 0;
         }
 
-        return text.Split(new char[] { ' ', '\t', '\n', '\r'}, StringSplitOptions.RemoveEmptyEntries).Length;
+        return text.Split(new char[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
     }
+
+    public void AddWordsToUser(string userId, int newWords)
+    {
+        DocumentReference userRef = db.Collection("Users").Document(userId);
+
+        userRef.UpdateAsync("words", FieldValue.Increment(newWords)).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log($"Successfully added {newWords} words to user {userId}.");
+            }
+            else
+            {
+                Debug.LogError("Failed to update words: " + task.Exception);
+            }
+        });
+    }
+
     void Update()
     {
 
+    }
+
+    public void clearText(){
+        storyInputField.text = " ";
+    }
+
+    public void closeScene(){
+        SceneManager.LoadScene("Main_Menu");
     }
 }
 

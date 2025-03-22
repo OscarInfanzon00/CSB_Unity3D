@@ -17,40 +17,56 @@ using System.Text;
 //Everything inside the coroutine will wait for the answer from the AI to be executed.
 //Let me know if you need help. Oscar
 
+#region Gemini Response Classes
+[Serializable]
+public class Response
+{
+    public Candidate[] candidates;
+}
+
+[Serializable]
+public class Candidate
+{
+    public Content content;
+}
+
+[Serializable]
+public class Content
+{
+    public string role;
+    public Part[] parts;
+}
+
+[Serializable]
+public class Part
+{
+    public string text;
+}
+#endregion
+
 public static class AI_Manager
 {
-    private const string API_URL = "https://openrouter.ai/api/v1";
-    private const string API_KEY = "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";
+    private static string apiKey = "AIzaSyA_5K_6hP7RpZ8Ivfmpn-GcqJQJOqSZo9s";
+    private static string apiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
     public static IEnumerator GetChatCompletion(string prompt, Action<string> callback)
     {
-        string jsonData = "{\"model\": \"google/gemini-2.0-flash-exp:free\", \"messages\": [{\"role\": \"user\", \"content\": \"" + prompt + "\"}]}";
+        string url = $"{apiEndpoint}?key={apiKey}";
+        string jsonData = "{\"contents\": [{\"parts\": [{\"text\": \"" + EscapeJson(prompt) + "\"}]}]}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
-        using (UnityWebRequest request = new UnityWebRequest(API_URL + "/chat/completions", "POST"))
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
         {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", "Bearer " + API_KEY);
 
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.Success)
             {
                 string jsonResponse = request.downloadHandler.text;
-
-                OpenAIResponse response = JsonUtility.FromJson<OpenAIResponse>(jsonResponse);
-
-                if (response != null && response.choices != null && response.choices.Length > 0 && response.choices[0].message != null)
-                {
-                    callback?.Invoke(response.choices[0].message.content);
-                }
-                else
-                {
-                    Debug.LogError("Response failed :(");
-                    callback?.Invoke(null);
-                }
+                callback?.Invoke(ParseGeminiResponse(jsonResponse));
             }
             else
             {
@@ -59,22 +75,30 @@ public static class AI_Manager
             }
         }
     }
-}
 
-[System.Serializable]
-public class OpenAIResponse
-{
-    public Choice[] choices;
-}
+    private static string ParseGeminiResponse(string jsonResponse)
+    {
+        try
+        {
+            Response response = JsonUtility.FromJson<Response>(jsonResponse);
+            if (response.candidates != null && response.candidates.Length > 0 &&
+                response.candidates[0].content != null &&
+                response.candidates[0].content.parts != null &&
+                response.candidates[0].content.parts.Length > 0)
+            {
+                return response.candidates[0].content.parts[0].text;
+            }
+            return "No response.";
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Parsing error: " + ex.Message);
+            return "Error parsing response.";
+        }
+    }
 
-[System.Serializable]
-public class Choice
-{
-    public Message message;
-}
-
-[System.Serializable]
-public class Message
-{
-    public string content;
+    private static string EscapeJson(string s)
+    {
+        return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
+    }
 }

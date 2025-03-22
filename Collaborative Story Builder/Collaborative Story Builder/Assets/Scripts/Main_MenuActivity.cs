@@ -3,19 +3,22 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
-using UnityEditor.U2D.Aseprite;
 public class Main_MenuActivity : MonoBehaviour
 {
 
     public GameObject MainMenuPanel, ProfilePanel, LobbyPanel, TutorialPanel1, TutorialPanel2, TutorialPanel3,
-    TutorialPanel4, TutorialPanel5, TutorialPanel6;
+    TutorialPanel4, TutorialPanel5, TutorialPanel6, onboardingMessage;
     public Button openProfileButton;
     public Button openMultiplayerMenuButton;
     public TextMeshProUGUI username;
     public Button btnTutorial;
+    
+    public GameObject AiGenButtonsPanel;
+    public Button AiGenMenuBtn;
 
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
+    public TextMeshProUGUI XPtext;
 
     public Button openTestingRoomButton;
 
@@ -27,7 +30,7 @@ public class Main_MenuActivity : MonoBehaviour
         openMultiplayerMenuButton.onClick.AddListener(openMultiplayer);
         btnTutorial.onClick.AddListener(playTutorial);
         openTestingRoomButton.onClick.AddListener(openTestingRoom);
-
+        AiGenMenuBtn.onClick.AddListener(openAiGenMenu);
 
         user = User.GetUser();
 
@@ -41,17 +44,28 @@ public class Main_MenuActivity : MonoBehaviour
         }
 
         updateLVL();
+        AiGenButtonsPanel.SetActive(false);
+        
+        createOnboardingMessage();
     }
+
+    private void openAiGenMenu()
+    {
+        AiGenButtonsPanel.SetActive(!AiGenButtonsPanel.activeSelf);
+    }
+
 
     private void updateLVL(){
         if (user.UserLevel!=0)
         {
-            lvlSlider.value = user.UserLevel;
+            XPtext.text = "XP "+ PlayerPrefs.GetInt("XP", 0);
             lvlText.text = "LVL: "+ user.UserLevel;
         }else{
-            lvlSlider.value = 0;
+            XPtext.text = "XP "+ 0;
             lvlText.text = "LVL: Newbie";
         }
+        lvlSlider.value = PlayerPrefs.GetInt("XP", 0);
+        lvlSlider.maxValue = LevelSystem.GetXPForNextLevel();
     }
 
     private void playTutorial()
@@ -94,5 +108,16 @@ public class Main_MenuActivity : MonoBehaviour
         
     }
 
-    
+    public void createOnboardingMessage(){
+        if(PlayerPrefs.GetInt("login")==1){
+            onboardingMessage.SetActive(true);
+            Invoke("closeOnboardingMessage", 5f);
+            PlayerPrefs.SetInt("login", 0);
+            PlayerPrefs.Save();
+        }
+    }
+
+    public void closeOnboardingMessage(){
+        onboardingMessage.SetActive(false);
+    }
 }
