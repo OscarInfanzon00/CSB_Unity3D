@@ -8,6 +8,7 @@ using UnityEngine;
 using Firebase.Firestore;
 using Firebase;
 using Firebase.Extensions;
+using System.Threading.Tasks;
 
 public class UserData
 {
@@ -37,6 +38,7 @@ public class UserData
 public static class User
 {
     private static FirebaseFirestore firestore;
+    private static FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
     static User()
     {
@@ -46,7 +48,7 @@ public static class User
             firestore = FirebaseFirestore.GetInstance(app);
         });
     }
-    
+
     public static void SaveUser(string userID, string username, string email, int userLVL, int words)
     {
         PlayerPrefs.SetString("SavedUserID", userID);
@@ -89,7 +91,7 @@ public static class User
         };
 
         DocumentReference userDocRef = firestore.Collection("Users").Document(user.UserID);
-        
+
         userDocRef.SetAsync(userData).ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
