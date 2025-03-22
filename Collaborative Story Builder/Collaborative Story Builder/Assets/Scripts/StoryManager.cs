@@ -1,9 +1,11 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase.Firestore;
 using Firebase.Extensions;
 using Firebase.Auth;
+using UnityEngine.UI;
+using TMPro;
+using System;
 
 public class StoryManager : MonoBehaviour
 {
@@ -12,9 +14,11 @@ public class StoryManager : MonoBehaviour
     public Transform storyListContainer;
     public GameObject storyCardPrefab;
     public GameObject StoryViewerUI;
-    private string storyID;
+    public TMP_InputField searchInputField;
+    public string storyID;
     private HashSet<string> friendsSet = new HashSet<string>();
     bool allTheStoriesShowingUp = true;
+    private List<Story> allStories = new List<Story>();
 
     private void Start()
     {
@@ -22,6 +26,11 @@ public class StoryManager : MonoBehaviour
         currentUser = FirebaseAuth.DefaultInstance.CurrentUser;
         LoadFriends();
         LoadStories();
+
+        if (searchInputField != null)
+        {
+            searchInputField.onValueChanged.AddListener(FilterStories);
+        }
     }
 
     void LoadFriends()
@@ -63,14 +72,19 @@ public class StoryManager : MonoBehaviour
             {
                 try
                 {
+                    allStories.Clear();
                     List<Story> friendStories = new List<Story>();
                     List<Story> otherStories = new List<Story>();
+                    foreach (Transform child in storyListContainer)
+                    {
+                        Destroy(child.gameObject);
+                    }
 
                     foreach (DocumentSnapshot doc in task.Result.Documents)
                     {
                         Dictionary<string, object> data = doc.ToDictionary();
-
                         List<string> storyTexts = new List<string>();
+
                         if (data.ContainsKey("storyTexts"))
                         {
                             foreach (var item in (List<object>)data["storyTexts"])
@@ -97,7 +111,8 @@ public class StoryManager : MonoBehaviour
                             }
                         }
 
-                        storyID = (string)data["storyID"];
+                        storyID = data.ContainsKey("storyID") ? (string)data["storyID"] : "";
+
                         DateTime timestamp = DateTime.MinValue;
                         if (data.ContainsKey("timestamp"))
                         {
@@ -125,7 +140,6 @@ public class StoryManager : MonoBehaviour
 
                         string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
                         Story newStory = new Story(previewText, storyTexts, usersnames, timestamp);
-
                         if (isFriend)
                         {
                             friendStories.Add(newStory); // Add to friend stories
@@ -134,6 +148,7 @@ public class StoryManager : MonoBehaviour
                         {
                             otherStories.Add(newStory); // Add to other stories
                         }
+                        allStories.Add(newStory);
                     }
 
                     // Sort stories by timestamp (latest first)
@@ -151,7 +166,6 @@ public class StoryManager : MonoBehaviour
                     {
                         CreateStoryCard(story, false);
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -164,32 +178,6 @@ public class StoryManager : MonoBehaviour
             }
         });
     }
-
-    public void removeStories()
-    {
-        // Part to delete all stories
-        int children = storyListContainer.childCount;
-        Debug.Log(children + " stories to delete");
-
-        for (int i = 0; i < children; i++)
-        {
-            GameObject.Destroy(storyListContainer.GetChild(i).gameObject);
-            Debug.Log("Deleted a story");
-        }
-        // Part to delete all stories
-
-        if (allTheStoriesShowingUp)
-        {
-            loadStoryByID();
-            allTheStoriesShowingUp = false;
-        }
-        else
-        {
-            LoadStories();
-            allTheStoriesShowingUp = true;
-        }
-    }
-
 
     public void loadStoryByID()
     {
@@ -291,18 +279,63 @@ public class StoryManager : MonoBehaviour
         return bookMarkList.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
     }
 
-    // Create and display story cards
+    public void removeStories()
+    {
+        // Part to delete all stories
+        int children = storyListContainer.childCount;
+        Debug.Log(children + " stories to delete");
+
+        for (int i = 0; i < children; i++)
+        {
+            GameObject.Destroy(storyListContainer.GetChild(i).gameObject);
+            Debug.Log("Deleted a story");
+        }
+        // Part to delete all stories
+
+        if (allTheStoriesShowingUp)
+        {
+            loadStoryByID();
+            allTheStoriesShowingUp = false;
+        }
+        else
+        {
+            LoadStories();
+            allTheStoriesShowingUp = true;
+        }
+    }
+
+    void FilterStories(string filterText)
+    {
+        List<Story> filteredStories = allStories.FindAll(story =>
+            story.storyTexts.Count > 0 && story.storyTexts[0].ToLower().Contains(filterText.ToLower())
+        );
+        DisplayStories(filteredStories);
+    }
+
+    void DisplayStories(List<Story> stories)
+    {
+        foreach (Transform child in storyListContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Story story in stories)
+        {
+            CreateStoryCard(story, false);
+        }
+    }
+
     void CreateStoryCard(Story story, bool areFriends)
     {
         GameObject newCard = Instantiate(storyCardPrefab, storyListContainer);
         newCard.GetComponent<StoryCardUI>().StoryViewerUI = StoryViewerUI;
         StoryCardUI cardUI = newCard.GetComponent<StoryCardUI>();
         cardUI.SetStoryInfo(story);
+        cardUI.storyID = storyID;
         if (areFriends)
             cardUI.activateFriends();
-
+    
         // Pass the specific storyID from the Story object
-        cardUI.storyID = story.storyID;
+        cardUI.storyID = storyID;
     }
-
 }
