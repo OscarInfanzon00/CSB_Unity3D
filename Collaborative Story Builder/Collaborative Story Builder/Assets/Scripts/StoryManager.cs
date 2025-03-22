@@ -166,34 +166,37 @@ public class StoryManager : MonoBehaviour
     }
 
     public void removeStories()
-    {
-        //part to delete all stories
-        int children = storyListContainer.childCount;
-        Debug.Log(children + " to delete");
-        for (int i = 0; i < children; i++)
-        {
-            GameObject.Destroy(storyListContainer.GetChild(i).gameObject);
-            Debug.Log("DELETED");
-        }
-        //part to delete all stories
+{
+    // Part to delete all stories
+    int children = storyListContainer.childCount;
+    Debug.Log(children + " stories to delete");
 
-        if (allTheStoriesShowingUp)
-        {
-            loadStoryByID();
-            allTheStoriesShowingUp = false;
-        }
-        else
-        {
-            LoadStories();
-            allTheStoriesShowingUp = true;
-        }
+    for (int i = 0; i < children; i++)
+    {
+        GameObject.Destroy(storyListContainer.GetChild(i).gameObject);
+        Debug.Log("Deleted a story");
     }
+    // Part to delete all stories
+
+    if (allTheStoriesShowingUp)
+    {
+        loadStoryByID();
+        allTheStoriesShowingUp = false;
+    }
+    else
+    {
+        LoadStories();
+        allTheStoriesShowingUp = true;
+    }
+}
+
 
 
 //For Completition. This is teh code to finish / /For Completition. This is teh code to finish
     public void loadStoryByID()
 {
     string[] listIDs = getBookmarks();
+    Debug.Log($"Bookmarks to load: {string.Join(", ", listIDs)}");
 
     db.Collection("Stories").GetSnapshotAsync().ContinueWithOnMainThread(task =>
     {
@@ -207,14 +210,21 @@ public class StoryManager : MonoBehaviour
                 {
                     Dictionary<string, object> data = doc.ToDictionary();
 
-                    if (!data.ContainsKey("storyID")) 
+                    if (!data.ContainsKey("storyID"))
+                    {
+                        Debug.LogWarning("No storyID found in document");
                         continue; // Skip if no storyID
+                    }
 
                     string storyID = (string)data["storyID"];
+                    Debug.Log($"Found storyID: {storyID}");
 
                     // Only continue if the storyID is in the listIDs
-                    if (!Array.Exists(listIDs, id => id == storyID))
+                    if (!Array.Exists(listIDs, id => id.Trim() == storyID.Trim()))
+                    {
+                        Debug.Log($"Skipping story with ID: {storyID} (not in bookmarks)");
                         continue;
+                    }
 
                     List<string> storyTexts = new List<string>();
                     if (data.ContainsKey("storyTexts"))
@@ -225,12 +235,12 @@ public class StoryManager : MonoBehaviour
                         }
                     }
 
-                    List<string> usersnames = new List<string>();
+                    List<string> usernames = new List<string>();
                     if (data.ContainsKey("usernames"))
                     {
                         foreach (var item in (List<object>)data["usernames"])
                         {
-                            usersnames.Add(item.ToString());
+                            usernames.Add(item.ToString());
                         }
                     }
 
@@ -249,7 +259,7 @@ public class StoryManager : MonoBehaviour
                     }
 
                     string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
-                    Story newStory = new Story(previewText, storyTexts, usersnames, timestamp);
+                    Story newStory = new Story(previewText, storyTexts, usernames, timestamp);
 
                     matchedStories.Add(newStory);
                 }
@@ -262,6 +272,7 @@ public class StoryManager : MonoBehaviour
                 {
                     CreateStoryCard(story, true);
                 }
+
             }
             catch (Exception e)
             {
@@ -274,11 +285,13 @@ public class StoryManager : MonoBehaviour
         }
     });
 }
+
     public string[] getBookmarks()
-    {
-        string bookMarkList = PlayerPrefs.GetString("SavedBookMarkList");
-        return bookMarkList.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
-    }
+{
+    string bookMarkList = PlayerPrefs.GetString("SavedBookMarkList");
+    Debug.Log($"Loaded Bookmarks: {bookMarkList}");
+    return bookMarkList.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
+}
 
     // Create and display story cards
     void CreateStoryCard(Story story, bool areFriends)
@@ -289,6 +302,9 @@ public class StoryManager : MonoBehaviour
         cardUI.SetStoryInfo(story);
         if (areFriends)
             cardUI.activateFriends();
-        cardUI.storyID = storyID;
+    
+        // Pass the specific storyID from the Story object
+        cardUI.storyID = story.storyID;
     }
+
 }
