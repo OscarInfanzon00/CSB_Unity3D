@@ -69,8 +69,8 @@ public class StoryCardUI : MonoBehaviour
             finalBookList = storyID;
         }
 
-
         PlayerPrefs.SetString("SavedBookMarkList", finalBookList);
+        Debug.Log("Story bookmarked!");
     }
 
 }
