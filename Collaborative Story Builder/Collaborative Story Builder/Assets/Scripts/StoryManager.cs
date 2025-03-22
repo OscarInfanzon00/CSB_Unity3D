@@ -135,134 +135,26 @@ public class StoryManager : MonoBehaviour
         });
     }
 
-    public void removeStories()
-{
-    // Part to delete all stories
-    int children = storyListContainer.childCount;
-    Debug.Log(children + " stories to delete");
-
-    for (int i = 0; i < children; i++)
+    void FilterStories(string filterText)
     {
-        GameObject.Destroy(storyListContainer.GetChild(i).gameObject);
-        Debug.Log("Deleted a story");
+        List<Story> filteredStories = allStories.FindAll(story =>
+            story.storyTexts.Count > 0 && story.storyTexts[0].ToLower().Contains(filterText.ToLower())
+        );
+        DisplayStories(filteredStories);
     }
 
-    if (allTheStoriesShowingUp)
+    void DisplayStories(List<Story> stories)
     {
-        loadStoryByID();
-        allTheStoriesShowingUp = false;
-
-    }
-    else
-    {
-        LoadStories();
-        allTheStoriesShowingUp = true;
-    }
-}
-
-
-
-//For Completition. This is teh code to finish / /For Completition. This is teh code to finish
-    public void loadStoryByID()
-{
-    string[] listIDs = getBookmarks();
-    Debug.Log($"Bookmarks to load: {string.Join(", ", listIDs)}");
-
-    db.Collection("Stories").GetSnapshotAsync().ContinueWithOnMainThread(task =>
-    {
-        if (task.IsCompletedSuccessfully)
+        foreach (Transform child in storyListContainer)
         {
-            try
-            {
-                List<Story> matchedStories = new List<Story>();
-
-                foreach (DocumentSnapshot doc in task.Result.Documents)
-                {
-                    Dictionary<string, object> data = doc.ToDictionary();
-
-                    if (!data.ContainsKey("storyID"))
-                    {
-                        Debug.LogWarning("No storyID found in document");
-                        continue; // Skip if no storyID
-                    }
-
-                    string storyID = (string)data["storyID"];
-                    Debug.Log($"Found storyID: {storyID}");
-
-                    // Only continue if the storyID is in the listIDs
-                    if (!Array.Exists(listIDs, id => id.Trim() == storyID.Trim()))
-                    {
-                        Debug.Log($"Skipping story with ID: {storyID} (not in bookmarks)");
-                        continue;
-                    }
-
-                    List<string> storyTexts = new List<string>();
-                    if (data.ContainsKey("storyTexts"))
-                    {
-                        foreach (var item in (List<object>)data["storyTexts"])
-                        {
-                            storyTexts.Add(item.ToString());
-                        }
-                    }
-
-                    List<string> usernames = new List<string>();
-                    if (data.ContainsKey("usernames"))
-                    {
-                        foreach (var item in (List<object>)data["usernames"])
-                        {
-                            usernames.Add(item.ToString());
-                        }
-                    }
-
-                    DateTime timestamp = DateTime.MinValue;
-                    if (data.ContainsKey("timestamp"))
-                    {
-                        object timestampObj = data["timestamp"];
-                        if (timestampObj is Firebase.Firestore.Timestamp firestoreTimestamp)
-                        {
-                            timestamp = firestoreTimestamp.ToDateTime();
-                        }
-                        else
-                        {
-                            Debug.LogError($"Invalid timestamp format: {timestampObj.GetType()}");
-                        }
-                    }
-
-                    string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
-                    Story newStory = new Story(previewText, storyTexts, usernames, timestamp);
-
-                    matchedStories.Add(newStory);
-                }
-
-                // Sort stories by timestamp (latest first)
-                matchedStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
-
-                // Display matched stories
-                foreach (Story story in matchedStories)
-                {
-                    CreateStoryCard(story, true);
-                }
-
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("Failed to load stories: " + e);
-            }
+            Destroy(child.gameObject);
         }
-        else
+
+        foreach (Story story in stories)
         {
-            Debug.LogError("Failed to load stories: " + task.Exception);
+            CreateStoryCard(story);
         }
-    });
-}
-
-    public string[] getBookmarks()
-{
-    string bookMarkList = PlayerPrefs.GetString("SavedBookMarkList");
-    Debug.Log($"Loaded Bookmarks: {bookMarkList}");
-    return bookMarkList.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
-}
-
+    }
 
     void CreateStoryCard(Story story)
     {
@@ -270,12 +162,6 @@ public class StoryManager : MonoBehaviour
         newCard.GetComponent<StoryCardUI>().StoryViewerUI = StoryViewerUI;
         StoryCardUI cardUI = newCard.GetComponent<StoryCardUI>();
         cardUI.SetStoryInfo(story);
-        if (areFriends)
-            cardUI.activateFriends();
-    
-        // Pass the specific storyID from the Story object
-        cardUI.storyID = story.storyID;
-
+        cardUI.storyID = storyID;
     }
-
 }
