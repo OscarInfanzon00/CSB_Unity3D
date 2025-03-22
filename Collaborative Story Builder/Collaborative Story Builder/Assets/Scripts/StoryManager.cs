@@ -139,7 +139,7 @@ public class StoryManager : MonoBehaviour
                         }
 
                         string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
-                        Story newStory = new Story(previewText, storyTexts, usersnames, timestamp);
+                        Story newStory = new Story(data["storyID"].ToString(), previewText, storyTexts, usersnames, timestamp);
                         if (isFriend)
                         {
                             friendStories.Add(newStory); // Add to friend stories
@@ -194,6 +194,7 @@ public class StoryManager : MonoBehaviour
 
                     foreach (DocumentSnapshot doc in task.Result.Documents)
                     {
+
                         Dictionary<string, object> data = doc.ToDictionary();
 
                         if (!data.ContainsKey("storyID"))
@@ -202,7 +203,7 @@ public class StoryManager : MonoBehaviour
                             continue; // Skip if no storyID
                         }
 
-                        string storyID = (string)data["storyID"];
+                        storyID = (string)data["storyID"];
                         Debug.Log($"Found storyID: {storyID}");
 
                         // Only continue if the storyID is in the listIDs
@@ -245,7 +246,7 @@ public class StoryManager : MonoBehaviour
                         }
 
                         string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
-                        Story newStory = new Story(previewText, storyTexts, usernames, timestamp);
+                        Story newStory = new Story(data["storyID"].ToString(), previewText, storyTexts, usernames, timestamp);
 
                         matchedStories.Add(newStory);
                     }
@@ -256,7 +257,7 @@ public class StoryManager : MonoBehaviour
                     // Display matched stories
                     foreach (Story story in matchedStories)
                     {
-                        CreateStoryCard(story, true);
+                        CreateStoryCard(story, false);
                     }
 
                 }
@@ -319,9 +320,14 @@ public class StoryManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach (Story story in stories)
+        if (stories.Count != allStories.Count)
         {
-            CreateStoryCard(story, false);
+            foreach (Story story in stories)
+            {
+                CreateStoryCard(story, false);
+            }
+        }else{
+            LoadStories();
         }
     }
 
@@ -331,11 +337,8 @@ public class StoryManager : MonoBehaviour
         newCard.GetComponent<StoryCardUI>().StoryViewerUI = StoryViewerUI;
         StoryCardUI cardUI = newCard.GetComponent<StoryCardUI>();
         cardUI.SetStoryInfo(story);
-        cardUI.storyID = storyID;
+        cardUI.storyID = story.storyRealID;
         if (areFriends)
             cardUI.activateFriends();
-    
-        // Pass the specific storyID from the Story object
-        cardUI.storyID = storyID;
     }
 }
