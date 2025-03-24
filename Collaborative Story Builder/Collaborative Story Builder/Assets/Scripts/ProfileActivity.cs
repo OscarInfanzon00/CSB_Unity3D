@@ -5,10 +5,18 @@ using System.IO;
 using TMPro;
 using Firebase.Firestore;
 using Firebase.Extensions;
+using System.Collections.Generic;
+using System;
+using System.Linq;
+using Firebase.Auth;
 
 public class ProfileActivity : MonoBehaviour
 {
     public GameObject MainMenuPanel, ProfilePanel, FriendsPanel;
+    public Transform storyListContainer;
+    public GameObject storyCardPrefab;
+    public GameObject StoryViewerUI;
+
     public TextMeshProUGUI usernameMainMenuText;
     public Button closeButton;
     public TMP_InputField email;
@@ -16,14 +24,16 @@ public class ProfileActivity : MonoBehaviour
     public Button saveButton;
     public Button logoutButton;
     public Button profilePicButton;
-    public Button friedListButton; 
+    public Button friedListButton;
     public Image profilePic;
+    FirebaseFirestore db;
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
     public TextMeshProUGUI txtWordCounter;
     public NotificationManager notification;
     public int maxImageSize = 512;
     private string persistentImageName = "profilePic.png";
+    private string storyID;
 
     private UserData user;
 
@@ -33,20 +43,21 @@ public class ProfileActivity : MonoBehaviour
 
     void Start()
     {
+        db = FirebaseFirestore.DefaultInstance;
         saveButton.onClick.AddListener(saveUsername);
         logoutButton.onClick.AddListener(logout);
         closeButton.onClick.AddListener(closeProfile);
         profilePicButton.onClick.AddListener(OnProfilePicButtonClicked);
-        friedListButton.onClick.AddListener(OpenFriendsList); 
+        friedListButton.onClick.AddListener(OpenFriendsList);
 
         user = User.GetUser();
 
-        if (user.Email!="defaultEmail")
+        if (user.Email != "defaultEmail")
         {
             email.text = user.Email;
             username.text = user.Email;
         }
-        if (user.Username!="defaultUser")
+        if (user.Username != "defaultUser")
         {
             username.text = user.Username;
         }
@@ -65,6 +76,8 @@ public class ProfileActivity : MonoBehaviour
 
         dbReference = FirebaseFirestore.DefaultInstance;
         GetUserWords(user.UserID);
+
+        loadStoryByID();
     }
 
     public void GetUserWords(string userId)
@@ -91,19 +104,22 @@ public class ProfileActivity : MonoBehaviour
         });
     }
 
-    private void updateLVL(){
-        if (user.UserLevel!=0)
+    private void updateLVL()
+    {
+        if (user.UserLevel != 0)
         {
-            XPtext.text = "XP "+ PlayerPrefs.GetInt("XP", 0);
-            lvlText.text = "LVL: "+ user.UserLevel;
-        }else{
-            XPtext.text = "XP "+ 0;
+            XPtext.text = "XP " + PlayerPrefs.GetInt("XP", 0);
+            lvlText.text = "LVL: " + user.UserLevel;
+        }
+        else
+        {
+            XPtext.text = "XP " + 0;
             lvlText.text = "LVL: Newbie";
         }
         lvlSlider.value = PlayerPrefs.GetInt("XP", 0);
         lvlSlider.maxValue = LevelSystem.GetXPForNextLevel();
     }
-    
+
     private void logout()
     {
         PlayerPrefs.DeleteAll();
@@ -192,5 +208,112 @@ public class ProfileActivity : MonoBehaviour
         {
             Debug.LogWarning("Failed to load texture from: " + imagePath);
         }
+    }
+
+
+
+    public void loadStoryByID()
+    {
+        string currentUserID = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
+
+        if (string.IsNullOrEmpty(currentUserID))
+        {
+            Debug.LogError("User is not authenticated.");
+            return;
+        }
+
+        db.Collection("Stories").GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                try
+                {
+                    List<Story> matchedStories = new List<Story>();
+
+                    foreach (DocumentSnapshot doc in task.Result.Documents)
+                    {
+                        Dictionary<string, object> data = doc.ToDictionary();
+
+                        if (!data.ContainsKey("storyID"))
+                        {
+                            Debug.LogWarning("No storyID found in document");
+                            continue;
+                        }
+
+                        string storyID = (string)data["storyID"];
+                        Debug.Log($"Found storyID: {storyID}");
+
+                        // Check if the user is in the 'users' array
+                        if (!data.ContainsKey("users") || !(data["users"] is List<object> userList))
+                        {
+                            Debug.Log($"Skipping story {storyID} - No users list found.");
+                            continue;
+                        }
+
+                        List<string> owners = userList.Select(user => user.ToString()).ToList();
+                        if (!owners.Contains(currentUserID))
+                        {
+                            Debug.Log($"Skipping story {storyID} - Current user is not an owner.");
+                            continue;
+                        }
+
+                        List<string> storyTexts = new List<string>();
+                        if (data.ContainsKey("storyTexts"))
+                        {
+                            foreach (var item in (List<object>)data["storyTexts"])
+                            {
+                                storyTexts.Add(item.ToString());
+                            }
+                        }
+
+                        List<string> usernames = new List<string>();
+                        if (data.ContainsKey("usernames"))
+                        {
+                            foreach (var item in (List<object>)data["usernames"])
+                            {
+                                usernames.Add(item.ToString());
+                            }
+                        }
+
+                        DateTime timestamp = DateTime.MinValue;
+                        if (data.ContainsKey("timestamp") && data["timestamp"] is Firebase.Firestore.Timestamp firestoreTimestamp)
+                        {
+                            timestamp = firestoreTimestamp.ToDateTime();
+                        }
+
+                        string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
+                        Story newStory = new Story(storyID, previewText, storyTexts, usernames, timestamp);
+
+                        matchedStories.Add(newStory);
+                    }
+
+                    // Sort stories by timestamp (latest first)
+                    matchedStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
+
+                    // Display matched stories
+                    foreach (Story story in matchedStories)
+                    {
+                        CreateStoryCard(story);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Failed to load stories: " + e);
+                }
+            }
+            else
+            {
+                Debug.LogError("Failed to load stories: " + task.Exception);
+            }
+        });
+    }
+
+    void CreateStoryCard(Story story)
+    {
+        GameObject newCard = Instantiate(storyCardPrefab, storyListContainer);
+        newCard.GetComponent<StoryCardUI>().StoryViewerUI = StoryViewerUI;
+        StoryCardUI cardUI = newCard.GetComponent<StoryCardUI>();
+        cardUI.SetStoryInfo(story);
+        cardUI.storyID = story.storyRealID;
     }
 }

@@ -277,6 +277,21 @@ public class MultiplayerStoryManager : MonoBehaviour
         {
             if (snapshot.Exists)
             {
+                if (!snapshot.Exists)
+                {
+                    Debug.Log("Room has been closed by the owner. Exiting...");
+
+                    // Stop listeners
+                    if (roomListener != null)
+                        roomListener.Stop();
+                    if (storyListener != null)
+                        storyListener.Stop();
+
+                    // Return to main menu
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+                    return;
+                }
+
                 if (string.IsNullOrEmpty(currentStoryID) && snapshot.ContainsField("currentStoryID"))
                 {
                     currentStoryID = snapshot.GetValue<string>("currentStoryID");
@@ -305,6 +320,39 @@ public class MultiplayerStoryManager : MonoBehaviour
         });
     }
 
+    public void CloseRoom()
+    {
+        if (!IsRoomCreator())
+        {
+            Debug.LogError("Only the room owner can close the room.");
+            return;
+        }
+
+        DocumentReference roomRef = db.Collection("Rooms").Document(currentRoomID);
+
+        roomRef.DeleteAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("Room closed successfully.");
+
+                // Stop listeners
+                if (roomListener != null)
+                    roomListener.Stop();
+                if (storyListener != null)
+                    storyListener.Stop();
+
+                // Load the main menu
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+            }
+            else
+            {
+                Debug.LogError("Error closing room: " + task.Exception);
+            }
+        });
+    }
+
+
     void OnDestroy()
     {
         if (roomListener != null)
@@ -313,7 +361,8 @@ public class MultiplayerStoryManager : MonoBehaviour
             storyListener.Stop();
     }
 
-    public void closeTutorial(){
+    public void closeTutorial()
+    {
         tutorial.SetActive(false);
     }
 }
