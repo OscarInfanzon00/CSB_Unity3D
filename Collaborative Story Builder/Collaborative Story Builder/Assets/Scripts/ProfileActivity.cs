@@ -12,7 +12,7 @@ using Firebase.Auth;
 
 public class ProfileActivity : MonoBehaviour
 {
-    public GameObject MainMenuPanel, ProfilePanel, FriendsPanel;
+    public GameObject MainMenuPanel, ProfilePanel, FriendsPanel, BlockedUsersPanel;
     public Transform storyListContainer;
     public GameObject storyCardPrefab;
     public GameObject StoryViewerUI;
@@ -25,6 +25,7 @@ public class ProfileActivity : MonoBehaviour
     public Button logoutButton;
     public Button profilePicButton;
     public Button friedListButton;
+    public Button blockedListButton;
     public Image profilePic;
     FirebaseFirestore db;
     public Slider lvlSlider;
@@ -49,7 +50,7 @@ public class ProfileActivity : MonoBehaviour
         closeButton.onClick.AddListener(closeProfile);
         profilePicButton.onClick.AddListener(OnProfilePicButtonClicked);
         friedListButton.onClick.AddListener(OpenFriendsList);
-
+        blockedListButton.onClick.AddListener(OpenBlockedUsersList);
         user = User.GetUser();
 
         if (user.Email != "defaultEmail")
@@ -146,6 +147,10 @@ public class ProfileActivity : MonoBehaviour
         FriendsPanel.SetActive(true);
     }
 
+    private void OpenBlockedUsersList()
+    {
+        BlockedUsersPanel.SetActive(true);
+    }
     private void OnProfilePicButtonClicked()
     {
         PickImage();
