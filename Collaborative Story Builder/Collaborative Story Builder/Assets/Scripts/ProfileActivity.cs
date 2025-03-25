@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using Firebase.Auth;
+using System.Collections;
+using static System.Net.Mime.MediaTypeNames;
+
 
 public class ProfileActivity : MonoBehaviour
 {
@@ -25,8 +28,9 @@ public class ProfileActivity : MonoBehaviour
     public Button logoutButton;
     public Button profilePicButton;
     public Button friedListButton;
-    public Image profilePic;
-    FirebaseFirestore db;
+    public UnityEngine.UI.Image profilePic;
+
+
     public Slider lvlSlider;
     public TextMeshProUGUI lvlText;
     public TextMeshProUGUI txtWordCounter;
@@ -36,14 +40,27 @@ public class ProfileActivity : MonoBehaviour
     private string storyID;
 
     private UserData user;
+    private FirebaseFirestore db;
+    private FirebaseFirestore dbReference;
+    private string currentUserId;
 
     public TextMeshProUGUI XPtext;
 
-    private FirebaseFirestore dbReference;
+    // 🆕 Avatar selection panel and buttons
+    public GameObject avatarSelectionPanel, CustomFieldPanel;
+    public List<Button> defaultAvatarButtons; // Assign 5 buttons in Inspector
+    public Button customAvatarButton;
+    public TMP_InputField customURLInput;
+    public Button confirmCustomButton;
+
 
     void Start()
     {
+
         db = FirebaseFirestore.DefaultInstance;
+        dbReference = FirebaseFirestore.DefaultInstance;
+        currentUserId = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
+
         saveButton.onClick.AddListener(saveUsername);
         logoutButton.onClick.AddListener(logout);
         closeButton.onClick.AddListener(closeProfile);
@@ -52,73 +69,123 @@ public class ProfileActivity : MonoBehaviour
 
         user = User.GetUser();
 
-        if (user.Email != "defaultEmail")
+        if (user.Email != "defaultEmail") email.text = user.Email;
+        if (user.Username != "defaultUser") username.text = user.Username;
+
+        // 🆕 Load avatar from Firestore if saved
+        if (!string.IsNullOrEmpty(currentUserId))
         {
-            email.text = user.Email;
-            username.text = user.Email;
-        }
-        if (user.Username != "defaultUser")
-        {
-            username.text = user.Username;
+            db.Collection("Users").Document(currentUserId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
+            {
+                if (task.Result.Exists && task.Result.ContainsField("avatarUrl"))
+                {
+                    string avatarUrl = task.Result.GetValue<string>("avatarUrl");
+                    SelectAvatar(avatarUrl); // Load saved avatar
+                }
+            });
         }
 
-        string savedPath = Path.Combine(Application.persistentDataPath, persistentImageName);
-        if (File.Exists(savedPath))
+        // 🆕 Set up default avatar button listeners
+        defaultAvatarButtons[0].onClick.AddListener(() => SelectAvatar("https://img.freepik.com/premium-vector/men-icon-trendy-avatar-character-cheerful-happy-people-flat-vector-illustration-round-frame-male-portraits-group-team-adorable-guys-isolated-white-background_275421-282.jpg?w=1060"));
+        defaultAvatarButtons[1].onClick.AddListener(() => SelectAvatar("https://img.freepik.com/premium-vector/women-trendy-icon-avatar-character-cheerful-happy-people-flat-vector-illustration-round-frame-female-portraits-group-team-adorable-girl-isolated-white-background_275421-271.jpg"));
+        defaultAvatarButtons[2].onClick.AddListener(() => SelectAvatar("https://img.freepik.com/premium-vector/men-icon-trendy-avatar-character-cheerful-happy-people-flat-vector-illustration-round-frame-male-portraits-group-team-adorable-guys-isolated-white-background_275421-280.jpg"));
+        defaultAvatarButtons[3].onClick.AddListener(() => SelectAvatar("https://img.freepik.com/premium-vector/men-icon-trendy-avatar-character-cheerful-happy-people-flat-vector-illustration-round-frame-male-portraits-group-team-adorable-guys-isolated-white-background_275421-281.jpg"));
+        defaultAvatarButtons[4].onClick.AddListener(() => SelectAvatar("https://img.freepik.com/premium-vector/men-avatars-characters-cheerful-happy-people-flat-vector-illustration-set-male-female-portraits-group-team-adorable-guys-girls-trendy-pack_275421-1300.jpg"));
+
+        //custom URL input
+        customAvatarButton.onClick.AddListener(() =>
+        {   
+            CustomFieldPanel.SetActive(true);
+        });
+
+        //Confirm and apply custom avatar
+        confirmCustomButton.onClick.AddListener(() =>
         {
-            LoadProfileImage(savedPath);
-        }
-        else
-        {
-            Debug.Log("No profile image found at: " + savedPath);
-        }
+            string url = customURLInput.text;
+            if (!string.IsNullOrEmpty(url))
+            {
+                SelectAvatar(url);
+            }
+        });
 
         updateLVL();
-
-        dbReference = FirebaseFirestore.DefaultInstance;
         GetUserWords(user.UserID);
-
         loadStoryByID();
     }
 
-    public void GetUserWords(string userId)
+    private void OnProfilePicButtonClicked()
     {
-        dbReference.Collection("Users").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        //Show avatar selection panel
+        avatarSelectionPanel.SetActive(true);
+    }
+
+    private void SelectAvatar(string url)
+    {
+        StartCoroutine(LoadImageFromURL(url, (sprite) =>
         {
-            if (task.IsCompleted)
+            if (sprite != null)
             {
-                DocumentSnapshot doc = task.Result;
-                if (doc.Exists)
-                {
-                    int words = doc.ContainsField("words") ? doc.GetValue<int>("words") : 0;
-                    txtWordCounter.text = "Words counter: " + words.ToString();
-                }
-                else
-                {
-                    Debug.Log($"User {userId} not found in Firestore.");
-                }
+                profilePic.sprite = sprite;
+                SaveAvatarToFirestore(url);
+                AvatarManager.Instance?.SetAvatarUrl(url);
+
+
+                // Hide panel and reset input
+                avatarSelectionPanel.SetActive(false);
+                CustomFieldPanel.SetActive(false);
+                customURLInput.text = "";
             }
             else
             {
-                Debug.LogError("Failed to fetch user data: " + task.Exception);
+                Debug.LogWarning("Invalid avatar URL.");
             }
-        });
+        }));
     }
 
-    private void updateLVL()
+    private IEnumerator LoadImageFromURL(string url, Action<Sprite> callback)
     {
-        if (user.UserLevel != 0)
+        using (WWW www = new WWW(url))
         {
-            XPtext.text = "XP " + PlayerPrefs.GetInt("XP", 0);
-            lvlText.text = "LVL: " + user.UserLevel;
+            yield return www;
+            if (string.IsNullOrEmpty(www.error))
+            {
+                Texture2D texture = www.texture;
+                Sprite sprite = Sprite.Create(texture,
+                                              new Rect(0, 0, texture.width, texture.height),
+                                              new Vector2(0.5f, 0.5f));
+                callback(sprite);
+            }
+            else
+            {
+                Debug.LogError("Error loading image from URL: " + www.error);
+                callback(null);
+            }
         }
-        else
-        {
-            XPtext.text = "XP " + 0;
-            lvlText.text = "LVL: Newbie";
-        }
-        lvlSlider.value = PlayerPrefs.GetInt("XP", 0);
-        lvlSlider.maxValue = LevelSystem.GetXPForNextLevel();
     }
+
+    private void SaveAvatarToFirestore(string url)
+    {
+        if (string.IsNullOrEmpty(currentUserId)) return;
+
+        Dictionary<string, object> data = new Dictionary<string, object>
+        {
+            { "avatarUrl", url }
+        };
+
+        db.Collection("Users").Document(currentUserId).SetAsync(data, SetOptions.MergeAll).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("Avatar URL saved to Firestore.");
+            }
+            else
+            {
+                Debug.LogError("Failed to save avatar URL: " + task.Exception);
+            }
+        });
+        
+    }
+
 
     private void logout()
     {
@@ -146,71 +213,45 @@ public class ProfileActivity : MonoBehaviour
         FriendsPanel.SetActive(true);
     }
 
-    private void OnProfilePicButtonClicked()
+    private void updateLVL()
     {
-        PickImage();
-    }
-
-    private void PickImage()
-    {
-        NativeGallery.GetImageFromGallery((string imagePath) =>
+        if (user.UserLevel != 0)
         {
-            if (!string.IsNullOrEmpty(imagePath))
-            {
-                Debug.Log("Image selected: " + imagePath);
-                CopyImageToPersistentPath(imagePath);
-            }
-            else
-            {
-                Debug.Log("No image was selected.");
-            }
-        }, "Select a PNG image", "image/png");
-    }
-
-    private void CopyImageToPersistentPath(string sourcePath)
-    {
-        try
-        {
-            string destPath = Path.Combine(Application.persistentDataPath, persistentImageName);
-
-            byte[] imageData = File.ReadAllBytes(sourcePath);
-            File.WriteAllBytes(destPath, imageData);
-
-            Debug.Log("Copied image to persistent path: " + destPath);
-            PlayerPrefs.SetString("ProfilePicPath", destPath);
-            PlayerPrefs.Save();
-            LoadProfileImage(destPath);
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError("Error copying image: " + ex.Message);
-        }
-    }
-
-    private void LoadProfileImage(string imagePath)
-    {
-        if (!File.Exists(imagePath))
-        {
-            Debug.LogWarning("File does not exist at path: " + imagePath);
-            return;
-        }
-
-        Texture2D texture = NativeGallery.LoadImageAtPath(imagePath, maxImageSize);
-        if (texture != null)
-        {
-            Sprite newSprite = Sprite.Create(texture,
-                                             new Rect(0, 0, texture.width, texture.height),
-                                             new Vector2(0.5f, 0.5f));
-            profilePic.sprite = newSprite;
-            Debug.Log("Profile image loaded successfully from: " + imagePath);
+            XPtext.text = "XP " + PlayerPrefs.GetInt("XP", 0);
+            lvlText.text = "LVL: " + user.UserLevel;
         }
         else
         {
-            Debug.LogWarning("Failed to load texture from: " + imagePath);
+            XPtext.text = "XP " + 0;
+            lvlText.text = "LVL: Newbie";
         }
+        lvlSlider.value = PlayerPrefs.GetInt("XP", 0);
+        lvlSlider.maxValue = LevelSystem.GetXPForNextLevel();
     }
 
-
+    public void GetUserWords(string userId)
+    {
+        dbReference.Collection("Users").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DocumentSnapshot doc = task.Result;
+                if (doc.Exists)
+                {
+                    int words = doc.ContainsField("words") ? doc.GetValue<int>("words") : 0;
+                    txtWordCounter.text = "Words counter: " + words.ToString();
+                }
+                else
+                {
+                    Debug.Log($"User {userId} not found in Firestore.");
+                }
+            }
+            else
+            {
+                Debug.LogError("Failed to fetch user data: " + task.Exception);
+            }
+        });
+    }
 
     public void loadStoryByID()
     {
@@ -235,62 +276,34 @@ public class ProfileActivity : MonoBehaviour
                         Dictionary<string, object> data = doc.ToDictionary();
 
                         if (!data.ContainsKey("storyID"))
-                        {
-                            Debug.LogWarning("No storyID found in document");
                             continue;
-                        }
 
                         string storyID = (string)data["storyID"];
-                        Debug.Log($"Found storyID: {storyID}");
-
-                        // Check if the user is in the 'users' array
                         if (!data.ContainsKey("users") || !(data["users"] is List<object> userList))
-                        {
-                            Debug.Log($"Skipping story {storyID} - No users list found.");
                             continue;
-                        }
 
                         List<string> owners = userList.Select(user => user.ToString()).ToList();
                         if (!owners.Contains(currentUserID))
-                        {
-                            Debug.Log($"Skipping story {storyID} - Current user is not an owner.");
                             continue;
-                        }
 
-                        List<string> storyTexts = new List<string>();
-                        if (data.ContainsKey("storyTexts"))
-                        {
-                            foreach (var item in (List<object>)data["storyTexts"])
-                            {
-                                storyTexts.Add(item.ToString());
-                            }
-                        }
+                        List<string> storyTexts = data.ContainsKey("storyTexts") ?
+                            ((List<object>)data["storyTexts"]).Select(o => o.ToString()).ToList() : new List<string>();
 
-                        List<string> usernames = new List<string>();
-                        if (data.ContainsKey("usernames"))
-                        {
-                            foreach (var item in (List<object>)data["usernames"])
-                            {
-                                usernames.Add(item.ToString());
-                            }
-                        }
+                        List<string> usernames = data.ContainsKey("usernames") ?
+                            ((List<object>)data["usernames"]).Select(o => o.ToString()).ToList() : new List<string>();
 
                         DateTime timestamp = DateTime.MinValue;
-                        if (data.ContainsKey("timestamp") && data["timestamp"] is Firebase.Firestore.Timestamp firestoreTimestamp)
+                        if (data.ContainsKey("timestamp") && data["timestamp"] is Firebase.Firestore.Timestamp ts)
                         {
-                            timestamp = firestoreTimestamp.ToDateTime();
+                            timestamp = ts.ToDateTime();
                         }
 
                         string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
                         Story newStory = new Story(storyID, previewText, storyTexts, usernames, timestamp);
-
                         matchedStories.Add(newStory);
                     }
 
-                    // Sort stories by timestamp (latest first)
                     matchedStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
-
-                    // Display matched stories
                     foreach (Story story in matchedStories)
                     {
                         CreateStoryCard(story);

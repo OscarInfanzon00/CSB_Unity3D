@@ -7,7 +7,8 @@ using Firebase;
 using Firebase.Auth;
 using Firebase.Firestore;
 using Firebase.Extensions;
-
+using static System.Net.Mime.MediaTypeNames;
+using System.Collections;
 
 public class FriendsListManager : MonoBehaviour
 {
@@ -17,12 +18,13 @@ public class FriendsListManager : MonoBehaviour
     public TMP_Text friendsCounterText;
     public Button closeButton;
     public Button refreshButton;
-    public TMP_InputField searchField; // 🆕 Search input field
+    public TMP_InputField searchField;
 
     public GameObject friendsPopup;
     public TMP_Text popupUsernameText;
     public TMP_Text popupLevelText;
     public TMP_Text popupWordsText;
+    public UnityEngine.UI.Image popupAvatarImage; // 🆕 Avatar image in popup
     public Button closeFriendPopupBtn;
     public Button removeFriendButton;
 
@@ -31,7 +33,11 @@ public class FriendsListManager : MonoBehaviour
     private string currentUserId;
     private string selectedFriendId;
 
-    private List<(string friendId, string username, int level, int words)> allFriends = new(); // 🆕 Store all friends
+    // 🆕 Store all friend data including avatar URL
+    private List<(string friendId, string username, int level, int words, string avatarUrl)> allFriends = new();
+
+    // 🆕 Default avatar fallback
+    private const string defaultAvatarUrl = "https://as2.ftcdn.net/jpg/03/31/69/91/1000_F_331699188_lRpvqxO5QRtwOM05gR50ImaaJgBx68vi.jpg";
 
     void Start()
     {
@@ -39,7 +45,7 @@ public class FriendsListManager : MonoBehaviour
         closeButton.onClick.AddListener(CloseFriendsPanel);
         removeFriendButton.onClick.AddListener(RemoveFriend);
         refreshButton.onClick.AddListener(LoadFriendsList);
-        searchField.onValueChanged.AddListener(FilterFriendsList); // 🆕 Add search listener
+        searchField.onValueChanged.AddListener(FilterFriendsList);
 
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
@@ -65,7 +71,7 @@ public class FriendsListManager : MonoBehaviour
 
     private void LoadFriendsList()
     {
-        allFriends.Clear(); // 🆕 Clear stored friends
+        allFriends.Clear();
 
         foreach (Transform child in contentArea)
         {
@@ -112,12 +118,12 @@ public class FriendsListManager : MonoBehaviour
                     string username = friendSnapshot.ContainsField("username") ? friendSnapshot.GetValue<string>("username") : "Unknown User";
                     int level = friendSnapshot.ContainsField("userLevel") ? friendSnapshot.GetValue<int>("userLevel") : 0;
                     int words = friendSnapshot.ContainsField("words") ? friendSnapshot.GetValue<int>("words") : 0;
+                    string avatarUrl = friendSnapshot.ContainsField("avatarUrl") ? friendSnapshot.GetValue<string>("avatarUrl") : defaultAvatarUrl;
 
                     username = FormatUsername(username);
 
-                    allFriends.Add((friendId, username, level, words)); // 🆕 Store friend in list
-
-                    FilterFriendsList(searchField.text); // 🆕 Refresh displayed friends
+                    allFriends.Add((friendId, username, level, words, avatarUrl));
+                    FilterFriendsList(searchField.text);
                 }
             }
         });
@@ -131,13 +137,13 @@ public class FriendsListManager : MonoBehaviour
         }
 
         string searchLower = searchText.ToLower();
-
         int count = 0;
+
         foreach (var friend in allFriends)
         {
-            if (friend.username.ToLower().Contains(searchLower)) // Case-insensitive search
+            if (friend.username.ToLower().Contains(searchLower))
             {
-                CreateFriendCard(friend.friendId, friend.username, friend.level, friend.words);
+                CreateFriendCard(friend.friendId, friend.username, friend.level, friend.words, friend.avatarUrl);
                 count++;
             }
         }
@@ -145,7 +151,7 @@ public class FriendsListManager : MonoBehaviour
         Debug.Log($"Filtered Friends: {count} matching '{searchText}'");
     }
 
-    private void CreateFriendCard(string friendId, string username, int level, int words)
+    private void CreateFriendCard(string friendId, string username, int level, int words, string avatarUrl)
     {
         if (FriendCardPrefab == null) return;
 
@@ -155,11 +161,9 @@ public class FriendsListManager : MonoBehaviour
         FriendCardController friendController = newFriendCard.GetComponent<FriendCardController>();
         if (friendController != null)
         {
-            // 🆕 Pass all details correctly
-            friendController.Setup(username, level,friendId);
+            friendController.Setup(username, level, friendId, words, avatarUrl, this);
         }
     }
-
 
     private void UpdateFriendsCounter(int count)
     {
@@ -169,7 +173,8 @@ public class FriendsListManager : MonoBehaviour
         }
     }
 
-    public void OpenFriendsPopup(string friendId, string username, int level, int words)
+    // 🆕 Now receives avatarUrl
+    public void OpenFriendsPopup(string friendId, string username, int level, int words, string avatarUrl)
     {
         selectedFriendId = friendId;
         username = FormatUsername(username);
@@ -178,7 +183,33 @@ public class FriendsListManager : MonoBehaviour
         if (popupLevelText != null) popupLevelText.text = "Level: " + level;
         if (popupWordsText != null) popupWordsText.text = "Words: " + words;
 
+        if (!string.IsNullOrEmpty(avatarUrl) && popupAvatarImage != null)
+        {
+            StartCoroutine(LoadPopupImageFromURL(avatarUrl));
+        }
+
         friendsPopup.SetActive(true);
+    }
+
+    private IEnumerator LoadPopupImageFromURL(string url)
+    {
+        using (WWW www = new WWW(url))
+        {
+            yield return www;
+            if (string.IsNullOrEmpty(www.error))
+            {
+                Texture2D texture = www.texture;
+                Sprite sprite = Sprite.Create(texture,
+                                              new Rect(0, 0, texture.width, texture.height),
+                                              new Vector2(0.5f, 0.5f));
+                popupAvatarImage.sprite = sprite;
+                popupAvatarImage.preserveAspect = true;
+            }
+            else
+            {
+                Debug.LogWarning("Failed to load popup avatar: " + www.error);
+            }
+        }
     }
 
     public void CloseFriendsPopup()
@@ -188,10 +219,7 @@ public class FriendsListManager : MonoBehaviour
 
     private void RemoveFriend()
     {
-        if (string.IsNullOrEmpty(selectedFriendId))
-        {
-            return;
-        }
+        if (string.IsNullOrEmpty(selectedFriendId)) return;
 
         db.Collection("Friends").Document(currentUserId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {

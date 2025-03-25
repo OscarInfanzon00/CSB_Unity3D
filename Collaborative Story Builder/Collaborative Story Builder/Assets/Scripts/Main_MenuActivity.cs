@@ -103,7 +103,6 @@ public class Main_MenuActivity : MonoBehaviour
     private void openProfile()
     {
         ProfilePanel.SetActive(true);
-        MainMenuPanel.SetActive(false);
         LobbyPanel.SetActive(false);
     }
 
