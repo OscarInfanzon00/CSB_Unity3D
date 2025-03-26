@@ -4,19 +4,28 @@ using TMPro;
 using Firebase.Firestore;
 using Firebase.Auth;
 using Firebase.Extensions;
-
+using System.Collections;
+using static System.Net.Mime.MediaTypeNames;
 
 
 public class FriendCardController : MonoBehaviour
 {
     public TMP_Text usernameText;
     public TMP_Text levelText;
-    public Button inviteButton; // 🆕 Reference to the invite button
+    public Button inviteButton;
+    public Button cardClickButton;// Clickable card to open popup
 
     private string friendId;
+    private string username;
+    private int level;
+    private int words;
+    private string avatarUrl;      // 🆕 Store avatar URL
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private string currentUserId;
+    public UnityEngine.UI.Image avatarImage;
+
+    private FriendsListManager manager;
 
     void Start()
     {
@@ -32,16 +41,41 @@ public class FriendCardController : MonoBehaviour
         {
             inviteButton.onClick.AddListener(SendInvite);
         }
+
+        if (cardClickButton != null)
+        {
+            cardClickButton.onClick.AddListener(OpenPopup);
+        }
     }
 
-    public void Setup(string username, int level, string friendId)
+    // 🆕 Updated Setup to receive avatarUrl
+    public void Setup(string username, int level, string friendId, int words, string avatarUrl, FriendsListManager manager)
     {
+        this.username = username;
+        this.level = level;
         this.friendId = friendId;
+        this.words = words;
+        this.avatarUrl = avatarUrl;
+        this.manager = manager;
+
         if (usernameText != null)
             usernameText.text = username;
 
         if (levelText != null)
             levelText.text = "Level: " + level;
+
+        if (!string.IsNullOrEmpty(avatarUrl) && avatarImage != null)
+        {
+            StartCoroutine(LoadImageFromURL(avatarUrl));
+        }
+    }
+
+    private void OpenPopup()
+    {
+        if (manager != null)
+        {
+            manager.OpenFriendsPopup(friendId, username, level, words, avatarUrl); // 🆕 Pass avatar to popup
+        }
     }
 
     private void SendInvite()
@@ -68,5 +102,27 @@ public class FriendCardController : MonoBehaviour
                 Debug.LogError("Failed to send invitation.");
             }
         });
+    }
+
+    // 🆕 Load avatar from URL
+    private IEnumerator LoadImageFromURL(string url)
+    {
+        using (WWW www = new WWW(url))
+        {
+            yield return www;
+            if (string.IsNullOrEmpty(www.error))
+            {
+                Texture2D texture = www.texture;
+                Sprite sprite = Sprite.Create(texture,
+                                              new Rect(0, 0, texture.width, texture.height),
+                                              new Vector2(0.5f, 0.5f));
+                avatarImage.sprite = sprite;
+                avatarImage.preserveAspect = true;
+            }
+            else
+            {
+                Debug.LogWarning("Failed to load avatar image: " + www.error);
+            }
+        }
     }
 }
