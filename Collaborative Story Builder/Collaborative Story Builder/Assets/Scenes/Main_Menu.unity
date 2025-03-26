@@ -16359,6 +16359,7 @@ MonoBehaviour:
   popupWordsText: {fileID: 1921361640}
   closeFriendPopupBtn: {fileID: 1637910030}
   removeFriendButton: {fileID: 1482473899}
+  joinLobbyButton: {fileID: 0}
 --- !u!1 &1092210875
 GameObject:
   m_ObjectHideFlags: 0
@@ -32548,6 +32549,10 @@ PrefabInstance:
     - target: {fileID: 4316174019629382976, guid: a01bb8756c74b45568699a0490f3afb1, type: 3}
       propertyPath: m_Name
       value: JoinRandomButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 7566889186566866410, guid: a01bb8756c74b45568699a0490f3afb1, type: 3}
+      propertyPath: m_text
+      value: Join Random Room
       objectReference: {fileID: 0}
     - target: {fileID: 7974271147298460950, guid: a01bb8756c74b45568699a0490f3afb1, type: 3}
       propertyPath: m_Pivot.x

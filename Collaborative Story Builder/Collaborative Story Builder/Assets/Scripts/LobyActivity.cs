@@ -211,6 +211,9 @@ public class LobbyActivity : MonoBehaviour
         ListenForRoomUpdates();
     }
 
+    public void JoinRoomForFriend(string roomID){
+        EnterRoom(roomID);
+    }
     private void AddPlayerToRoom()
     {
         DocumentReference roomRef = db.Collection("Rooms").Document(currentRoomID);
