@@ -28,6 +28,8 @@ public class FriendsListManager : MonoBehaviour
     public Button closeFriendPopupBtn;
     public Button removeFriendButton;
     public Button joinLobbyButton;
+    public GameObject ProfileUI;
+    public GameObject LobbyUI;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private string currentUserId;
@@ -70,6 +72,10 @@ public class FriendsListManager : MonoBehaviour
         LoadFriendsList();
     }
 
+    public void OpenLobbyUI()
+    {
+        LobbyUI.SetActive(true);
+    }
     private void LoadFriendsList()
     {
         allFriends.Clear();
@@ -217,6 +223,10 @@ public class FriendsListManager : MonoBehaviour
     {
         friendsPopup.SetActive(false);
     }
+    public void CloseProfileUI()
+    {
+        ProfileUI.SetActive(false);
+    }
 
     private void RemoveFriend()
     {
@@ -274,6 +284,10 @@ public class FriendsListManager : MonoBehaviour
                             if (lobbyActivity != null)
                             {
                                 lobbyActivity.JoinRoomForFriend(roomID);
+                                CloseFriendsPopup();
+                                CloseFriendsPanel();
+                                CloseProfileUI();
+                                OpenLobbyUI();
                                 Debug.Log($"Joined friend's room: {roomID}");
                             }
                             else

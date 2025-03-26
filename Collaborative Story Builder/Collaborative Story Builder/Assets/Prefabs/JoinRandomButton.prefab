@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2001332204230233034}
   - component: {fileID: 7566889186566866410}
   m_Layer: 0
-  m_Name: CreateRoomTitle
+  m_Name: RandomRoomTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Create Room
+  m_text: Join Random Room
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c40630a094af278428ba232a14807278, type: 2}
   m_sharedMaterial: {fileID: -96834054162728800, guid: c40630a094af278428ba232a14807278, type: 2}

@@ -181,7 +181,11 @@ public class LobbyActivity : MonoBehaviour
                 List<string> roomIDs = new List<string>();
                 foreach (var document in task.Result.Documents)
                 {
-                    roomIDs.Add(document.Id);
+                    string creatorID = document.GetValue<string>("creatorID");
+                    if (!string.IsNullOrEmpty(creatorID) && creatorID != currentUserID)
+                    {
+                        roomIDs.Add(document.Id);
+                    }
                 }
                 if (roomIDs.Count == 0)
                 {
