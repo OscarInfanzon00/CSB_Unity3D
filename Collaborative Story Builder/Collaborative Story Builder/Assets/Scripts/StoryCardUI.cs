@@ -12,10 +12,11 @@ public class StoryCardUI : MonoBehaviour
     public GameObject friendTag;
     public GameObject summarizePanel;
     public TextMeshProUGUI summaryText;
+    public GameObject selectionIndicator;
     private Story storyData;
     public string storyID;
     public NotificationManager notification = null;
-
+    private bool isSelected = false;
 
     public void SetStoryInfo(Story story)
     {
@@ -23,6 +24,10 @@ public class StoryCardUI : MonoBehaviour
         titleText.text = story.storyID;
         authorText.text = "Authors: " + string.Join(", ", story.users);
         openDetailsButton.onClick.AddListener(OnStoryClick);
+        if (selectionIndicator != null)
+        {
+            selectionIndicator.SetActive(false);
+        }
     }
 
     public void OnStoryClick()
@@ -31,6 +36,33 @@ public class StoryCardUI : MonoBehaviour
         StoryViewerUI.GetComponent<StoryDetailsUI>().ShowStoryDetails(storyData, storyID);
     }
 
+    public void EnableSelectionMode(bool enabled)
+    {
+        if (!enabled)
+        {
+            SetSelected(false);
+        }
+    }
+    public void SetSelected(bool selected)
+    {
+        isSelected = selected;
+        if (selectionIndicator != null)
+        {
+            selectionIndicator.SetActive(selected);
+        }
+        else
+        {
+            Debug.LogWarning("Selection indicator not assign on StoryCardUI");
+        }
+    }
+    public void ToggleSelection()
+    {
+        SetSelected(!isSelected);
+    }
+    public Story GetStoryData()
+    {
+        return storyData;
+    }
     public void activateFriends()
     {
         friendTag.SetActive(true);

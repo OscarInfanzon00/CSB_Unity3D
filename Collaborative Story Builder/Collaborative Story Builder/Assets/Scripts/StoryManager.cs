@@ -6,6 +6,7 @@ using Firebase.Auth;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections;
 
 public class StoryManager : MonoBehaviour
 {
@@ -279,7 +280,6 @@ public class StoryManager : MonoBehaviour
         Debug.Log($"Loaded Bookmarks: {bookMarkList}");
         return bookMarkList.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
     }
-
     public void removeStories()
     {
         // Part to delete all stories
