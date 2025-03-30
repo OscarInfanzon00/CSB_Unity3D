@@ -17,7 +17,7 @@ public class InvitationNotification : MonoBehaviour
     private string currentUserId;
     private string inviterId;
 
-    private ListenerRegistration inviteListener; // 🆕 Firestore Listener
+    private ListenerRegistration inviteListener; 
 
     void Start()
     {
@@ -27,19 +27,19 @@ public class InvitationNotification : MonoBehaviour
         if (auth.CurrentUser != null)
         {
             currentUserId = auth.CurrentUser.UserId;
-            StartListeningForInvites(); // 🆕 Start real-time listener
+            StartListeningForInvites(); 
         }
 
         acceptButton.onClick.AddListener(AcceptInvitation);
         rejectButton.onClick.AddListener(RejectInvitation);
 
-        // Hide panel on start
+        
         invitationPanel.SetActive(false);
     }
 
     private void StartListeningForInvites()
     {
-        // 🆕 Listen for changes to the UserInvitations document for the current user
+        
         inviteListener = db.Collection("UserInvitations").Document(currentUserId)
             .Listen(snapshot =>
             {
@@ -47,7 +47,7 @@ public class InvitationNotification : MonoBehaviour
                 {
                     inviterId = snapshot.GetValue<string>("inviterId");
 
-                    // Fetch inviter's username
+                    
                     db.Collection("Users").Document(inviterId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
                     {
                         if (task.IsCompletedSuccessfully)
@@ -61,7 +61,7 @@ public class InvitationNotification : MonoBehaviour
                 }
                 else
                 {
-                    invitationPanel.SetActive(false); // Hide panel if no invitation exists
+                    invitationPanel.SetActive(false); 
                 }
             });
     }
@@ -98,7 +98,7 @@ public class InvitationNotification : MonoBehaviour
 
     private void OnDestroy()
     {
-        // 🛑 Stop listening when the object is destroyed
+        
         if (inviteListener != null)
         {
             inviteListener.Stop();
