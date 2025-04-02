@@ -44,12 +44,13 @@ public class ProfileActivity : MonoBehaviour
     private FirebaseFirestore db;
     private FirebaseFirestore dbReference;
     private string currentUserId;
+    public TMP_Text noStoriesPlaceHolder;
 
     public TextMeshProUGUI XPtext;
 
-    // 🆕 Avatar selection panel and buttons
+ 
     public GameObject avatarSelectionPanel, CustomFieldPanel;
-    public List<Button> defaultAvatarButtons; // Assign 5 buttons in Inspector
+    public List<Button> defaultAvatarButtons;
     public Button customAvatarButton;
     public TMP_InputField customURLInput;
     public Button confirmCustomButton;
@@ -73,7 +74,7 @@ public class ProfileActivity : MonoBehaviour
         if (user.Email != "defaultEmail") email.text = user.Email;
         if (user.Username != "defaultUser") username.text = user.Username;
 
-        // 🆕 Load avatar from Firestore if saved
+        
         if (!string.IsNullOrEmpty(currentUserId))
         {
             db.Collection("Users").Document(currentUserId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
@@ -86,7 +87,7 @@ public class ProfileActivity : MonoBehaviour
             });
         }
 
-        // 🆕 Set up default avatar button listeners
+       
         defaultAvatarButtons[0].onClick.AddListener(() => SelectAvatar("https://img.freepik.com/premium-vector/men-icon-trendy-avatar-character-cheerful-happy-people-flat-vector-illustration-round-frame-male-portraits-group-team-adorable-guys-isolated-white-background_275421-282.jpg?w=1060"));
         defaultAvatarButtons[1].onClick.AddListener(() => SelectAvatar("https://img.freepik.com/premium-vector/women-trendy-icon-avatar-character-cheerful-happy-people-flat-vector-illustration-round-frame-female-portraits-group-team-adorable-girl-isolated-white-background_275421-271.jpg"));
         defaultAvatarButtons[2].onClick.AddListener(() => SelectAvatar("https://img.freepik.com/premium-vector/men-icon-trendy-avatar-character-cheerful-happy-people-flat-vector-illustration-round-frame-male-portraits-group-team-adorable-guys-isolated-white-background_275421-280.jpg"));
@@ -116,7 +117,7 @@ public class ProfileActivity : MonoBehaviour
 
     private void OnProfilePicButtonClicked()
     {
-        //Show avatar selection panel
+       
         avatarSelectionPanel.SetActive(true);
     }
 
@@ -265,6 +266,7 @@ public class ProfileActivity : MonoBehaviour
         if (string.IsNullOrEmpty(currentUserID))
         {
             Debug.LogError("User is not authenticated.");
+            noStoriesPlaceHolder.text = "Register/Log in to see your Stories!";
             return;
         }
 
@@ -275,6 +277,10 @@ public class ProfileActivity : MonoBehaviour
                 try
                 {
                     List<Story> matchedStories = new List<Story>();
+
+                    if(matchedStories.Count == 0)
+                        noStoriesPlaceHolder.text = "You Don't have any stories. Please Play to Create a New Story!";
+                    
 
                     foreach (DocumentSnapshot doc in task.Result.Documents)
                     {
@@ -312,16 +318,19 @@ public class ProfileActivity : MonoBehaviour
                     foreach (Story story in matchedStories)
                     {
                         CreateStoryCard(story);
+                        noStoriesPlaceHolder.text = "";
                     }
                 }
                 catch (Exception e)
                 {
                     Debug.LogError("Failed to load stories: " + e);
+                    noStoriesPlaceHolder.text = "You Don't have any stories. Please Play to Create a New Story!";
                 }
             }
             else
             {
                 Debug.LogError("Failed to load stories: " + task.Exception);
+
             }
         });
     }
