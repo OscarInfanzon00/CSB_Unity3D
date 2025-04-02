@@ -13,6 +13,7 @@ public class CurrentUserStoryManager : MonoBehaviour
     FirebaseUser currentUser;
     public Transform storyListContainer;
     public GameObject storyCardPrefab;
+    public GameObject StoryViewerUI;
     public string storyID;
     private void Start()
     {
@@ -95,6 +96,10 @@ public class CurrentUserStoryManager : MonoBehaviour
 
                     // Sort stories by timestamp (latest first)
                     userStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
+                    foreach (Story story in userStories)
+                    {
+                        CreateStoryCard(story);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -106,5 +111,13 @@ public class CurrentUserStoryManager : MonoBehaviour
                 Debug.LogError("Failed to load stories: " + task.Exception);
             }
         });
+    }
+    void CreateStoryCard(Story story)
+    {
+        GameObject newCard = Instantiate(storyCardPrefab, storyListContainer);
+        newCard.GetComponent<StoryCardUI>().StoryViewerUI = StoryViewerUI;
+        StoryCardUI cardUI = newCard.GetComponent<StoryCardUI>();
+        cardUI.SetStoryInfo(story);
+        cardUI.storyID = story.storyRealID;
     }
 }
