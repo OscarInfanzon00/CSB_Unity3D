@@ -160,7 +160,6 @@ public class StoryDeletionManager : MonoBehaviour
             {
                 if (storyCardPrefab != null)
                 {
-
                     GameObject cardCopy = Instantiate(storyCardPrefab, selectedStoriesContainer);
                     StoryCardUI copyCardUI = cardCopy.GetComponent<StoryCardUI>();
 
@@ -188,6 +187,8 @@ public class StoryDeletionManager : MonoBehaviour
         int totalToDelete = selectedStoryIDs.Count;
         int deletedCount = 0;
 
+        UpdateLocalDataModel();
+
         foreach (string storyID in selectedStoryIDs)
         {
             // Fixed Firebase query to properly handle the query results
@@ -213,22 +214,23 @@ public class StoryDeletionManager : MonoBehaviour
                                 {
                                     Debug.Log("Successfully deleted story: " + storyID);
 
-                                    deletedCount++;
-                                    // If all stories deleted, refresh UI
+                                    // If all stories deleted, finish up
                                     if (deletedCount == totalToDelete)
                                     {
-                                        notification.Notify($"Successfully deleted {totalToDelete} stories!");
-
-                                        HideDeleteConfirmation();
-                                        ExitSelectionMode();
-                                        
-
+                                        FinishDeletion(totalToDelete);
                                     }
                                 }
                                 else
                                 {
                                     Debug.LogError("Error deleting story: " + deleteTask.Exception);
-                                    notification.Notify("Error deleting some stories. Please try again.");
+
+                                    // If all deletion attempts completed
+                                    if (deletedCount == totalToDelete)
+                                    {
+                                        notification.Notify("Error deleting some stories. The UI has been updated.");
+                                        HideDeleteConfirmation();
+                                        ExitSelectionMode();
+                                    }
                                 }
                             });
                         }
@@ -236,29 +238,65 @@ public class StoryDeletionManager : MonoBehaviour
                         {
                             Debug.LogWarning("No document found with storyID: " + storyID);
                             deletedCount++;
+                            CheckIfAllDeletionsCompleted(deletedCount, totalToDelete);
                         }
                     }
                     else
                     {
                         Debug.LogWarning("No document found with storyID: " + storyID);
                         deletedCount++;
+                        CheckIfAllDeletionsCompleted(deletedCount, totalToDelete);
                     }
                 }
                 else
                 {
                     Debug.LogError("Error finding story to delete: " + task.Exception);
                     deletedCount++;
-
-                    // If all attempts completed, notify user
-                    if (deletedCount == totalToDelete)
-                    {
-                        notification.Notify("Error deleting some stories. Please try again.");
-                        HideDeleteConfirmation();
-                        ExitSelectionMode();
-                    }
+                    CheckIfAllDeletionsCompleted(deletedCount, totalToDelete);
                 }
             });
         }
     }
+    private void UpdateLocalDataModel()
+    {
+        // Update StoryManager internal data model
+        if (storyManager != null)
+        {
+            foreach (string storyID in selectedStoryIDs)
+            {
+                storyManager.RemoveStoryByID(storyID);
+            }
+        }
 
+        // Remove the UI elements
+        foreach (StoryCardUI card in selectedStoryCards)
+        {
+            if (card != null && card.gameObject != null)
+            {
+                Destroy(card.gameObject);
+            }
+        }
+    }
+
+    private void CheckIfAllDeletionsCompleted(int deletedCount, int totalToDelete)
+    {
+        // If all deletion attempts completed
+        if (deletedCount == totalToDelete)
+        {
+            FinishDeletion(totalToDelete);
+        }
+    }
+
+    private void FinishDeletion(int totalDeleted)
+    {
+        notification.Notify($"Successfully deleted {totalDeleted} stories!");
+        HideDeleteConfirmation();
+        ExitSelectionMode();
+
+        // Refresh CurrentUserStoryManager's UI if available
+        if (crntUserStoryManager != null)
+        {
+            crntUserStoryManager.LoadUserStories();
+        }
+    }
 }
