@@ -46,7 +46,7 @@ public class Part
 
 public static class AI_Manager
 {
-    private static string apiKey = "AIzaSyA_5K_6hP7RpZ8Ivfmpn-GcqJQJOqSZo9s";
+    private static string apiKey = "AIzaSyCZu0rCf_VO6Mxv74QSX_Qh5Jnvio2BbLk";
     private static string apiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
     public static IEnumerator GetChatCompletion(string prompt, Action<string> callback)
