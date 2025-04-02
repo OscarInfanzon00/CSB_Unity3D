@@ -6,6 +6,7 @@ using Firebase.Auth;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections;
 
 public class StoryManager : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class StoryManager : MonoBehaviour
     public GameObject StoryViewerUI;
     public TMP_InputField searchInputField;
     public string storyID;
+    public Button refreshButton;
     private HashSet<string> friendsSet = new HashSet<string>();
     bool allTheStoriesShowingUp = true;
     private List<Story> allStories = new List<Story>();
@@ -24,6 +26,7 @@ public class StoryManager : MonoBehaviour
     {
         db = FirebaseFirestore.DefaultInstance;
         currentUser = FirebaseAuth.DefaultInstance.CurrentUser;
+        refreshButton.onClick.AddListener(RefreshStories);
         LoadFriends();
         LoadStories();
 
@@ -63,9 +66,18 @@ public class StoryManager : MonoBehaviour
             }
         });
     }
-
+    public void ClearStoryContainer()
+    {
+        // Clear all story cards from the container
+        foreach (Transform child in storyListContainer)
+        {
+            Destroy(child.gameObject);
+        }
+    }
     void LoadStories()
     {
+        ClearStoryContainer();
+        allStories.Clear();
         db.Collection("Stories").GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
@@ -181,6 +193,7 @@ public class StoryManager : MonoBehaviour
 
     public void loadStoryByID()
     {
+        ClearStoryContainer();
         string[] listIDs = getBookmarks();
         Debug.Log($"Bookmarks to load: {string.Join(", ", listIDs)}");
 
@@ -279,20 +292,15 @@ public class StoryManager : MonoBehaviour
         Debug.Log($"Loaded Bookmarks: {bookMarkList}");
         return bookMarkList.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
     }
-
     public void removeStories()
     {
-        // Part to delete all stories
-        int children = storyListContainer.childCount;
-        Debug.Log(children + " stories to delete");
+        ClearStoryContainer();
+        StartCoroutine(ReloadStoryList());
+    }
 
-        for (int i = 0; i < children; i++)
-        {
-            GameObject.Destroy(storyListContainer.GetChild(i).gameObject);
-            Debug.Log("Deleted a story");
-        }
-        // Part to delete all stories
-
+    private IEnumerator ReloadStoryList()
+    {
+        yield return new WaitForSeconds(0.1f); // Wait for UI update
         if (allTheStoriesShowingUp)
         {
             loadStoryByID();
@@ -304,7 +312,22 @@ public class StoryManager : MonoBehaviour
             allTheStoriesShowingUp = true;
         }
     }
-
+    public void RefreshStories()
+    {
+        // Show loading indicator if you have one
+        
+        // Clear existing stories
+        ClearStoryContainer();
+        
+        // Reset story lists
+        allStories.Clear();
+        
+        // Reload friends (in case friend list has changed)
+        LoadFriends();
+        
+        // Reload stories
+        LoadStories();
+    }
     void FilterStories(string filterText)
     {
         List<Story> filteredStories = allStories.FindAll(story =>
@@ -315,6 +338,7 @@ public class StoryManager : MonoBehaviour
 
     void DisplayStories(List<Story> stories)
     {
+        ClearStoryContainer();
         foreach (Transform child in storyListContainer)
         {
             Destroy(child.gameObject);
@@ -330,7 +354,22 @@ public class StoryManager : MonoBehaviour
             LoadStories();
         }
     }
+    public void RemoveStoryByID(string storyIdToRemove)
+    {
+        // Remove from the allStories list
+        allStories.RemoveAll(story => story.storyRealID == storyIdToRemove);
 
+        // Find and remove from UI if present
+        foreach (Transform child in storyListContainer)
+        {
+            StoryCardUI cardUI = child.GetComponent<StoryCardUI>();
+            if (cardUI != null && cardUI.storyID == storyIdToRemove)
+            {
+                Destroy(child.gameObject);
+                break;
+            }
+        }
+    }
     void CreateStoryCard(Story story, bool areFriends)
     {
         GameObject newCard = Instantiate(storyCardPrefab, storyListContainer);

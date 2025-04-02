@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1765889441179041675
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 101240272455853673}
+  - component: {fileID: 6430557405797854184}
+  m_Layer: 0
+  m_Name: Genre_Style_Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &101240272455853673
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765889441179041675}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -36.13637, y: 739.1757, z: -2.0839942}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6430557405797854184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765889441179041675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54b17390e5b44400885a5874f445683d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  genreDropdown: {fileID: 0}
+  backgroundImages:
+  - {fileID: 0}
+  uiPanels:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  uiButtons:
+  - {fileID: 0}
+  uiTexts:
+  - {fileID: 0}
+  - {fileID: 0}
+  genreThemes:
+  - genreName: Sci-fi
+    backgroundImages:
+    - {fileID: 21300000, guid: eeb0e9f70ba6e664e9e6d064e13c821c, type: 3}
+    panelImages:
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: f57b3e44b93713946ae7087873829395, type: 3}
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: 2fdc725d8597ae048aff5051148dd2b9, type: 3}
+    - {fileID: 21300000, guid: eeffb356a8b699142855c2591a58ba76, type: 3}
+    panelColors:
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 0.27058825, g: 0.8392157, b: 0.9647059, a: 1}
+    buttonImages:
+    - {fileID: 21300000, guid: 356796e48f465de499bee3899ee6f7aa, type: 3}
+    buttonColors:
+    - {r: 0.28773582, g: 0.8676728, b: 1, a: 1}
+    textColors:
+    - {r: 0, g: 0, b: 0, a: 1}
+    - {r: 0.27058825, g: 0.8392157, b: 0.96862745, a: 1}
+  - genreName: Fantasy
+    backgroundImages:
+    - {fileID: 21300000, guid: b0efbc267bf5af34ebc3f2f8e5488a47, type: 3}
+    panelImages:
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: f57b3e44b93713946ae7087873829395, type: 3}
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: 2fdc725d8597ae048aff5051148dd2b9, type: 3}
+    - {fileID: 21300000, guid: eeffb356a8b699142855c2591a58ba76, type: 3}
+    panelColors:
+    - {r: 0, g: 0.3018868, b: 0.07058601, a: 1}
+    - {r: 0.007843138, g: 0.3019608, b: 0.07058824, a: 1}
+    - {r: 0.007843138, g: 0.3019608, b: 0.07058824, a: 1}
+    - {r: 0.33962262, g: 0.17666289, b: 0.12655748, a: 1}
+    - {r: 1, g: 0.93299586, b: 0.7971698, a: 1}
+    buttonImages:
+    - {fileID: 21300000, guid: 356796e48f465de499bee3899ee6f7aa, type: 3}
+    buttonColors:
+    - {r: 0, g: 0.6132076, b: 0.1181687, a: 1}
+    textColors:
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 0.94016206, b: 0.7028302, a: 1}
+  - genreName: Horror
+    backgroundImages:
+    - {fileID: 21300000, guid: eeb0e9f70ba6e664e9e6d064e13c821c, type: 3}
+    panelImages:
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: f57b3e44b93713946ae7087873829395, type: 3}
+    - {fileID: 21300000, guid: 6acdd280faaf51647aeb98cd6f2f3ac4, type: 3}
+    - {fileID: 21300000, guid: 2fdc725d8597ae048aff5051148dd2b9, type: 3}
+    - {fileID: 21300000, guid: eeffb356a8b699142855c2591a58ba76, type: 3}
+    panelColors:
+    - {r: 0, g: 0, b: 0, a: 1}
+    - {r: 0, g: 0, b: 0, a: 1}
+    - {r: 0, g: 0, b: 0, a: 1}
+    - {r: 1, g: 0, b: 0, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    buttonImages:
+    - {fileID: 21300000, guid: 356796e48f465de499bee3899ee6f7aa, type: 3}
+    buttonColors:
+    - {r: 1, g: 1, b: 1, a: 1}
+    textColors:
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 0.92941177, g: 0.003921569, b: 0, a: 1}

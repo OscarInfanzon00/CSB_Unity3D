@@ -27,7 +27,9 @@ public class FriendsListManager : MonoBehaviour
     public UnityEngine.UI.Image popupAvatarImage; // 🆕 Avatar image in popup
     public Button closeFriendPopupBtn;
     public Button removeFriendButton;
-
+    public Button joinLobbyButton;
+    public GameObject ProfileUI;
+    public GameObject LobbyUI;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private string currentUserId;
@@ -44,6 +46,7 @@ public class FriendsListManager : MonoBehaviour
         closeFriendPopupBtn.onClick.AddListener(CloseFriendsPopup);
         closeButton.onClick.AddListener(CloseFriendsPanel);
         removeFriendButton.onClick.AddListener(RemoveFriend);
+        joinLobbyButton.onClick.AddListener(JoinFriendRoom);
         refreshButton.onClick.AddListener(LoadFriendsList);
         searchField.onValueChanged.AddListener(FilterFriendsList);
 
@@ -69,6 +72,10 @@ public class FriendsListManager : MonoBehaviour
         LoadFriendsList();
     }
 
+    public void OpenLobbyUI()
+    {
+        LobbyUI.SetActive(true);
+    }
     private void LoadFriendsList()
     {
         allFriends.Clear();
@@ -216,6 +223,10 @@ public class FriendsListManager : MonoBehaviour
     {
         friendsPopup.SetActive(false);
     }
+    public void CloseProfileUI()
+    {
+        ProfileUI.SetActive(false);
+    }
 
     private void RemoveFriend()
     {
@@ -244,6 +255,55 @@ public class FriendsListManager : MonoBehaviour
                         });
                     }
                 }
+            }
+        });
+    }
+    public void JoinFriendRoom()
+    {   
+        if (string.IsNullOrEmpty(selectedFriendId))
+        {
+            return;
+        }
+        db.Collection("Rooms").GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                QuerySnapshot roomsSnapshot = task.Result;
+
+                foreach (DocumentSnapshot roomDoc in roomsSnapshot.Documents)
+                {
+                    string creatorID = roomDoc.ContainsField("creatorID") ? roomDoc.GetValue<string>("creatorID") : null;
+                    bool isGameStarted = roomDoc.ContainsField("isGameStarted") && roomDoc.GetValue<bool>("isGameStarted");
+
+                    if (creatorID == selectedFriendId && !isGameStarted)
+                    {
+                        string roomID = roomDoc.ContainsField("roomID") ? roomDoc.GetValue<string>("roomID") : null;
+                        if (!string.IsNullOrEmpty(roomID))
+                        {
+                            LobbyActivity lobbyActivity = FindAnyObjectByType<LobbyActivity>();
+                            if (lobbyActivity != null)
+                            {
+                                lobbyActivity.JoinRoomForFriend(roomID);
+                                CloseFriendsPopup();
+                                CloseFriendsPanel();
+                                CloseProfileUI();
+                                OpenLobbyUI();
+                                Debug.Log($"Joined friend's room: {roomID}");
+                            }
+                            else
+                            {
+                                Debug.LogError("LobbyActivity not found.");
+                            }
+                        }
+                        return;
+                    }
+                }
+
+                Debug.LogWarning("No available room found for the selected friend.");
+            }
+            else
+            {
+                Debug.LogError("Failed to retrieve room data.");
             }
         });
     }

@@ -13,6 +13,13 @@ public class Solo_UploadStory : MonoBehaviour
 {
     private UserData userData;
     public TMP_InputField storyInputField;
+    public TMP_InputField bannedWordInputField;
+    public Transform bannedWordsListContent;
+    public GameObject bannedWordItemPrefab;
+    public TMP_InputField requiredWordInputField;
+    public Transform requiredWordsListContent;
+    private List<string> currentStoryRequiredWords = new List<string>();
+    private List<string> currentStoryBannedWords = new List<string>();
     private FirebaseFirestore db;
     public NotificationManager notificationManager;
     public Button closeButton;
@@ -21,6 +28,8 @@ public class Solo_UploadStory : MonoBehaviour
     {
         db = FirebaseFirestore.DefaultInstance;
         userData = User.GetUser();
+        currentStoryBannedWords.Clear();
+        UpdateBannedWordsUI();
         closeButton.onClick.AddListener(closeScene);
     }
 
@@ -39,6 +48,16 @@ public class Solo_UploadStory : MonoBehaviour
         string storyID = Guid.NewGuid().ToString();
 
         string storyText = storyInputField.text;
+        string foundBannedWord = CheckForBannedWords(storyText);
+        if (!string.IsNullOrEmpty(foundBannedWord))
+        {
+            notificationManager.Notify($"Your story contains a banned word: '{foundBannedWord}'.", 3f);
+            return;
+        }
+        if(!ContainsAllRequiredWords(storyText))
+        {
+            return;
+        }
         int wordCount = CountWords(storyText);
         List<string> storyTexts = new List<string>
     {
@@ -101,6 +120,124 @@ public class Solo_UploadStory : MonoBehaviour
             }
         });
     }
+     private string CheckForBannedWords(string text)
+    {
+        foreach (string word in currentStoryBannedWords)
+        {
+            if (text.Contains(word, StringComparison.OrdinalIgnoreCase))
+            {
+                return word;
+            }
+        }
+        return null;
+    }
+
+    public void AddBannedWord()
+    {
+        string bannedWord = bannedWordInputField.text.Trim().ToLower();
+
+        if (string.IsNullOrEmpty(bannedWord))
+        {
+            notificationManager.Notify("Please enter a word to ban.", 2f);
+            return;
+        }
+
+        if (!currentStoryBannedWords.Contains(bannedWord))
+        {
+            currentStoryBannedWords.Add(bannedWord);
+            notificationManager.Notify($"'{bannedWord}' has been added to the banned list.", 2f);
+            bannedWordInputField.text = "";
+            UpdateBannedWordsUI();
+        }
+        else
+        {
+            notificationManager.Notify($"'{bannedWord}' is already in the banned list.", 2f);
+        }
+    }
+
+    public void RemoveBannedWord(string word)
+    {
+        if (currentStoryBannedWords.Contains(word))
+        {
+            currentStoryBannedWords.Remove(word);
+            notificationManager.Notify($"'{word}' has been removed from the banned list.", 2f);
+            UpdateBannedWordsUI();
+        }
+    }
+
+    private void UpdateBannedWordsUI()
+    {
+        foreach (Transform child in bannedWordsListContent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (string word in currentStoryBannedWords)
+        {
+            GameObject item = Instantiate(bannedWordItemPrefab, bannedWordsListContent);
+            item.GetComponentInChildren<TMP_Text>().text = word;
+            item.GetComponentInChildren<Button>().onClick.AddListener(() => RemoveBannedWord(word));
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(bannedWordsListContent.GetComponent<RectTransform>());
+
+    }
+
+    public void ClearBannedWordsForNewStory()
+    {
+        currentStoryBannedWords.Clear();
+        UpdateBannedWordsUI();
+    }
+    public void AddRequiredWord() {
+        string newWord = requiredWordInputField.text.Trim().ToLower();
+        Debug.Log("Attempting to add required word: " + newWord);
+        if (string.IsNullOrEmpty(newWord))
+        {
+            notificationManager.Notify("Please enter a required word.", 3f);
+            return;
+        }
+
+        if (currentStoryRequiredWords.Contains(newWord))
+        {
+            notificationManager.Notify("Word is already in the required list.", 3f);
+            return;
+        }
+
+        currentStoryRequiredWords.Add(newWord);
+        requiredWordInputField.text = "";
+        UpdateRequiredWordsUI();
+    }
+    public void RemoveRequiredWord(string word)
+    {
+        currentStoryRequiredWords.Remove(word);
+        UpdateRequiredWordsUI();
+    }
+    private void  UpdateRequiredWordsUI()
+    {
+        foreach (Transform child in requiredWordsListContent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (string word in currentStoryRequiredWords)
+        {
+            GameObject item = Instantiate(bannedWordItemPrefab, requiredWordsListContent);
+            item.GetComponentInChildren<TMP_Text>().text = word;
+            item.GetComponentInChildren<Button>().onClick.AddListener(() => RemoveRequiredWord(word));
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(requiredWordsListContent.GetComponent<RectTransform>());
+    }
+    private bool ContainsAllRequiredWords(string storyText) {
+        foreach (string word in currentStoryRequiredWords)
+        {
+            if (!storyText.ToLower().Contains(word))
+            {
+                notificationManager.Notify($"Your story must include the word: '{word}'", 3f);
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public void clearText()
     {

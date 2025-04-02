@@ -15,11 +15,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 public class ProfileActivity : MonoBehaviour
 {
-    public GameObject MainMenuPanel, ProfilePanel, FriendsPanel;
-    public Transform storyListContainer;
-    public GameObject storyCardPrefab;
-    public GameObject StoryViewerUI;
-
+    public GameObject MainMenuPanel, ProfilePanel, FriendsPanel, BlockedUsersPanel;
     public TextMeshProUGUI usernameMainMenuText;
     public Button closeButton;
     public TMP_InputField email;
@@ -28,6 +24,7 @@ public class ProfileActivity : MonoBehaviour
     public Button logoutButton;
     public Button profilePicButton;
     public Button friedListButton;
+    public Button blockedListButton;
     public UnityEngine.UI.Image profilePic;
 
 
@@ -43,7 +40,6 @@ public class ProfileActivity : MonoBehaviour
     private FirebaseFirestore db;
     private FirebaseFirestore dbReference;
     private string currentUserId;
-    public TMP_Text noStoriesPlaceHolder;
 
     public TextMeshProUGUI XPtext;
 
@@ -67,7 +63,7 @@ public class ProfileActivity : MonoBehaviour
         closeButton.onClick.AddListener(closeProfile);
         profilePicButton.onClick.AddListener(OnProfilePicButtonClicked);
         friedListButton.onClick.AddListener(OpenFriendsList);
-
+        blockedListButton.onClick.AddListener(OpenBlockedUsersList);
         user = User.GetUser();
 
         if (user.Email != "defaultEmail") email.text = user.Email;
@@ -111,7 +107,6 @@ public class ProfileActivity : MonoBehaviour
 
         updateLVL();
         GetUserWords(user.UserID);
-        loadStoryByID();
     }
 
     private void OnProfilePicButtonClicked()
@@ -214,6 +209,10 @@ public class ProfileActivity : MonoBehaviour
         FriendsPanel.SetActive(true);
     }
 
+    private void OpenBlockedUsersList()
+    {
+        BlockedUsersPanel.SetActive(true);
+    }
     private void updateLVL()
     {
         if (user.UserLevel != 0)
@@ -252,90 +251,5 @@ public class ProfileActivity : MonoBehaviour
                 Debug.LogError("Failed to fetch user data: " + task.Exception);
             }
         });
-    }
-
-    public void loadStoryByID()
-    {
-        string currentUserID = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
-
-        if (string.IsNullOrEmpty(currentUserID))
-        {
-            Debug.LogError("User is not authenticated.");
-            noStoriesPlaceHolder.text = "Register/Log in to see your Stories!";
-            return;
-        }
-
-        db.Collection("Stories").GetSnapshotAsync().ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                try
-                {
-                    List<Story> matchedStories = new List<Story>();
-
-                    if(matchedStories.Count == 0)
-                        noStoriesPlaceHolder.text = "You Don't have any stories. Please Play to Create a New Story!";
-                    
-
-                    foreach (DocumentSnapshot doc in task.Result.Documents)
-                    {
-                        Dictionary<string, object> data = doc.ToDictionary();
-
-                        if (!data.ContainsKey("storyID"))
-                            continue;
-
-                        string storyID = (string)data["storyID"];
-                        if (!data.ContainsKey("users") || !(data["users"] is List<object> userList))
-                            continue;
-
-                        List<string> owners = userList.Select(user => user.ToString()).ToList();
-                        if (!owners.Contains(currentUserID))
-                            continue;
-
-                        List<string> storyTexts = data.ContainsKey("storyTexts") ?
-                            ((List<object>)data["storyTexts"]).Select(o => o.ToString()).ToList() : new List<string>();
-
-                        List<string> usernames = data.ContainsKey("usernames") ?
-                            ((List<object>)data["usernames"]).Select(o => o.ToString()).ToList() : new List<string>();
-
-                        DateTime timestamp = DateTime.MinValue;
-                        if (data.ContainsKey("timestamp") && data["timestamp"] is Firebase.Firestore.Timestamp ts)
-                        {
-                            timestamp = ts.ToDateTime();
-                        }
-
-                        string previewText = storyTexts.Count > 0 ? storyTexts[0] : "No preview available";
-                        Story newStory = new Story(storyID, previewText, storyTexts, usernames, timestamp);
-                        matchedStories.Add(newStory);
-                    }
-
-                    matchedStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
-                    foreach (Story story in matchedStories)
-                    {
-                        CreateStoryCard(story);
-                        noStoriesPlaceHolder.text = "";
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError("Failed to load stories: " + e);
-                    noStoriesPlaceHolder.text = "You Don't have any stories. Please Play to Create a New Story!";
-                }
-            }
-            else
-            {
-                Debug.LogError("Failed to load stories: " + task.Exception);
-
-            }
-        });
-    }
-
-    void CreateStoryCard(Story story)
-    {
-        GameObject newCard = Instantiate(storyCardPrefab, storyListContainer);
-        newCard.GetComponent<StoryCardUI>().StoryViewerUI = StoryViewerUI;
-        StoryCardUI cardUI = newCard.GetComponent<StoryCardUI>();
-        cardUI.SetStoryInfo(story);
-        cardUI.storyID = story.storyRealID;
     }
 }
