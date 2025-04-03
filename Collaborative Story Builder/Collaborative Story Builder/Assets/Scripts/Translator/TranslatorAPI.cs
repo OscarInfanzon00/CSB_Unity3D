@@ -15,6 +15,7 @@ public class TranslatorAPI : MonoBehaviour
 
     void Start()
     {
+
         translateButton.onClick.AddListener(OnTranslateButtonClicked);
     }
     private void Update()
