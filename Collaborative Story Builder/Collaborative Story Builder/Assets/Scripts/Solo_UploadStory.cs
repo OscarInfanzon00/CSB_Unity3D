@@ -24,6 +24,8 @@ public class Solo_UploadStory : MonoBehaviour
     public NotificationManager notificationManager;
     public Button closeButton;
 
+    public string undoText;
+
     void Start()
     {
         db = FirebaseFirestore.DefaultInstance;
@@ -241,7 +243,12 @@ public class Solo_UploadStory : MonoBehaviour
 
     public void clearText()
     {
+        undoText = storyInputField.text;
         storyInputField.text = " ";
+    }
+
+    public void undoTextBack(){
+        storyInputField.text = undoText;
     }
 
     void Update()
