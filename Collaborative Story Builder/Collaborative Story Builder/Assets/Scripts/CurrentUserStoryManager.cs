@@ -6,6 +6,7 @@ using Firebase.Extensions;
 using Firebase.Auth;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class CurrentUserStoryManager : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class CurrentUserStoryManager : MonoBehaviour
     public GameObject storyCardPrefab;
     public GameObject StoryViewerUI;
     public string storyID;
+    public TMP_Text NoStoriesInFeed;
     private void Start()
     {
         db = FirebaseFirestore.DefaultInstance;
@@ -94,8 +96,17 @@ public class CurrentUserStoryManager : MonoBehaviour
                         userStories.Add(newStory);
                     }
 
-                    // Sort stories by timestamp (latest first)
-                    userStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
+                    if (userStories.Count == 0)
+                    {
+                        NoStoriesInFeed.text = "No Stories here, Play to create one!";
+                    }
+                    else
+                    {
+                        NoStoriesInFeed.text = "";
+                    }
+
+                        // Sort stories by timestamp (latest first)
+                        userStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
                     foreach (Story story in userStories)
                     {
                         CreateStoryCard(story);
@@ -104,11 +115,14 @@ public class CurrentUserStoryManager : MonoBehaviour
                 catch (Exception e)
                 {
                     Debug.LogError("Failed to load stories: " + e);
+                    NoStoriesInFeed.text = e.Message;
+
                 }
             }
             else
             {
                 Debug.LogError("Failed to load stories: " + task.Exception);
+                NoStoriesInFeed.text = "Failed to load stories, Please try again later.";
             }
         });
     }
