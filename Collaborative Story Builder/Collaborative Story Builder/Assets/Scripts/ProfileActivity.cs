@@ -22,6 +22,8 @@ public class ProfileActivity : MonoBehaviour
     public TMP_InputField username;
     public Button saveButton;
     public Button logoutButton;
+    public GameObject ConfirmLogoutPanel;
+    public Button cancelLogoutbtn, confirmlogoutbtn;
     public Button profilePicButton;
     public Button friedListButton;
     public Button blockedListButton;
@@ -58,12 +60,16 @@ public class ProfileActivity : MonoBehaviour
         dbReference = FirebaseFirestore.DefaultInstance;
         currentUserId = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
 
+        ConfirmLogoutPanel.SetActive(false);
+
         saveButton.onClick.AddListener(saveUsername);
-        logoutButton.onClick.AddListener(logout);
+        logoutButton.onClick.AddListener(confirmLogout);
         closeButton.onClick.AddListener(closeProfile);
         profilePicButton.onClick.AddListener(OnProfilePicButtonClicked);
         friedListButton.onClick.AddListener(OpenFriendsList);
         blockedListButton.onClick.AddListener(OpenBlockedUsersList);
+        cancelLogoutbtn.onClick.AddListener(cancelLogout);
+        confirmlogoutbtn.onClick.AddListener(logout);
         user = User.GetUser();
 
         if (user.Email != "defaultEmail") email.text = user.Email;
@@ -109,10 +115,20 @@ public class ProfileActivity : MonoBehaviour
         GetUserWords(user.UserID);
     }
 
+    private void confirmLogout()
+    {
+        ConfirmLogoutPanel.SetActive(true);
+    }
+
     private void OnProfilePicButtonClicked()
     {
        
         avatarSelectionPanel.SetActive(true);
+    }
+
+    private void cancelLogout()
+    {
+        ConfirmLogoutPanel.SetActive(false);
     }
 
     private void SelectAvatar(string url)
