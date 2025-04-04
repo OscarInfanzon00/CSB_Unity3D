@@ -253,5 +253,11 @@ public class Solo_UploadStory : MonoBehaviour
     {
         SceneManager.LoadScene("Main_Menu");
     }
+
+    public void copyText()
+    {
+        GUIUtility.systemCopyBuffer = storyInputField.text;
+        notificationManager.Notify("The text of this story has been copied.");
+    }
 }
 
