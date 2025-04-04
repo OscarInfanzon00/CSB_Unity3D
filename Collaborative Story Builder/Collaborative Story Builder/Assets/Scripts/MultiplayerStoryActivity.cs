@@ -343,7 +343,7 @@ public class MultiplayerStoryManager : MonoBehaviour
                     storyListener.Stop();
 
                 // Load the main menu
-                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Main_Menu");
             }
             else
             {
