@@ -6,7 +6,7 @@ using System.Text;
 using TMPro;
 public class TranslatorAPI : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private TextMeshProUGUI inputField;
     [SerializeField] private TextMeshProUGUI outputText;
     [SerializeField] private Button translateButton;
 
@@ -15,6 +15,7 @@ public class TranslatorAPI : MonoBehaviour
 
     void Start()
     {
+
         translateButton.onClick.AddListener(OnTranslateButtonClicked);
     }
     private void Update()

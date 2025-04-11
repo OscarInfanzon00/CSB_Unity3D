@@ -21,6 +21,7 @@ public class StoryManager : MonoBehaviour
     private HashSet<string> friendsSet = new HashSet<string>();
     bool allTheStoriesShowingUp = true;
     private List<Story> allStories = new List<Story>();
+    public TMP_Text Message;
 
     private void Start()
     {
@@ -163,9 +164,22 @@ public class StoryManager : MonoBehaviour
                         allStories.Add(newStory);
                     }
 
+                    if (friendStories.Count == 0 && otherStories.Count == 0)
+                    {
+                        Message.text = "No Stories available right now!";
+                    }
+                    else
+                    {
+                        Message.text = "";
+                    }
+
+
                     // Sort stories by timestamp (latest first)
                     friendStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
                     otherStories.Sort((s1, s2) => s2.timestamp.CompareTo(s1.timestamp));
+
+
+
 
                     // Display friend stories first, followed by other stories
                     foreach (Story story in friendStories)
@@ -178,15 +192,19 @@ public class StoryManager : MonoBehaviour
                     {
                         CreateStoryCard(story, false);
                     }
+
+
                 }
                 catch (Exception e)
                 {
                     Debug.LogError("Failed to load stories: " + e);
+                    Message.text = e.Message;
                 }
             }
             else
             {
                 Debug.LogError("Failed to load stories: " + task.Exception);
+                Message.text = "Failed to load stories: " + task.Exception;
             }
         });
     }
@@ -332,7 +350,16 @@ public class StoryManager : MonoBehaviour
         List<Story> filteredStories = allStories.FindAll(story =>
             story.storyTexts.Count > 0 && story.storyTexts[0].ToLower().Contains(filterText.ToLower())
         );
-        DisplayStories(filteredStories);
+
+        if (filteredStories.Count > 0)
+        {
+            Message.text = "";
+        }
+        else
+        {
+            Message.text = "No Stories available with that Name!";
+        }
+            DisplayStories(filteredStories);
     }
 
     void DisplayStories(List<Story> stories)

@@ -43,7 +43,11 @@ public class NotificationManager : MonoBehaviour
 
         notificationText.text = message;
         StopAllCoroutines();
+        #if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate();
+        #endif
         StartCoroutine(ShowAndHide(duration ?? displayTime));
+        
     }
 
     private IEnumerator ShowAndHide(float duration)

@@ -25,6 +25,8 @@ public class Solo_UploadStory : MonoBehaviour
     public Button closeButton;
     public AudioSource victory;
 
+    public string undoText;
+
     void Start()
     {
         db = FirebaseFirestore.DefaultInstance;
@@ -36,67 +38,77 @@ public class Solo_UploadStory : MonoBehaviour
 
     public void SaveStory()
     {
-        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
-        FirebaseUser user = auth.CurrentUser;
 
-        if (user == null)
-        {
-            Debug.LogError("No user is currently signed in.");
+        if (string.IsNullOrWhiteSpace(storyInputField.text)){
+            Debug.Log("Input field is empty.");
             return;
         }
 
-        string userID = user.UserId;
-        string storyID = Guid.NewGuid().ToString();
+        string[] words = storyInputField.text.Trim().Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
 
-        string storyText = storyInputField.text;
-        string foundBannedWord = CheckForBannedWords(storyText);
-        if (!string.IsNullOrEmpty(foundBannedWord))
-        {
-            notificationManager.Notify($"Your story contains a banned word: '{foundBannedWord}'.", 3f);
+        if(words.Length < 10){
             return;
         }
-        if(!ContainsAllRequiredWords(storyText))
-        {
-            return;
-        }
-        int wordCount = CountWords(storyText);
-        List<string> storyTexts = new List<string>
-    {
-        storyInputField.text
-    };
+        
+            FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+            FirebaseUser user = auth.CurrentUser;
 
-        List<string> usersID = new List<string> { userID };
-        List<string> usersUsernames = new List<string> { userData.Username };
-
-        Dictionary<string, object> storyData = new Dictionary<string, object>
-    {
-        { "storyID", storyID },
-        { "storyTexts", storyTexts },
-        { "timestamp", Firebase.Firestore.Timestamp.GetCurrentTimestamp() },
-        { "usernames", usersUsernames },
-        { "users", usersID },
-        { "wordCount", wordCount }
-    };
-
-        DocumentReference storyRef = db.Collection("Stories").Document(storyID);
-
-        storyRef.SetAsync(storyData).ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompletedSuccessfully)
+            if (user == null)
             {
-                notificationManager.Notify($"Your story was successfully uploaded!\nWord count: {wordCount}", 3f);
-                Debug.Log("Story saved successfully with ID: " + storyID);
-                if (victory != null) {
-                    victory.Play();
+                Debug.LogError("No user is currently signed in.");
+                return;
+            }
+
+            string userID = user.UserId;
+            string storyID = Guid.NewGuid().ToString();
+
+            string storyText = storyInputField.text;
+            string foundBannedWord = CheckForBannedWords(storyText);
+            if (!string.IsNullOrEmpty(foundBannedWord))
+            {
+                notificationManager.Notify($"Your story contains a banned word: '{foundBannedWord}'.", 3f);
+                return;
+            }
+            if(!ContainsAllRequiredWords(storyText))
+            {
+                return;
+            }
+            int wordCount = CountWords(storyText);
+            List<string> storyTexts = new List<string>
+        {
+            storyInputField.text
+        };
+
+            List<string> usersID = new List<string> { userID };
+            List<string> usersUsernames = new List<string> { userData.Username };
+
+            Dictionary<string, object> storyData = new Dictionary<string, object>
+        {
+            { "storyID", storyID },
+            { "storyTexts", storyTexts },
+            { "timestamp", Firebase.Firestore.Timestamp.GetCurrentTimestamp() },
+            { "usernames", usersUsernames },
+            { "users", usersID },
+            { "wordCount", wordCount }
+        };
+
+            DocumentReference storyRef = db.Collection("Stories").Document(storyID);
+
+            storyRef.SetAsync(storyData).ContinueWithOnMainThread(task =>
+            {
+                if (task.IsCompletedSuccessfully)
+                {
+                    notificationManager.Notify($"Your story was successfully uploaded!\nWord count: {wordCount}", 3f);
+                    Debug.Log("Story saved successfully with ID: " + storyID);
+                    LevelSystem.AddXP(50);
+                    AddWordsToUser(user.UserId, wordCount);
                 }
-                LevelSystem.AddXP(50);
-                AddWordsToUser(user.UserId, wordCount);
-            }
-            else
-            {
-                Debug.LogError("Error saving story: " + task.Exception);
-            }
-        });
+                else
+                {
+                    Debug.LogError("Error saving story: " + task.Exception);
+                }
+            });
+            
     }
     private int CountWords(string text)
     {
@@ -245,7 +257,12 @@ public class Solo_UploadStory : MonoBehaviour
 
     public void clearText()
     {
+        undoText = storyInputField.text;
         storyInputField.text = " ";
+    }
+
+    public void undoTextBack(){
+        storyInputField.text = undoText;
     }
 
     void Update()
@@ -256,6 +273,12 @@ public class Solo_UploadStory : MonoBehaviour
     public void closeScene()
     {
         SceneManager.LoadScene("Main_Menu");
+    }
+
+    public void copyText()
+    {
+        GUIUtility.systemCopyBuffer = storyInputField.text;
+        notificationManager.Notify("The text of this story has been copied.");
     }
 }
 
