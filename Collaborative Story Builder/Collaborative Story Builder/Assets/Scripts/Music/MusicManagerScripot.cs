@@ -9,6 +9,35 @@ public class MusicManagerScripot : MonoBehaviour
     public AudioSource audioSource;
     public GameObject MuteButton;
     public AudioClip currentSong;
+    public Toggle MuteToggle; 
+    
+    
+    void Start()
+    {
+
+        MuteToggle.onValueChanged.AddListener(SwitchMusicOnOff);
+        
+        if (mainMenu)
+        {
+            currentSong = MusicLibrary[6];
+            audioSource.resource = currentSong;
+        }
+        else
+        {
+            SetRandomSong();
+        }
+    }
+
+    public void SwitchMusicOnOff(bool isOn)
+    {
+        audioSource.mute = !isOn;
+
+        MuteButton.transform.GetChild(0).GetComponent<Image>().sprite =
+            isOn ? soundOnImage : muteSoundImage;
+    }
+
+
+
     public void SwitchMusicOnOff()
     {
         switch (audioSource.mute)
@@ -24,19 +53,7 @@ public class MusicManagerScripot : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        
-        if (mainMenu)
-        {
-            currentSong = MusicLibrary[6];
-            audioSource.resource = currentSong;
-        }
-        else
-        {
-            SetRandomSong();
-        }
-    }
+   
 
     // Update is called once per frame
     void Update()
