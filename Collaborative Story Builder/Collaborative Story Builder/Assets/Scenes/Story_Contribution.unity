@@ -2447,7 +2447,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 619964666}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9995321
+  m_Size: 0.999984
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2768,15 +2768,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2673442687610607807, guid: cb70a89ec74214f879020629ed07d88a, type: 3}
       propertyPath: m_Name
-      value: AIPopupButton
+      value: GenrePopupButton
       objectReference: {fileID: 0}
     - target: {fileID: 6964610622027427180, guid: cb70a89ec74214f879020629ed07d88a, type: 3}
       propertyPath: m_text
-      value: AI
+      value: Genre
       objectReference: {fileID: 0}
     - target: {fileID: 6964610622027427180, guid: cb70a89ec74214f879020629ed07d88a, type: 3}
       propertyPath: m_fontSize
-      value: 72
+      value: 66.5
       objectReference: {fileID: 0}
     - target: {fileID: 6964610622027427180, guid: cb70a89ec74214f879020629ed07d88a, type: 3}
       propertyPath: m_enableAutoSizing
@@ -2800,7 +2800,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7344984649134642648, guid: cb70a89ec74214f879020629ed07d88a, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -29.8041
       objectReference: {fileID: 0}
     - target: {fileID: 7344984649134642648, guid: cb70a89ec74214f879020629ed07d88a, type: 3}
       propertyPath: m_SizeDelta.y
@@ -3016,7 +3016,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000039852046}
+  m_AnchoredPosition: {x: 0, y: 0.00008905788}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1623429288
