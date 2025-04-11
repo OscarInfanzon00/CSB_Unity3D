@@ -23,6 +23,7 @@ public class Solo_UploadStory : MonoBehaviour
     private FirebaseFirestore db;
     public NotificationManager notificationManager;
     public Button closeButton;
+    public AudioSource victory;
 
     public string undoText;
 
