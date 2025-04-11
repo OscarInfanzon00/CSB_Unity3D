@@ -298,5 +298,6 @@ public class StoryDeletionManager : MonoBehaviour
         {
             crntUserStoryManager.LoadUserStories();
         }
+
     }
 }

@@ -332,7 +332,6 @@ public class StoryManager : MonoBehaviour
     }
     public void RefreshStories()
     {
-        // Show loading indicator if you have one
         
         // Clear existing stories
         ClearStoryContainer();
