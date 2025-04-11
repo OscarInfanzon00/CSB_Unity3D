@@ -23,8 +23,10 @@ public class Solo_UploadStory : MonoBehaviour
     private FirebaseFirestore db;
     public NotificationManager notificationManager;
     public Button closeButton;
+    public Button confirmBanButton;
+    public Button confirmRequireButton;
     public AudioSource victory;
-
+    public Button saveStoryButton;
     public string undoText;
 
     void Start()
@@ -33,6 +35,9 @@ public class Solo_UploadStory : MonoBehaviour
         userData = User.GetUser();
         currentStoryBannedWords.Clear();
         UpdateBannedWordsUI();
+        confirmBanButton.onClick.AddListener(AddBannedWord);
+        confirmRequireButton.onClick.AddListener(AddRequiredWord);
+        saveStoryButton.onClick.AddListener(SaveStory);
         closeButton.onClick.AddListener(closeScene);
     }
 
@@ -47,6 +52,7 @@ public class Solo_UploadStory : MonoBehaviour
         string[] words = storyInputField.text.Trim().Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
 
         if(words.Length < 10){
+            notificationManager.Notify("Your story is too short, it must contain at least 10+ words to be saved.");
             return;
         }
         
