@@ -392,6 +392,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 65380916}
     m_Modifications:
+    - target: {fileID: 568145372061045682, guid: 35c8a2cd3e819384cb52709bceac1340, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -4.9999847
+      objectReference: {fileID: 0}
     - target: {fileID: 2835589244959799722, guid: 35c8a2cd3e819384cb52709bceac1340, type: 3}
       propertyPath: m_Name
       value: SettingsPanel
@@ -1057,7 +1061,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.60670114}
   m_AnchorMax: {x: 1, y: 0.91795164}
-  m_AnchoredPosition: {x: 0.000030517578, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 5.3500004}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &429441527
@@ -1291,7 +1295,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 49.6
+  m_fontSize: 72
   m_fontSizeBase: 70
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2447,7 +2451,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 619964666}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.999984
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2940,10 +2944,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 65380916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000030518, y: 0.00002670288}
-  m_SizeDelta: {x: 3183.869, y: 2285.6296}
+  m_AnchorMin: {x: 0, y: 0.62634534}
+  m_AnchorMax: {x: 1, y: 0.91795164}
+  m_AnchoredPosition: {x: 0, y: 2.5}
+  m_SizeDelta: {x: 0, y: -5.6616}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1481415714
 MonoBehaviour:
@@ -3612,7 +3616,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000015258789, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1864076516
