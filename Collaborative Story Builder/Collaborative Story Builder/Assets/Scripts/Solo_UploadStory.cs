@@ -23,6 +23,7 @@ public class Solo_UploadStory : MonoBehaviour
     private FirebaseFirestore db;
     public NotificationManager notificationManager;
     public Button closeButton;
+    public AudioSource victory;
 
     void Start()
     {
@@ -85,6 +86,9 @@ public class Solo_UploadStory : MonoBehaviour
             {
                 notificationManager.Notify($"Your story was successfully uploaded!\nWord count: {wordCount}", 3f);
                 Debug.Log("Story saved successfully with ID: " + storyID);
+                if (victory != null) {
+                    victory.Play();
+                }
                 LevelSystem.AddXP(50);
                 AddWordsToUser(user.UserId, wordCount);
             }
