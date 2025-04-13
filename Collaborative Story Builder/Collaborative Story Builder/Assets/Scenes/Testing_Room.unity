@@ -432,19 +432,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 169313499}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1578449256}
-        m_TargetAssemblyTypeName: UploadStory, Assembly-CSharp
-        m_MethodName: SaveStory
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &169313499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2167,6 +2155,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5507367600807907236, guid: 11ef4906db82e44cebcc3abae45b5f68, type: 3}
   m_PrefabInstance: {fileID: 752693923}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &752693927 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8375636942320522343, guid: 11ef4906db82e44cebcc3abae45b5f68, type: 3}
+  m_PrefabInstance: {fileID: 752693923}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &927776999
 GameObject:
   m_ObjectHideFlags: 0
@@ -2710,6 +2709,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 259884495945193751, guid: 0046cbe0587954f19a1d9e75bdac110a, type: 3}
   m_PrefabInstance: {fileID: 1157770860}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1157770865 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3674934321903765297, guid: 0046cbe0587954f19a1d9e75bdac110a, type: 3}
+  m_PrefabInstance: {fileID: 1157770860}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1171816432
 GameObject:
   m_ObjectHideFlags: 0
@@ -3712,7 +3722,10 @@ MonoBehaviour:
   requiredWordsListContent: {fileID: 1157770864}
   notificationManager: {fileID: 1980005829}
   closeButton: {fileID: 1656552985}
+  confirmBanButton: {fileID: 752693927}
+  confirmRequireButton: {fileID: 1157770865}
   victory: {fileID: 1578449258}
+  saveStoryButton: {fileID: 169313498}
   undoText: 
 --- !u!4 &1578449257
 Transform:
