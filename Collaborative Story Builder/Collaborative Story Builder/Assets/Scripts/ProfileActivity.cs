@@ -212,7 +212,31 @@ public class ProfileActivity : MonoBehaviour
         PlayerPrefs.Save();
         usernameMainMenuText.text = username.text;
         notification.Notify("The new username has been saved!", 3f);
+        SaveUsernameToFirestore(username.text);
     }
+
+    private void SaveUsernameToFirestore(string username)
+    {
+        if (string.IsNullOrEmpty(currentUserId)) return;
+
+        Dictionary<string, object> data = new Dictionary<string, object>
+        {
+            { "username", username }
+        };
+
+        db.Collection("Users").Document(currentUserId).SetAsync(data, SetOptions.MergeAll).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("Username saved to Firestore.");
+            }
+            else
+            {
+                Debug.LogError("Failed to save username: " + task.Exception);
+            }
+        });
+    }
+
 
     private void closeProfile()
     {
