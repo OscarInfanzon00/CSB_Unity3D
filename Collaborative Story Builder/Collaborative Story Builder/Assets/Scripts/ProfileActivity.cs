@@ -50,7 +50,7 @@ public class ProfileActivity : MonoBehaviour
     public List<Button> defaultAvatarButtons;
     public Button customAvatarButton;
     public TMP_InputField customURLInput;
-    public Button confirmCustomButton;
+    public Button confirmCustomButton, cancelBtn, cancelBtnMain;
 
 
     void Start()
@@ -109,6 +109,15 @@ public class ProfileActivity : MonoBehaviour
             {
                 SelectAvatar(url);
             }
+        });
+
+
+        cancelBtn.onClick.AddListener(() => { 
+            CustomFieldPanel?.SetActive(false);
+        });
+
+        cancelBtnMain.onClick.AddListener(() => {
+            avatarSelectionPanel?.SetActive(false);
         });
 
         updateLVL();

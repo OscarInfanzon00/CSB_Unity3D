@@ -39,7 +39,7 @@ public class FriendsListManager : MonoBehaviour
     private List<(string friendId, string username, int level, int words, string avatarUrl)> allFriends = new();
 
     // 🆕 Default avatar fallback
-    private const string defaultAvatarUrl = "https://as2.ftcdn.net/jpg/03/31/69/91/1000_F_331699188_lRpvqxO5QRtwOM05gR50ImaaJgBx68vi.jpg";
+    private const string defaultAvatarUrl = "https://i.sstatic.net/l60Hf.png";
 
     void Start()
     {
