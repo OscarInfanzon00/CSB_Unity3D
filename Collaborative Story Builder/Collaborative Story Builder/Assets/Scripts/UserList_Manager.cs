@@ -56,6 +56,19 @@ public class UserList_Manager : MonoBehaviour
         });
 
         notification = GameObject.Find("Notification").GetComponent<NotificationManager>();
+
+        checkStoryFinished();
+    }
+
+    void checkStoryFinished(){
+        if(PlayerPrefs.GetInt("StorySaved")==1)
+        {
+            notification.Notify("Congrats! The story was saved, you can read it now in your profile.");
+        }
+        
+                    
+        PlayerPrefs.SetInt("StorySaved", 0);
+        PlayerPrefs.Save();
     }
 
     private void CloseMenu()

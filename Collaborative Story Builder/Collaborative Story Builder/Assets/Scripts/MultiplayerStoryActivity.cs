@@ -277,7 +277,9 @@ public class MultiplayerStoryManager : MonoBehaviour
         {
             if (snapshot.Exists)
             {
-                if (!snapshot.Exists)
+                // Check if the room is closed
+                bool isRoomClosed = snapshot.ContainsField("isRoomClosed") && snapshot.GetValue<bool>("isRoomClosed");
+                if (isRoomClosed)
                 {
                     Debug.Log("Room has been closed by the owner. Exiting...");
 
@@ -288,7 +290,9 @@ public class MultiplayerStoryManager : MonoBehaviour
                         storyListener.Stop();
 
                     // Return to main menu
-                    UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("Main_Menu");
+                    PlayerPrefs.SetInt("StorySaved", 1);
+                    PlayerPrefs.Save();
                     return;
                 }
 
@@ -320,6 +324,7 @@ public class MultiplayerStoryManager : MonoBehaviour
         });
     }
 
+
     public void CloseRoom()
     {
         if (!IsRoomCreator())
@@ -330,11 +335,15 @@ public class MultiplayerStoryManager : MonoBehaviour
 
         DocumentReference roomRef = db.Collection("Rooms").Document(currentRoomID);
 
-        roomRef.DeleteAsync().ContinueWithOnMainThread(task =>
+        // Update the room document to indicate that the room is closed before deleting it
+        roomRef.UpdateAsync(new Dictionary<string, object>
         {
-            if (task.IsCompletedSuccessfully)
+            { "isRoomClosed", true }
+        }).ContinueWithOnMainThread(updateTask =>
+        {
+            if (updateTask.IsCompletedSuccessfully)
             {
-                Debug.Log("Room closed successfully.");
+                Debug.Log("Room closure status updated successfully.");
 
                 // Stop listeners
                 if (roomListener != null)
@@ -342,16 +351,30 @@ public class MultiplayerStoryManager : MonoBehaviour
                 if (storyListener != null)
                     storyListener.Stop();
 
-                // Load the main menu
-                UnityEngine.SceneManagement.SceneManager.LoadScene("Main_Menu");
+                // Now delete the room after updating its closure status
+                roomRef.DeleteAsync().ContinueWithOnMainThread(deleteTask =>
+                {
+                    if (deleteTask.IsCompletedSuccessfully)
+                    {
+                        Debug.Log("Room closed successfully.");
+
+                        // Load the main menu
+                        UnityEngine.SceneManagement.SceneManager.LoadScene("Main_Menu");
+                        PlayerPrefs.SetInt("StorySaved", 1);
+                        PlayerPrefs.Save();
+                    }
+                    else
+                    {
+                        Debug.LogError("Error closing room: " + deleteTask.Exception);
+                    }
+                });
             }
             else
             {
-                Debug.LogError("Error closing room: " + task.Exception);
+                Debug.LogError("Error updating room closure status: " + updateTask.Exception);
             }
         });
     }
-
 
     void OnDestroy()
     {
